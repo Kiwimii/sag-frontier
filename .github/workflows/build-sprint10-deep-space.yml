@@ -17,11 +17,14 @@ jobs:
         with:
           node-version: '22'
       - name: Build Deep Space runtime
-        run: node tools/build-sprint10-deep-space.cjs
+        run: |
+          node tools/build-sprint10-deep-space.cjs
+          node tools/fix-sprint10-runtime.cjs
       - name: Validate JavaScript and progression guards
         run: |
           node --check sprint10-source.js
           node --check tools/build-sprint10-deep-space.cjs
+          node --check tools/fix-sprint10-runtime.cjs
           node --check tests/sprint10-smoke.mjs
           node - <<'NODE'
           const fs = require('fs');
