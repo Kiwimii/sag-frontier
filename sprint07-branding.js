@@ -21,6 +21,7 @@
 
   const language = () => document.documentElement.lang === 'en' || $('langEn')?.classList.contains('active') ? 'en' : 'de';
   const skillsActive = () => $('tabSkills')?.classList.contains('active');
+  const afterBaseHandlers = callback => requestAnimationFrame(() => requestAnimationFrame(callback));
 
   function showSkillsMessage(learned = false) {
     if (!skillsActive()) return;
@@ -32,11 +33,14 @@
     setTimeout(() => $('kiwimiPanel')?.classList.remove('speaking'), 650);
   }
 
-  $('tabSkills')?.addEventListener('click', () => requestAnimationFrame(() => showSkillsMessage(false)));
-  for (const id of ['langDe', 'langEn']) $(id)?.addEventListener('click', () => requestAnimationFrame(() => showSkillsMessage(false)));
+  document.querySelector('.tabs')?.addEventListener('click', event => {
+    if (!event.target.closest('#tabSkills')) return;
+    afterBaseHandlers(() => showSkillsMessage(false));
+  });
+  for (const id of ['langDe', 'langEn']) $(id)?.addEventListener('click', () => afterBaseHandlers(() => showSkillsMessage(false)));
   $('skillGrid')?.addEventListener('click', event => {
     const button = event.target.closest('.card-actions button');
     if (!button || button.disabled) return;
-    requestAnimationFrame(() => showSkillsMessage(true));
+    afterBaseHandlers(() => showSkillsMessage(true));
   });
 })();
