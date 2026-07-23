@@ -1,22 +1,13 @@
-name: Build Sprint 07 runtime
+name: Build and test Sprint 07
 on:
   push:
     branches: [feat/live-sprint-07-progression]
-    paths:
-      - '.github/workflows/decompress-source.yml'
-      - 'tools/build-sprint07.cjs'
-      - 'tools/repair-build-sprint07.cjs'
   pull_request:
     branches: [live]
-    paths:
-      - '.github/workflows/decompress-source.yml'
-      - 'tools/build-sprint07.cjs'
-      - 'tools/repair-build-sprint07.cjs'
-      - 'sprint07-source.js'
 permissions:
   contents: write
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,16 +27,6 @@ jobs:
           rm -f sprint07-build.failed sprint07-build.log
           node tools/build-sprint07.cjs > sprint07-build.log 2>&1 || touch sprint07-build.failed
           cat sprint07-build.log
-      - name: Upload build diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sprint07-build-diagnostics
-          path: |
-            sprint07-build.log
-            sprint07-build.failed
-            sprint07-source.js
-          if-no-files-found: ignore
       - name: Make branding title version-aware
         if: ${{ !hashFiles('sprint07-build.failed') }}
         run: |
@@ -61,12 +42,37 @@ jobs:
         run: |
           node --check sprint07-source.js
           node --check sprint06-branding.js
-      - name: Commit generated runtime or diagnostics
-        if: github.event_name == 'push'
+          node --check tests/sprint07-smoke.mjs
+      - name: Install browser test runtime
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Browser smoke test
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: |
+          python3 -m http.server 4173 > /tmp/sag-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint07-smoke.mjs
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint07-build-diagnostics
+          path: |
+            sprint07-build.log
+            sprint07-build.failed
+            sprint07-source.js
+            /tmp/sag-http.log
+          if-no-files-found: ignore
+      - name: Commit generated runtime
+        if: github.event_name == 'push' && !hashFiles('sprint07-build.failed')
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add tools/build-sprint07.cjs sprint07-build.log sprint07-source.js sprint06-branding.js 2>/dev/null || true
+          git add tools/build-sprint07.cjs sprint07-build.log sprint07-source.js sprint06-branding.js
           git diff --cached --quiet && exit 0
           git commit -m 'build: generate Sprint 0.7 runtime'
           git push origin HEAD:feat/live-sprint-07-progression
