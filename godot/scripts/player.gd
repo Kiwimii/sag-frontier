@@ -1,12 +1,21 @@
 extends CharacterBody2D
 
+signal health_changed(current: int, maximum: int)
+signal died
+
 @export var speed := 360.0
 @export var acceleration := 1800.0
 @export var deceleration := 2200.0
+@export var max_health := 100
 
+var health := 100
 var touch_origin := Vector2.ZERO
 var touch_vector := Vector2.ZERO
 var active_touch := -1
+
+func _ready() -> void:
+	health = max_health
+	health_changed.emit(health, max_health)
 
 func _physics_process(delta: float) -> void:
 	var keyboard := Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -19,6 +28,22 @@ func _physics_process(delta: float) -> void:
 	if velocity.length_squared() > 4.0:
 		rotation = velocity.angle() + PI / 2.0
 
+func take_damage(amount: int) -> void:
+	health = maxi(0, health - amount)
+	health_changed.emit(health, max_health)
+	modulate = Color(1.0, 0.35, 0.35, 1.0)
+	create_tween().tween_property(self, "modulate", Color.WHITE, 0.18)
+	if health <= 0:
+		died.emit()
+
+func reset_player() -> void:
+	health = max_health
+	global_position = get_viewport_rect().size * 0.5
+	velocity = Vector2.ZERO
+	visible = true
+	set_physics_process(true)
+	health_changed.emit(health, max_health)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		_handle_touch(event)
@@ -26,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_update_touch_vector(event.position)
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
-	var half_width := get_viewport_rect().size.x * 0.55
+	var half_width := get_viewport_rect().size.x * 0.7
 	if event.pressed and active_touch == -1 and event.position.x <= half_width:
 		active_touch = event.index
 		touch_origin = event.position
