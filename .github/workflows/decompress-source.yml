@@ -5,11 +5,13 @@ on:
     paths:
       - '.github/workflows/decompress-source.yml'
       - 'tools/build-sprint07.cjs'
+      - 'tools/repair-build-sprint07.cjs'
   pull_request:
     branches: [live]
     paths:
       - '.github/workflows/decompress-source.yml'
       - 'tools/build-sprint07.cjs'
+      - 'tools/repair-build-sprint07.cjs'
       - 'sprint07-source.js'
 permissions:
   contents: write
@@ -27,6 +29,8 @@ jobs:
         run: |
           test -s sprint05-source.js
           echo "Runtime source: $(wc -c < sprint05-source.js) bytes"
+      - name: Repair build source
+        run: node tools/repair-build-sprint07.cjs
       - name: Build Sprint 07 source
         run: |
           rm -f sprint07-build.failed sprint07-build.log
@@ -62,7 +66,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add sprint07-build.log sprint07-source.js sprint06-branding.js 2>/dev/null || true
+          git add tools/build-sprint07.cjs sprint07-build.log sprint07-source.js sprint06-branding.js 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m 'build: generate Sprint 0.7 runtime'
           git push origin HEAD:feat/live-sprint-07-progression
