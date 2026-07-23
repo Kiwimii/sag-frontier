@@ -1,0 +1,4 @@
+canvas{image-rendering:auto;filter:saturate(1.08) contrast(1.03)}
+body.in-game:after{content:"VISUAL FORGE 0.8";position:fixed;right:14px;bottom:12px;z-index:4;font:700 8px/1.2 "Segoe UI",sans-serif;letter-spacing:.18em;color:#d7a83c66;pointer-events:none}
+.major-status{color:#ffd36a;text-shadow:0 0 12px #d7a83c66}
+@media(max-width:620px){body.in-game:after{display:none}}
