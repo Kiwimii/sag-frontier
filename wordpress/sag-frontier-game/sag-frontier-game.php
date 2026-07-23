@@ -12,10 +12,12 @@ if (!defined('ABSPATH')) {
 }
 
 final class SAG_Frontier_Game {
-    private const SHORTCODE = 'sag_frontier';
+    private const SHORTCODES = ['sag_frontier', 'sag_voidrunner'];
 
     public static function init(): void {
-        add_shortcode(self::SHORTCODE, [self::class, 'render']);
+        foreach (self::SHORTCODES as $shortcode) {
+            add_shortcode($shortcode, [self::class, 'render']);
+        }
         add_action('wp_enqueue_scripts', [self::class, 'register_assets']);
     }
 
