@@ -1,0 +1,21 @@
+{
+  "css": [
+    "sprint05.css",
+    "sprint06-branding.css",
+    "sprint06-polish.css",
+    "sprint07.css",
+    "sprint08.css",
+    "sprint09.css",
+    "sprint10.css",
+    "sprint11.css"
+  ],
+  "ui": [
+    "sprint06-branding.js",
+    "sprint07-branding.js",
+    "sprint09-branding.js",
+    "sprint11-branding.js"
+  ],
+  "runtime": "sprint11-source.js",
+  "template": "sprint11.html",
+  "balance": "src/config/sprint12.balance.js"
+}
