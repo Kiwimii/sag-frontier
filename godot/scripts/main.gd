@@ -13,7 +13,7 @@ const ENEMY_SCENE := preload("res://scenes/enemy.tscn")
 
 var score := 0
 var elapsed := 0.0
-var spawn_clock := 0.0
+var spawn_clock := 0.2
 var shot_clock := 0.0
 var game_running := true
 
@@ -25,6 +25,7 @@ func _ready() -> void:
 	$HUD/GameOver/Restart.pressed.connect(_restart_game)
 	_on_viewport_size_changed()
 	_on_health_changed(player.health, player.max_health)
+	_update_hud()
 
 func _process(delta: float) -> void:
 	if not game_running:
@@ -38,9 +39,11 @@ func _process(delta: float) -> void:
 	if shot_clock <= 0.0:
 		_auto_fire()
 		shot_clock = maxf(0.18, 0.44 - elapsed * 0.002)
-	time_label.text = "TIME  %02d:%02d" % [int(elapsed) / 60, int(elapsed) % 60]
+	_update_hud()
 
 func _spawn_enemy() -> void:
+	if not game_running:
+		return
 	var enemy := ENEMY_SCENE.instantiate()
 	var size := get_viewport_rect().size
 	var side := randi() % 4
@@ -51,7 +54,7 @@ func _spawn_enemy() -> void:
 		_: enemy.global_position = Vector2(-35.0, randf_range(0.0, size.y))
 	enemy.setup(player, 1.0 + minf(elapsed / 140.0, 1.1))
 	enemy.destroyed.connect(_on_enemy_destroyed)
-	enemy.reached_player.connect(player.take_damage)
+	enemy.reached_player.connect(_on_enemy_reached_player)
 	enemies.add_child(enemy)
 
 func _auto_fire() -> void:
@@ -63,9 +66,14 @@ func _auto_fire() -> void:
 	projectiles.add_child(projectile)
 
 func _nearest_enemy() -> Node2D:
-	var nearest: Node2D
+	var nearest: Node2D = null
 	var best := INF
-	for enemy in enemies.get_children():
+	for child in enemies.get_children():
+		if not is_instance_valid(child) or child.is_queued_for_deletion():
+			continue
+		var enemy := child as Node2D
+		if enemy == null:
+			continue
 		var distance := player.global_position.distance_squared_to(enemy.global_position)
 		if distance < best:
 			best = distance
@@ -73,8 +81,14 @@ func _nearest_enemy() -> Node2D:
 	return nearest
 
 func _on_enemy_destroyed(points: int) -> void:
+	if not game_running:
+		return
 	score += points
-	score_label.text = "SCORE  %06d" % score
+	_update_hud()
+
+func _on_enemy_reached_player(damage: int) -> void:
+	if game_running:
+		player.take_damage(damage)
 
 func _on_health_changed(current: int, maximum: int) -> void:
 	health_bar.max_value = maximum
@@ -82,23 +96,39 @@ func _on_health_changed(current: int, maximum: int) -> void:
 	$HUD/HealthText.text = "HULL  %d / %d" % [current, maximum]
 
 func _on_player_died() -> void:
+	if not game_running:
+		return
 	game_running = false
 	player.visible = false
 	player.set_physics_process(false)
+	player.set_process_unhandled_input(false)
+	_clear_combat_nodes()
 	game_over_panel.visible = true
 	$HUD/GameOver/FinalScore.text = "FINAL SCORE  %06d" % score
 
 func _restart_game() -> void:
-	for child in enemies.get_children(): child.queue_free()
-	for child in projectiles.get_children(): child.queue_free()
+	_clear_combat_nodes()
 	score = 0
 	elapsed = 0.0
 	spawn_clock = 0.2
 	shot_clock = 0.0
-	score_label.text = "SCORE  000000"
 	game_over_panel.visible = false
 	game_running = true
 	player.reset_player()
+	_update_hud()
+
+func _clear_combat_nodes() -> void:
+	for child in enemies.get_children():
+		child.queue_free()
+	for child in projectiles.get_children():
+		child.queue_free()
+
+func _update_hud() -> void:
+	score_label.text = "SCORE  %06d" % score
+	var total_seconds := int(elapsed)
+	var minutes := floori(float(total_seconds) / 60.0)
+	var seconds := total_seconds % 60
+	time_label.text = "TIME  %02d:%02d" % [minutes, seconds]
 
 func _configure_input_map() -> void:
 	_register_key_action("move_left", [KEY_A, KEY_LEFT])
@@ -107,11 +137,20 @@ func _configure_input_map() -> void:
 	_register_key_action("move_down", [KEY_S, KEY_DOWN])
 
 func _register_key_action(action_name: StringName, keys: Array[int]) -> void:
-	if not InputMap.has_action(action_name): InputMap.add_action(action_name, 0.25)
+	if not InputMap.has_action(action_name):
+		InputMap.add_action(action_name, 0.25)
 	for keycode in keys:
 		var event := InputEventKey.new()
 		event.physical_keycode = keycode
-		if not InputMap.action_has_event(action_name, event): InputMap.action_add_event(action_name, event)
+		if not InputMap.action_has_event(action_name, event):
+			InputMap.action_add_event(action_name, event)
 
 func _on_viewport_size_changed() -> void:
-	$Background.size = get_viewport_rect().size
+	var viewport_size := get_viewport_rect().size
+	$Background.size = viewport_size
+	$Grid.polygon = PackedVector2Array([
+		Vector2.ZERO,
+		Vector2(viewport_size.x, 0.0),
+		viewport_size,
+		Vector2(0.0, viewport_size.y)
+	])

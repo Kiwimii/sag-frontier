@@ -29,6 +29,8 @@ func _physics_process(delta: float) -> void:
 		rotation = velocity.angle() + PI / 2.0
 
 func take_damage(amount: int) -> void:
+	if health <= 0 or not is_physics_processing():
+		return
 	health = maxi(0, health - amount)
 	health_changed.emit(health, max_health)
 	modulate = Color(1.0, 0.35, 0.35, 1.0)
@@ -40,8 +42,14 @@ func reset_player() -> void:
 	health = max_health
 	global_position = get_viewport_rect().size * 0.5
 	velocity = Vector2.ZERO
+	rotation = 0.0
+	modulate = Color.WHITE
+	touch_origin = Vector2.ZERO
+	touch_vector = Vector2.ZERO
+	active_touch = -1
 	visible = true
 	set_physics_process(true)
+	set_process_unhandled_input(true)
 	health_changed.emit(health, max_health)
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,6 +66,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 		touch_vector = Vector2.ZERO
 	elif not event.pressed and event.index == active_touch:
 		active_touch = -1
+		touch_origin = Vector2.ZERO
 		touch_vector = Vector2.ZERO
 
 func _update_touch_vector(position: Vector2) -> void:
