@@ -31,5 +31,13 @@ if (start >= 0 && endStart >= 0) {
   source = source.slice(0, start) + replacement + source.slice(endStart + endMarker.length);
 }
 
+const drawShipNeedle = "function drawShip(){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.invuln>0&&Math.floor(player.invuln*20)%2===0?.38:1;if(player.shield>0){";
+const drawShipCode = "function drawShip(){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.invuln>0&&Math.floor(player.invuln*20)%2===0?.38:1;if(player.chipPulse>0){ctx.strokeStyle='#55eaff';ctx.lineWidth=4;ctx.globalAlpha=player.chipPulse/.75;ctx.beginPath();ctx.arc(0,0,34+(1-player.chipPulse/.75)*25,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}if(player.shield>0){";
+replaceLine("must(`if(player.shield>0){`", "must(" + JSON.stringify(drawShipNeedle) + ", " + JSON.stringify(drawShipCode) + ");");
+
+const drawProjectilesNeedle = "for(const r of rockets){ctx.save();";
+const drawProjectilesCode = "for(const b of bullets){ctx.fillStyle=b.color||'#ffb35c';ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill()}for(const p of plasmaBolts){const glow=ctx.createRadialGradient(p.x,p.y,1,p.x,p.y,p.r*2.2);glow.addColorStop(0,'#ffffff');glow.addColorStop(.28,'#d9a5ff');glow.addColorStop(1,'#7e38b800');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(p.x,p.y,p.r*2.2,0,Math.PI*2);ctx.fill()}for(const r of rockets){ctx.save();";
+replaceLine("must(`for(const r of rockets){`", "must(" + JSON.stringify(drawProjectilesNeedle) + ", " + JSON.stringify(drawProjectilesCode) + ");");
+
 fs.writeFileSync(file, source);
-console.log('Sprint 0.7 builder is interpolation-safe');
+console.log('Sprint 0.7 builder is interpolation-safe and draw targets are scoped');
