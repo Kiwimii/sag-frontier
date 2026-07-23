@@ -12,12 +12,18 @@ var health := 100
 var touch_origin := Vector2.ZERO
 var touch_vector := Vector2.ZERO
 var active_touch := -1
+var invulnerability_left := 0.0
+var starting_speed := 360.0
+var starting_max_health := 100
 
 func _ready() -> void:
+	starting_speed = speed
+	starting_max_health = max_health
 	health = max_health
 	health_changed.emit(health, max_health)
 
 func _physics_process(delta: float) -> void:
+	invulnerability_left = maxf(0.0, invulnerability_left - delta)
 	var keyboard := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var direction := touch_vector if touch_vector.length() > 0.05 else keyboard
 	var target_velocity := direction.normalized() * speed
@@ -29,8 +35,9 @@ func _physics_process(delta: float) -> void:
 		rotation = velocity.angle() + PI / 2.0
 
 func take_damage(amount: int) -> void:
-	if health <= 0 or not is_physics_processing():
+	if health <= 0 or not is_physics_processing() or invulnerability_left > 0.0:
 		return
+	invulnerability_left = 0.35
 	health = maxi(0, health - amount)
 	health_changed.emit(health, max_health)
 	modulate = Color(1.0, 0.35, 0.35, 1.0)
@@ -38,19 +45,38 @@ func take_damage(amount: int) -> void:
 	if health <= 0:
 		died.emit()
 
-func reset_player() -> void:
+func reset_player(reset_stats: bool = false) -> void:
+	if reset_stats:
+		speed = starting_speed
+		max_health = starting_max_health
 	health = max_health
 	global_position = get_viewport_rect().size * 0.5
 	velocity = Vector2.ZERO
 	rotation = 0.0
 	modulate = Color.WHITE
-	touch_origin = Vector2.ZERO
-	touch_vector = Vector2.ZERO
-	active_touch = -1
+	invulnerability_left = 0.0
+	cancel_touch()
 	visible = true
 	set_physics_process(true)
 	set_process_unhandled_input(true)
 	health_changed.emit(health, max_health)
+
+func increase_speed(amount: float) -> void:
+	speed += amount
+
+func increase_max_health(amount: int) -> void:
+	max_health += amount
+	health = mini(max_health, health + amount)
+	health_changed.emit(health, max_health)
+
+func repair(amount: int) -> void:
+	health = mini(max_health, health + amount)
+	health_changed.emit(health, max_health)
+
+func cancel_touch() -> void:
+	touch_origin = Vector2.ZERO
+	touch_vector = Vector2.ZERO
+	active_touch = -1
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -65,9 +91,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 		touch_origin = event.position
 		touch_vector = Vector2.ZERO
 	elif not event.pressed and event.index == active_touch:
-		active_touch = -1
-		touch_origin = Vector2.ZERO
-		touch_vector = Vector2.ZERO
+		cancel_touch()
 
 func _update_touch_vector(position: Vector2) -> void:
 	var displacement := position - touch_origin
