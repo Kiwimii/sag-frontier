@@ -5,6 +5,12 @@ on:
     paths:
       - '.github/workflows/decompress-source.yml'
       - 'tools/build-sprint07.cjs'
+  pull_request:
+    branches: [live]
+    paths:
+      - '.github/workflows/decompress-source.yml'
+      - 'tools/build-sprint07.cjs'
+      - 'sprint07-source.js'
 permissions:
   contents: write
 jobs:
@@ -42,6 +48,7 @@ jobs:
           node --check sprint07-source.js
           node --check sprint06-branding.js
       - name: Commit generated runtime
+        if: github.event_name == 'push'
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
