@@ -1,32 +1,51 @@
-name: Decompress runtime source
+name: Build Sprint 07 runtime
 on:
   push:
     branches: [feat/live-sprint-07-progression]
     paths:
       - '.github/workflows/decompress-source.yml'
+      - 'tools/build-sprint07.cjs'
 permissions:
   contents: write
 jobs:
-  decompress:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Decompress Sprint 05 runtime
+      - name: Ensure Sprint 05 source exists
+        run: |
+          if [ ! -f sprint05-source.js ]; then
+            node - <<'NODE'
+            const fs = require('fs');
+            const zlib = require('zlib');
+            const files = ['s05z00.txt','s05z01.txt','s05z02.txt','s05z03.txt','s05z04.txt'];
+            const encoded = files.map(file => fs.readFileSync(file, 'utf8')).join('').replace(/\s/g, '');
+            fs.writeFileSync('sprint05-source.js', zlib.gunzipSync(Buffer.from(encoded, 'base64')));
+            NODE
+          fi
+      - name: Build Sprint 07 source
+        run: node tools/build-sprint07.cjs
+      - name: Make branding title version-aware
         run: |
           node - <<'NODE'
           const fs = require('fs');
-          const zlib = require('zlib');
-          const files = ['s05z00.txt','s05z01.txt','s05z02.txt','s05z03.txt','s05z04.txt'];
-          const encoded = files.map(file => fs.readFileSync(file, 'utf8')).join('').replace(/\s/g, '');
-          fs.writeFileSync('sprint05-source.js', zlib.gunzipSync(Buffer.from(encoded, 'base64')));
+          const file = 'sprint06-branding.js';
+          let source = fs.readFileSync(file, 'utf8');
+          source = source.replace("const VERSION_TITLE = 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';", "const VERSION_TITLE = document.body?.dataset.versionTitle || 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';");
+          fs.writeFileSync(file, source);
           NODE
-      - name: Commit source
+      - name: Validate JavaScript
+        run: |
+          node --check sprint07-source.js
+          node --check sprint06-branding.js
+      - name: Commit generated runtime
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add sprint05-source.js
-          git commit -m 'chore: expose runtime source for sprint development'
+          git add sprint05-source.js sprint07-source.js sprint06-branding.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Sprint 0.7 runtime'
           git push
