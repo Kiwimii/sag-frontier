@@ -35,7 +35,7 @@ const hangar = await page.evaluate(() => ({
   modules: document.querySelectorAll('#moduleGrid .card').length,
   skills: document.querySelectorAll('#skillGrid .skill-node').length
 }));
-if (!hangar.title.includes('Deep Space 0.10') || !hangar.deepBrief || !hangar.explorationHud) throw new Error(`Deep Space UI missing: ${JSON.stringify(hangar)}`);
+if (!hangar.title.toUpperCase().includes('DEEP SPACE 0.10') || !hangar.deepBrief || !hangar.explorationHud) throw new Error(`Deep Space UI missing: ${JSON.stringify(hangar)}`);
 if (hangar.ships !== 5 || hangar.modules !== 6 || hangar.skills !== 12) throw new Error(`Existing progression regressed: ${JSON.stringify(hangar)}`);
 
 await page.click('#startRunBtn');
