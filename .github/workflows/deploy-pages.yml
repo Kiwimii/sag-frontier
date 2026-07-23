@@ -1,5 +1,6 @@
 name: Deploy Playable Browser Build
 
+# Republishes the current browser build whenever the game or this workflow changes.
 on:
   push:
     branches:
