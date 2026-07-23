@@ -126,7 +126,7 @@ func _clear_combat_nodes() -> void:
 func _update_hud() -> void:
 	score_label.text = "SCORE  %06d" % score
 	var total_seconds := int(elapsed)
-	var minutes := total_seconds / 60
+	var minutes := floori(float(total_seconds) / 60.0)
 	var seconds := total_seconds % 60
 	time_label.text = "TIME  %02d:%02d" % [minutes, seconds]
 
