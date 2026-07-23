@@ -1,0 +1,59 @@
+name: Build and test Sprint 11
+on:
+  push:
+    branches: [feat/live-sprint-11-refinement]
+  pull_request:
+    branches: [live]
+permissions:
+  contents: write
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Unpack Sprint 0.11 runtime and page
+        run: node tools/unpack-sprint11.cjs
+      - name: Validate JavaScript and static quality guards
+        run: |
+          node --check sprint11-source.js
+          node --check sprint11-branding.js
+          node --check tools/unpack-sprint11.cjs
+          node --check tests/sprint11-smoke.mjs
+          node tests/sprint11-static.cjs
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Browser smoke, usability and streaming test
+        run: |
+          python3 -m http.server 4173 > /tmp/sag11-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint11-smoke.mjs > sprint11-smoke.log 2>&1
+          cat sprint11-smoke.log
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint11-refinement-diagnostics
+          path: |
+            sprint11-source.js
+            sprint11.html
+            sprint11-smoke.log
+            /tmp/sag11-http.log
+          if-no-files-found: ignore
+      - name: Commit generated playable files
+        if: github.event_name == 'push'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint11-source.js sprint11.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Deep Space Refined 0.11 runtime'
+          git push origin HEAD:feat/live-sprint-11-refinement
