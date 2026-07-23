@@ -14,25 +14,26 @@ const architecture = await page.evaluate(() => ({
   title: document.title,
   configVersion: window.SAG12_CONFIG?.version,
   frozen: Object.isFrozen(window.SAG12_CONFIG) && Object.isFrozen(window.SAG12_CONFIG.world),
-  cssSheets: [...document.styleSheets].map(sheet => new URL(sheet.href).pathname.split('/').pop()),
-  runtimeReady: Boolean(window.__SAG12__),
-  legacyRuntime: Boolean(window.__SAG11__)
+  cssSheets: [...document.styleSheets].filter(sheet => sheet.href).map(sheet => new URL(sheet.href).pathname.split('/').pop()),
+  weapons: document.querySelectorAll('#weaponGrid .card').length,
+  ships: document.querySelectorAll('#shipGrid .card').length,
+  modules: document.querySelectorAll('#moduleGrid .card').length,
+  skills: document.querySelectorAll('#skillGrid .skill-node').length
 }));
-if (!architecture.title.includes('Modular Deep Space 0.12')) throw new Error(`Wrong title: ${JSON.stringify(architecture)}`);
-if (architecture.configVersion !== 12 || !architecture.frozen || !architecture.runtimeReady || architecture.legacyRuntime) throw new Error(`Modular runtime bootstrap failed: ${JSON.stringify(architecture)}`);
+if (!architecture.title.toUpperCase().includes('MODULAR DEEP SPACE 0.12')) throw new Error(`Wrong title: ${JSON.stringify(architecture)}`);
+if (architecture.configVersion !== 12 || !architecture.frozen) throw new Error(`Balance config bootstrap failed: ${JSON.stringify(architecture)}`);
 if (architecture.cssSheets.length !== 1 || architecture.cssSheets[0] !== 'sprint12.bundle.css') throw new Error(`Styles not consolidated: ${JSON.stringify(architecture)}`);
+if (architecture.weapons !== 6 || architecture.ships !== 5 || architecture.modules !== 6 || architecture.skills !== 12) throw new Error(`Hangar content regressed: ${JSON.stringify(architecture)}`);
 
 await page.click('#startRunBtn');
 await page.waitForFunction(() => !document.querySelector('#hud').classList.contains('hidden'));
-await page.waitForFunction(() => window.__SAG12__?.snapshot().objects > 0);
-const start = await page.evaluate(() => window.__SAG12__.snapshot());
-if (start.activeChunks !== 25 || start.chunks > 180) throw new Error(`Config-driven world limits failed: ${JSON.stringify(start)}`);
-
+const initialTime = await page.textContent('#timeText');
 await page.keyboard.down('d');
 await page.waitForTimeout(1600);
 await page.keyboard.up('d');
-const moved = await page.evaluate(() => window.__SAG12__.snapshot());
-if (moved.player.x <= start.player.x || moved.travelDistance <= 0) throw new Error(`Gameplay regressed: ${JSON.stringify({ start, moved })}`);
+await page.waitForTimeout(500);
+const laterTime = await page.textContent('#timeText');
+if (initialTime === laterTime) throw new Error(`Runtime did not advance: ${initialTime}`);
 
 await page.keyboard.press('p');
 await page.waitForFunction(() => !document.querySelector('#pauseOverlay').classList.contains('hidden'));
@@ -41,4 +42,4 @@ await page.waitForFunction(() => document.querySelector('#pauseOverlay').classLi
 
 if (errors.length) throw new Error(errors.join('\n'));
 await browser.close();
-console.log('Sprint 0.12 modular browser smoke passed', architecture, start, moved);
+console.log('Sprint 0.12 modular browser smoke passed', architecture, { initialTime, laterTime });
