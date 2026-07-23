@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>S.A.G. Frontier — Sector Siege</title>
+  <link rel="stylesheet" href="sprint03.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div class="hud">
+    <div class="left">
+      <div class="title">S.A.G. FRONTIER // SECTOR SIEGE 0.3</div>
+      <div class="muted">WASD / arrows · auto-fire · Space dash · P pause</div>
+      <div class="bar"><div id="hpFill" class="fill"></div></div>
+      <div id="hpText">HULL 100 / 100</div>
+      <div id="shieldRow" class="hidden"><div class="bar"><div id="shieldFill" class="fill shield-fill"></div></div><div id="shieldText">SHIELD 0 / 0</div></div>
+    </div>
+    <div class="right">
+      <div id="scoreText">SCORE 000000</div>
+      <div id="timeText">TIME 00:00</div>
+      <div id="bestText">BEST 000000</div>
+      <div id="waveText" class="sector">SECTOR 01 · WAVE 01</div>
+      <div id="comboText" class="combo">COMBO x1.0</div>
+    </div>
+  </div>
+
+  <div id="bossWrap" class="boss-wrap">
+    <div class="bar"><div id="bossFill" class="fill"></div></div>
+    <div id="bossText" class="boss-text">WARDEN 100%</div>
+  </div>
+
+  <div class="bottom-left">
+    <div id="levelText">LEVEL 01</div>
+    <div id="dashText">DASH READY</div>
+  </div>
+  <div class="bottom-right">
+    <div id="objectiveText">OBJECTIVE: SURVIVE</div>
+    <div>Mobile: drag left side · DASH button</div>
+  </div>
+  <div class="xp-wrap"><div class="bar"><div id="xpFill" class="fill" style="width:0"></div></div><div id="xpText" class="xp-text">XP 0 / 30</div></div>
+  <div class="mobile-controls"><button id="dashBtn" class="dash-btn" type="button">DASH</button></div>
+  <div id="toast" class="toast">SYSTEM ONLINE</div>
+
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <h1>S.A.G. FRONTIER</h1>
+      <p>Break through escalating sectors, defeat Wardens, collect battlefield pickups and upgrade your ship. Bosses appear every third wave.</p>
+      <div class="stats">
+        <div class="stat"><b id="startBest">0</b><span>BEST SCORE</span></div>
+        <div class="stat"><b>SPACE</b><span>DASH</span></div>
+        <div class="stat"><b>3 WAVES</b><span>BOSS CYCLE</span></div>
+      </div>
+      <button id="startBtn" class="primary" type="button">START SECTOR SIEGE</button>
+    </div>
+  </div>
+
+  <div id="upgradeOverlay" class="overlay hidden">
+    <div class="panel" style="width:min(96vw,950px)">
+      <h2 id="upgradeTitle">LEVEL UP // SELECT SYSTEM</h2>
+      <p>Choose one upgrade. Combat resumes immediately.</p>
+      <div id="choices" class="choices"></div>
+    </div>
+  </div>
+
+  <div id="pauseOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>MISSION PAUSED</h2>
+      <p>Press P or Escape to continue.</p>
+      <button id="resumeBtn" class="primary" type="button">RESUME</button>
+    </div>
+  </div>
+
+  <div id="gameOverOverlay" class="overlay hidden">
+    <div class="panel">
+      <h2>SIGNAL LOST</h2>
+      <p id="finalText"></p>
+      <div class="stats">
+        <div class="stat"><b id="sumScore">0</b><span>SCORE</span></div>
+        <div class="stat"><b id="sumKills">0</b><span>KILLS</span></div>
+        <div class="stat"><b id="sumBosses">0</b><span>WARDENS</span></div>
+        <div class="stat"><b id="sumWave">1</b><span>WAVE</span></div>
+        <div class="stat"><b id="sumCombo">1.0</b><span>MAX COMBO</span></div>
+        <div class="stat"><b id="sumLevel">1</b><span>LEVEL</span></div>
+      </div>
+      <button id="restartBtn" class="primary" type="button">RESTART EXPEDITION</button>
+    </div>
+  </div>
+
+  <script src="sprint03.js"></script>
+</body>
+</html>
