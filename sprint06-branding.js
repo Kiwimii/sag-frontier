@@ -3,9 +3,9 @@
   const $ = id => document.getElementById(id);
 
   const assetManifest = {
-    kiwimi: ['s06-kiwimi-0.txt','s06-kiwimi-1.txt'],
-    logo: ['s06-sag-logo-0.txt'],
-    banner: ['s06-sag-banner-0.txt','s06-sag-banner-1.txt','s06-sag-banner-2.txt','s06-sag-banner-3.txt']
+    kiwimi: ['s06-kiwimi.txt'],
+    logo: ['s06-sag-logo.txt'],
+    banner: ['s06-sag-banner-0.txt','s06-sag-banner-1.txt','s06-sag-banner-2.txt','s06-sag-banner-3.txt','s06-sag-banner-4.txt']
   };
   async function loadBrandAssets() {
     try {
