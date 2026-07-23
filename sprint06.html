@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>S.A.G. Frontier — Kiwimi Protocol 0.6</title>
   <meta name="theme-color" content="#050505">
+  <meta name="description" content="S.A.G. Frontier — browserbasierte Star Atlas Germany Community Expedition.">
+  <script>try{if(localStorage.getItem('sag-frontier-intro-seen-v06')==='1')document.documentElement.classList.add('intro-seen')}catch{}</script>
   <link rel="stylesheet" href="sprint05.css">
   <link rel="stylesheet" href="sprint06-branding.css">
+  <link rel="stylesheet" href="sprint06-polish.css">
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -44,7 +47,7 @@
   <div class="bottom-right"><div id="objectiveText">NÄCHSTE WELLE 44s</div><div id="directiveText" class="directive">DIREKTIVE</div><div id="weaponText" class="weapon-status">LASER · RAILGUN</div></div>
   <div class="xp-wrap"><div class="bar"><div id="xpFill" class="fill" style="width:0"></div></div><div id="xpText" class="xp-text">XP 0 / 30</div></div>
   <div class="ability-stack"><button id="dashBtn" class="round-btn" type="button">DASH</button><button id="empBtn" class="round-btn emp-btn" type="button">EMP</button></div>
-  <aside id="kiwimiComms" class="kiwimi-comms" aria-live="polite">
+  <aside id="kiwimiComms" class="kiwimi-comms" role="status" aria-live="polite" aria-atomic="true">
     <div class="kiwimi-comms-portrait"></div>
     <div><span>KIWIMI // COM-LINK</span><p id="kiwimiCommsText">Systemverbindung stabil.</p></div>
   </aside>
@@ -82,6 +85,7 @@
         <div class="kiwimi-dialogue"><span id="kiwimiContext">HANGARPROTOKOLL</span><h3 id="kiwimiTitle">Willkommen im Hangar, Pilot.</h3><p id="kiwimiMessage">Hier stellst du dein Schiff, deine Waffen und deine Systeme für die nächste Expedition zusammen.</p></div>
         <div class="tutorial-block"><div class="tutorial-title"><span id="tutorialTitle">ERSTE SCHRITTE</span><b id="tutorialProgress">0 / 4</b></div><ol id="tutorialList"><li id="tutorialStep1"><i>1</i><span>Schiff prüfen oder auswählen</span></li><li id="tutorialStep2"><i>2</i><span>Waffe ausrüsten</span></li><li id="tutorialStep3"><i>3</i><span>Modul installieren</span></li><li id="tutorialStep4"><i>4</i><span>Expedition starten</span></li></ol></div>
         <blockquote id="kiwimiQuote">„Wissen ist dein Kompass. Entschlossenheit ist dein Antrieb.“</blockquote>
+        <button id="replayIntroBtn" class="replay-intro" type="button">INTRO ERNEUT ABSPIELEN</button>
       </aside>
     </div>
 
