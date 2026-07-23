@@ -1,0 +1,15 @@
+{
+  "name": "sag-frontier",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Mobile-first browser roguelite for Star Atlas Germany",
+  "scripts": {
+    "check": "npm run check:js && npm run check:php",
+    "check:js": "node --check wordpress/sag-voidrunner/assets/js/sag-voidrunner.js",
+    "check:php": "php -l wordpress/sag-voidrunner/sag-voidrunner.php && php -l wordpress/sag-voidrunner/includes/class-sag-voidrunner-elementor-widget.php",
+    "build": "node tools/build-plugin.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
