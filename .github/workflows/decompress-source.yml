@@ -1,0 +1,32 @@
+name: Decompress runtime source
+on:
+  push:
+    branches: [feat/live-sprint-07-progression]
+    paths:
+      - '.github/workflows/decompress-source.yml'
+permissions:
+  contents: write
+jobs:
+  decompress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Decompress Sprint 05 runtime
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const zlib = require('zlib');
+          const files = ['s05z00.txt','s05z01.txt','s05z02.txt','s05z03.txt','s05z04.txt'];
+          const encoded = files.map(file => fs.readFileSync(file, 'utf8')).join('').replace(/\s/g, '');
+          fs.writeFileSync('sprint05-source.js', zlib.gunzipSync(Buffer.from(encoded, 'base64')));
+          NODE
+      - name: Commit source
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint05-source.js
+          git commit -m 'chore: expose runtime source for sprint development'
+          git push
