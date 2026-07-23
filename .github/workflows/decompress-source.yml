@@ -42,6 +42,7 @@ jobs:
         run: |
           node --check sprint07-source.js
           node --check sprint06-branding.js
+          node --check sprint07-branding.js
           node --check tests/sprint07-smoke.mjs
       - name: Install browser test runtime
         if: ${{ !hashFiles('sprint07-build.failed') }}
@@ -55,7 +56,12 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
-          node tests/sprint07-smoke.mjs
+          set +e
+          node tests/sprint07-smoke.mjs > sprint07-smoke.log 2>&1
+          TEST_EXIT=$?
+          set -e
+          cat sprint07-smoke.log
+          exit $TEST_EXIT
       - name: Upload build diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -64,6 +70,7 @@ jobs:
           path: |
             sprint07-build.log
             sprint07-build.failed
+            sprint07-smoke.log
             sprint07-source.js
             /tmp/sag-http.log
           if-no-files-found: ignore
