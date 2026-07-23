@@ -32,6 +32,16 @@ jobs:
           rm -f sprint07-build.failed sprint07-build.log
           node tools/build-sprint07.cjs > sprint07-build.log 2>&1 || touch sprint07-build.failed
           cat sprint07-build.log
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint07-build-diagnostics
+          path: |
+            sprint07-build.log
+            sprint07-build.failed
+            sprint07-source.js
+          if-no-files-found: ignore
       - name: Make branding title version-aware
         if: ${{ !hashFiles('sprint07-build.failed') }}
         run: |
