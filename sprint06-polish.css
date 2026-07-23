@@ -1,0 +1,67 @@
+:root{
+  --kiwimi:none;
+  --sag-logo:none;
+  --sag-banner:linear-gradient(135deg,#090909,#17120a 48%,#030303);
+}
+html.intro-seen .brand-intro{display:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.replay-intro{width:100%;margin-top:10px;background:#090a0d;border-color:#4b3b20;color:#bfb59d;font-size:10px}
+.hangar-main,.kiwimi-panel,.loadout>*,.loadout-data,.slot,.economy-note{min-width:0}
+.tabs{scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x proximity}
+.tabs::-webkit-scrollbar{display:none}.tabs button{scroll-snap-align:start}
+.brand-assets-failed .intro-logo,.brand-assets-failed .hero-logo,.brand-assets-failed .hud-logo{background-image:none}
+.brand-assets-failed .intro-logo:after,.brand-assets-failed .hero-logo:after{content:"S.A.G.";display:grid;place-items:center;height:100%;color:var(--gold);font-weight:900;letter-spacing:.22em}
+
+@media(max-width:900px){
+  .loadout{grid-template-columns:1fr}
+  .loadout-data{gap:12px}
+  .mission-launch{margin-top:8px}
+}
+@media(max-width:760px){
+  .loadout{grid-template-columns:1fr}
+  .loadout-visual{min-height:300px}
+  .loadout-data{width:100%}
+  .economy-note{overflow-wrap:anywhere}
+  .brand-hero-content{min-width:0}
+  .hero-title-wrap{min-width:0}
+  .hero-title-wrap h1{overflow-wrap:anywhere}
+  .kiwimi-panel{margin-top:2px}
+}
+@media(max-width:620px){
+  body.in-game .language-switch{display:none}
+  .hud{padding:48px 7px 7px}
+  .hud-left,.hud-right{max-width:calc(50vw - 10px);padding:5px 6px;gap:2px}
+  .hud-left .title{max-width:160px;font-size:10px;line-height:1.18;margin-bottom:2px;letter-spacing:.05em}
+  .hud-left .bar{width:min(43vw,168px);height:12px}
+  .hud-left #hpText,.hud-left #shieldText{font-size:10px;line-height:1.1}
+  .hud-right{padding-top:5px;font-size:9px;line-height:1.18}
+  .hud-right #waveText,.hud-right #comboText{max-width:135px;margin-left:auto}
+  .kiwimi-comms{left:7px;top:126px;width:calc(100vw - 14px);grid-template-columns:46px 1fr;gap:7px;padding:5px 7px;max-height:68px;overflow:hidden}
+  .kiwimi-comms-portrait{height:46px}
+  .kiwimi-comms span{font-size:8px}
+  .kiwimi-comms p{font-size:10px;line-height:1.18;margin:2px 0}
+  .toast{top:208px;max-width:82vw;font-size:12px;line-height:1.2;text-align:center}
+  .bottom-left{left:8px;bottom:34px;font-size:9px}
+  .bottom-left #dashText,.bottom-left #empText{display:none}
+  .bottom-right{display:none}
+  .xp-wrap{left:8px;right:170px;bottom:8px}
+  .xp-wrap .bar{height:16px}
+  .xp-text{font-size:10px;line-height:16px;margin-top:-16px}
+  .ability-stack{right:8px;bottom:46px;gap:8px}
+  .round-btn{width:64px;height:64px;font-size:12px}
+}
+@media(max-width:390px){
+  .hud-left .title{max-width:145px;font-size:9px}
+  .hud-right{font-size:8px}
+  .xp-wrap{right:148px}
+  .round-btn{width:60px;height:60px}
+  .ability-stack{bottom:44px}
+}
+@media(max-height:600px) and (orientation:landscape){
+  .intro-content{top:40%;transform:translate(-50%,-50%) scale(.86)}
+  .intro-kiwimi{bottom:42px;transform:scale(.82);transform-origin:left bottom}
+  .intro-status{bottom:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
