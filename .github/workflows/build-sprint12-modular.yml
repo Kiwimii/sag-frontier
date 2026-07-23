@@ -25,6 +25,15 @@ jobs:
           node --check sprint12-ui.js
           node --check tests/sprint12-smoke.mjs
           node tests/sprint12-static.cjs
+      - name: Commit generated production files
+        if: github.event_name == 'push'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint12.html sprint12.bundle.css sprint12-config.js sprint12-source.js sprint12-ui.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Sprint 0.12 modular production bundle'
+          git push origin HEAD:feat/live-sprint-12-modular-runtime
       - name: Install Chromium
         run: |
           npm install --no-save playwright@1.55.0
@@ -51,12 +60,3 @@ jobs:
             sprint12-smoke.log
             /tmp/sag12-http.log
           if-no-files-found: ignore
-      - name: Commit generated production files
-        if: github.event_name == 'push'
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add sprint12.html sprint12.bundle.css sprint12-config.js sprint12-source.js sprint12-ui.js
-          git diff --cached --quiet && exit 0
-          git commit -m 'build: generate Sprint 0.12 modular production bundle'
-          git push origin HEAD:feat/live-sprint-12-modular-runtime
