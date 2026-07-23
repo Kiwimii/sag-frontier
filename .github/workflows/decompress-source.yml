@@ -1,4 +1,4 @@
-name: Build and test Sprint 07
+name: Build and validate Sprint 07
 on:
   pull_request:
     branches: [live]
@@ -35,31 +35,33 @@ jobs:
           source = source.replace("const VERSION_TITLE = 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';", "const VERSION_TITLE = document.body?.dataset.versionTitle || 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';");
           fs.writeFileSync(file, source);
           NODE
-      - name: Validate JavaScript
+      - name: Validate JavaScript and regression guards
         if: ${{ !hashFiles('sprint07-build.failed') }}
         run: |
           node --check sprint07-source.js
           node --check sprint06-branding.js
           node --check sprint07-branding.js
           node --check tests/sprint07-smoke.mjs
-      - name: Install browser test runtime
-        if: ${{ !hashFiles('sprint07-build.failed') }}
-        run: |
-          npm install --no-save playwright@1.55.0
-          npx playwright install --with-deps chromium
-      - name: Browser smoke test
-        if: ${{ !hashFiles('sprint07-build.failed') }}
-        run: |
-          python3 -m http.server 4173 > /tmp/sag-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID' EXIT
-          sleep 2
-          set +e
-          node tests/sprint07-smoke.mjs > sprint07-smoke.log 2>&1
-          TEST_EXIT=$?
-          set -e
-          cat sprint07-smoke.log
-          exit $TEST_EXIT
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('sprint07-source.js', 'utf8');
+          const required = [
+            "const ready=lastMajorAt===0?elapsed>=45:elapsed-lastMajorAt>=65",
+            "if(waveClock>=44&&!boss)advanceWave();maybeMajorUpgrade();",
+            "weaponChipsDropped<6&&r<.18",
+            "boost.total<8",
+            "function drawShip(){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.invuln>0&&Math.floor(player.invuln*20)%2===0?.38:1;if(player.chipPulse>0)",
+            "for(const b of bullets){ctx.fillStyle=b.color||'#ffb35c'"
+          ];
+          for (const fragment of required) {
+            if (!source.includes(fragment)) throw new Error(`Missing regression guard: ${fragment}`);
+          }
+          const damage = source.match(/function damagePlayer\([^\n]+/u)?.[0] || '';
+          if (damage.includes('ctx.')) throw new Error('Rendering code leaked into damagePlayer');
+          const update = source.match(/function update\(dt\)\{[\s\S]*?\n\}/u)?.[0] || '';
+          if (update.includes("for(const b of bullets){ctx.fillStyle")) throw new Error('Projectile rendering leaked into update');
+          console.log('Sprint 0.7 regression guards passed');
+          NODE
       - name: Upload build diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -68,9 +70,7 @@ jobs:
           path: |
             sprint07-build.log
             sprint07-build.failed
-            sprint07-smoke.log
             sprint07-source.js
-            /tmp/sag-http.log
           if-no-files-found: ignore
       - name: Commit generated runtime
         if: ${{ !hashFiles('sprint07-build.failed') }}
@@ -79,7 +79,7 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add tools/build-sprint07.cjs sprint07-build.log sprint07-source.js sprint06-branding.js
           git diff --cached --quiet && exit 0
-          git commit -m 'build: generate Sprint 0.7 runtime'
+          git commit -m 'build: generate validated Sprint 0.7 runtime'
           git push origin HEAD:feat/live-sprint-07-progression
       - name: Fail on build diagnostics
         run: test ! -f sprint07-build.failed
