@@ -24,11 +24,13 @@ source = source.replace(shipMarker, shipMarker + chipPulse);
 
 const damage = source.match(/function damagePlayer\([^\n]+/u)?.[0] || '';
 if (damage.includes('ctx.')) throw new Error('Rendering code remains inside damagePlayer');
-const nextFunctionAfterUpdate = source.indexOf('\nfunction updateHUD', source.indexOf('function update(dt){'));
-const updateBlock = source.slice(source.indexOf('function update(dt){'), nextFunctionAfterUpdate);
+const updateStart = source.indexOf('function update(dt){');
+const updateEnd = source.indexOf('\nfunction updateHUD', updateStart);
+const updateBlock = source.slice(updateStart, updateEnd);
 if (updateBlock.includes(projectileDraw)) throw new Error('Projectile rendering remains inside update');
 const drawBlock = source.slice(source.indexOf('function draw(){'), source.indexOf('\nfunction loop', source.indexOf('function draw(){')));
-if (!drawBlock.includes(projectileDraw) || !drawBlock.includes(chipPulse)) throw new Error('Expected visual effects missing from draw functions');
+const drawShipBlock = source.slice(source.indexOf('function drawShip(){'), source.indexOf('\nfunction drawEnemy', source.indexOf('function drawShip(){')));
+if (!drawBlock.includes(projectileDraw) || !drawShipBlock.includes(chipPulse)) throw new Error('Expected visual effects missing from render functions');
 
 fs.writeFileSync(file, source);
 console.log('Sprint 0.7 runtime sanitized', source.length);
