@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -55,6 +55,6 @@ jobs:
           git add sprint07-build.log sprint07-source.js sprint06-branding.js 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m 'build: generate Sprint 0.7 runtime'
-          git push
+          git push origin HEAD:feat/live-sprint-07-progression
       - name: Fail on build diagnostics
         run: test ! -f sprint07-build.failed
