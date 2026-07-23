@@ -1,7 +1,5 @@
 name: Build and test Sprint 09
 on:
-  push:
-    branches: [feat/live-sprint-09-frontier-path]
   pull_request:
     branches: [live]
 permissions:
@@ -12,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -49,7 +47,6 @@ jobs:
             /tmp/sag-sprint09-http.log
           if-no-files-found: ignore
       - name: Commit generated runtime
-        if: github.event_name == 'push'
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
