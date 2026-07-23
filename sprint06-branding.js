@@ -5,7 +5,7 @@
   const setText = (id, value) => { const node = $(id); if (node && node.textContent !== value) node.textContent = value; };
   const INTRO_KEY = 'sag-frontier-intro-seen-v06';
   const TUTORIAL_KEY = 'sag-frontier-kiwimi-tutorial-v2';
-  const VERSION_TITLE = 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';
+  const VERSION_TITLE = document.body?.dataset.versionTitle || 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';
 
   const safeStorage = {
     get(key) { try { return localStorage.getItem(key); } catch { return null; } },
