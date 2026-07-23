@@ -28,8 +28,12 @@ jobs:
           test -s sprint05-source.js
           echo "Runtime source: $(wc -c < sprint05-source.js) bytes"
       - name: Build Sprint 07 source
-        run: node tools/build-sprint07.cjs
+        run: |
+          rm -f sprint07-build.failed sprint07-build.log
+          node tools/build-sprint07.cjs > sprint07-build.log 2>&1 || touch sprint07-build.failed
+          cat sprint07-build.log
       - name: Make branding title version-aware
+        if: ${{ !hashFiles('sprint07-build.failed') }}
         run: |
           node - <<'NODE'
           const fs = require('fs');
@@ -39,15 +43,18 @@ jobs:
           fs.writeFileSync(file, source);
           NODE
       - name: Validate JavaScript
+        if: ${{ !hashFiles('sprint07-build.failed') }}
         run: |
           node --check sprint07-source.js
           node --check sprint06-branding.js
-      - name: Commit generated runtime
+      - name: Commit generated runtime or diagnostics
         if: github.event_name == 'push'
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add sprint07-source.js sprint06-branding.js
+          git add sprint07-build.log sprint07-source.js sprint06-branding.js 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m 'build: generate Sprint 0.7 runtime'
           git push
+      - name: Fail on build diagnostics
+        run: test ! -f sprint07-build.failed
