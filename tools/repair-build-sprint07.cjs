@@ -1,0 +1,12 @@
+const fs = require('fs');
+const file = 'tools/build-sprint07.cjs';
+let source = fs.readFileSync(file, 'utf8');
+const startMarker = "must(`function btn(text,fn,disabled=false,cls=''){`";
+const endMarker = "function btn(text,fn,disabled=false,cls=''){`);";
+const start = source.indexOf(startMarker);
+const endStart = source.indexOf(endMarker, start);
+if (start < 0 || endStart < 0) throw new Error('Could not locate skillCard patch block');
+const replacement = `must(\`function btn(text,fn,disabled=false,cls=''){\`, \`function skillCard(id){const q=t(),node=skillTree[id],rank=save.skills[id]||0,locked=node.requires&&(save.skills[node.requires.id]||0)<node.requires.rank,d=document.createElement('article');d.className='card skill-node '+node.branch+(locked?' locked':'')+(rank>=node.max?' selected':'');const req=locked?'<div class="muted">'+q.requires+': '+q.skillNames[node.requires.id]+' '+node.requires.rank+'</div>':'';d.innerHTML='<h3>'+q.skillNames[id]+'</h3><div class="level-pips">'+'◆'.repeat(rank)+'◇'.repeat(node.max-rank)+'</div><p>'+q.skillDesc[id]+'</p>'+req+'<div class="muted">'+q.rank+' '+rank+' / '+node.max+' · '+node.cost+' '+(node.cost===1?q.skillPoint:q.skillPoints)+'</div>';const a=document.createElement('div');a.className='card-actions';a.append(btn(rank>=node.max?q.max:q.learn,()=>buySkill(id),rank>=node.max||locked||save.skillPoints<node.cost,'gold'));d.append(a);return d}\nfunction btn(text,fn,disabled=false,cls=''){\`);`;
+source = source.slice(0, start) + replacement + source.slice(endStart + endMarker.length);
+fs.writeFileSync(file, source);
+console.log('Repaired nested skillCard template literal');
