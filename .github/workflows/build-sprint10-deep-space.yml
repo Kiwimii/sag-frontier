@@ -1,0 +1,87 @@
+name: Build and test Sprint 10
+on:
+  push:
+    branches: [feat/live-sprint-10-deep-space]
+  pull_request:
+    branches: [live]
+permissions:
+  contents: write
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build Deep Space runtime
+        run: node tools/build-sprint10-deep-space.cjs
+      - name: Validate JavaScript and progression guards
+        run: |
+          node --check sprint10-source.js
+          node --check tools/build-sprint10-deep-space.cjs
+          node --check tests/sprint10-smoke.mjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('sprint10-source.js', 'utf8');
+          const html = fs.readFileSync('sprint10.html', 'utf8');
+          const required = [
+            'const CHUNK_SIZE=900',
+            'function ensureWorld()',
+            'function generateChunk(cx,cy)',
+            'function updateWorld(dt)',
+            'function drawProceduralBackground()',
+            'function drawWorldObject(o)',
+            'function drawRadar()',
+            "player.shipType==='interceptor'",
+            "player.shipType==='bastion'",
+            "player.shipType==='specter'",
+            "player.shipType==='carrier'",
+            "player.shipType==='vanguard'",
+            "player.moduleId==='targeting'",
+            "player.moduleId==='capacitor'",
+            "player.moduleId==='armor'",
+            "player.moduleId==='magnet'",
+            "id:'plasmaField'",
+            "id:'arcChain'",
+            "id:'flakGuard'",
+            'ctx.translate(W/2-cameraX+sx,H/2-cameraY+sy)',
+            'window.__SAG10__'
+          ];
+          for (const fragment of required) if (!source.includes(fragment)) throw new Error(`Missing Deep Space guard: ${fragment}`);
+          if (source.includes('player.x=Math.max(24,Math.min(W-24,player.x))')) throw new Error('Player is still clamped to the viewport');
+          if (!html.includes('sprint10-source.js') || !html.includes('explorationText') || !html.includes('deep-space-brief')) throw new Error('Deep Space page integration incomplete');
+          console.log('Sprint 0.10 static regression guards passed');
+          NODE
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Browser smoke and exploration test
+        run: |
+          python3 -m http.server 4173 > /tmp/sag10-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint10-smoke.mjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint10-deep-space-diagnostics
+          path: |
+            sprint10-source.js
+            sprint10.html
+            /tmp/sag10-http.log
+          if-no-files-found: ignore
+      - name: Commit generated runtime
+        if: github.event_name == 'push'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint10-source.js sprint10.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Deep Space 0.10 runtime'
+          git push origin HEAD:feat/live-sprint-10-deep-space
