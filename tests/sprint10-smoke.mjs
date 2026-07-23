@@ -53,7 +53,8 @@ const moved = await page.evaluate(() => window.__SAG10__.snapshot());
 if (moved.player.x < 900) throw new Error(`Player remained screen-bound: ${JSON.stringify(moved)}`);
 if (moved.chunks <= start.chunks) throw new Error(`World did not expand procedurally: ${JSON.stringify({start,moved})}`);
 if (Math.abs(moved.camera.x - moved.player.x) > 180) throw new Error(`Camera did not follow world player: ${JSON.stringify(moved)}`);
-if (!document.querySelector('#explorationText')?.textContent.includes('DISTANZ')) throw new Error('Exploration HUD did not update');
+const explorationLabel = await page.textContent('#explorationText');
+if (!explorationLabel?.includes('DISTANZ')) throw new Error(`Exploration HUD did not update: ${explorationLabel}`);
 if (moved.objects > 180) throw new Error(`World generation is not bounded enough for a short run: ${moved.objects}`);
 if (errors.length) throw new Error(errors.join('\n'));
 
