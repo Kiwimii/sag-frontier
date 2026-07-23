@@ -1,12 +1,14 @@
 {
   "name": "sag-frontier",
-  "version": "2.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Mobile-first browser roguelite for Star Atlas Germany",
+  "description": "Godot-powered browser roguelite for Star Atlas Germany",
   "scripts": {
-    "check": "npm run check:js && npm run check:php",
-    "check:js": "node --check wordpress/sag-voidrunner/assets/js/sag-voidrunner.js",
-    "check:php": "php -l wordpress/sag-voidrunner/sag-voidrunner.php && php -l wordpress/sag-voidrunner/includes/class-sag-voidrunner-elementor-widget.php",
+    "check": "npm run check:js && npm run check:php && npm run check:godot-export",
+    "check:js": "node --check wordpress/sag-frontier-game/assets/loader.js",
+    "check:php": "php -l wordpress/sag-frontier-game/sag-frontier-game.php",
+    "check:godot-export": "node tools/check-web-export.mjs",
+    "export:web": "godot --headless --path godot --export-release Web ../wordpress/sag-frontier-game/public/game/index.html",
     "build": "node tools/build-plugin.mjs"
   },
   "engines": {
