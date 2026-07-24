@@ -1,6 +1,5 @@
 name: Deploy Playable Browser Build
 
-# Republishes the current browser build whenever the game or this workflow changes.
 on:
   push:
     branches:
@@ -26,7 +25,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       GODOT_VERSION: 4.6.3
       GODOT_STATUS: stable
@@ -50,18 +49,36 @@ jobs:
           cp -R /tmp/templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}/"
           godot --version
 
-      - name: Import project
-        run: godot --headless --path godot --editor --quit-after 2
+      - name: Import project and reject script errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --path godot --editor --quit-after 2 2>&1 | tee /tmp/godot-import.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-import.log; then
+            exit 1
+          fi
 
-      - name: Run headless smoke test
-        run: godot --headless --path godot --quit-after 10
+      - name: Run deterministic full-flow test
+        run: godot --headless --path godot --script res://tests/test_full_flow.gd
+
+      - name: Run headless runtime smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --path godot --quit-after 10 2>&1 | tee /tmp/godot-smoke.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-smoke.log; then
+            exit 1
+          fi
 
       - name: Export game
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p site
-          godot --headless --path godot --export-release Web "$GITHUB_WORKSPACE/site/index.html"
+          godot --headless --path godot --export-release Web "$GITHUB_WORKSPACE/site/index.html" 2>&1 | tee /tmp/godot-export.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-export.log; then
+            exit 1
+          fi
           test -s site/index.html
           test -s site/index.wasm
           test -s site/index.pck
