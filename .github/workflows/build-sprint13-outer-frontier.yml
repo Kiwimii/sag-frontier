@@ -11,6 +11,7 @@ on:
       - 'SPRINT13.md'
       - 'src/config/sprint13.balance.js'
       - 'tools/build-sprint13.cjs'
+      - 'tools/run-sprint13-build.cjs'
       - 'tests/sprint13-static.cjs'
       - 'tests/sprint13-smoke.mjs'
       - 'sprint13*'
@@ -35,12 +36,13 @@ jobs:
           node-version: '22'
 
       - name: Generate Outer Frontier browser build
-        run: node tools/build-sprint13.cjs
+        run: node tools/run-sprint13-build.cjs
 
       - name: Validate JavaScript and static guards
         run: |
           node --check src/config/sprint13.balance.js
           node --check tools/build-sprint13.cjs
+          node --check tools/run-sprint13-build.cjs
           node --check sprint13-config.js
           node --check sprint13-source.js
           node --check tests/sprint13-static.cjs
