@@ -36,7 +36,10 @@ jobs:
           node-version: '22'
 
       - name: Generate Outer Frontier browser build
-        run: node tools/run-sprint13-build.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node tools/run-sprint13-build.cjs 2>&1 | tee sprint13-build.log
 
       - name: Validate JavaScript and static guards
         run: |
@@ -69,6 +72,7 @@ jobs:
         with:
           name: sprint13-outer-frontier-diagnostics
           path: |
+            sprint13-build.log
             sprint13-config.js
             sprint13-source.js
             sprint13.bundle.css
