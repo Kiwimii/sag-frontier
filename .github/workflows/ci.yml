@@ -8,6 +8,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GODOT_VERSION: 4.6.3
+      GODOT_STATUS: stable
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +34,50 @@ jobs:
           test -f godot/project.godot
           test -f godot/scenes/main.tscn
           test -f godot/export_presets.cfg
+          test -f godot/tests/test_full_flow.gd
+
+      - name: Install Godot and export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          GODOT_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64.zip"
+          TEMPLATE_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_export_templates.tpz"
+          RELEASE_BASE="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
+          curl --fail --location --retry 3 "${RELEASE_BASE}/${GODOT_FILE}" --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 0755 "/tmp/godot/Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64" /usr/local/bin/godot
+          curl --fail --location --retry 3 "${RELEASE_BASE}/${TEMPLATE_FILE}" --output /tmp/templates.tpz
+          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}"
+          unzip -q /tmp/templates.tpz -d /tmp/templates
+          cp -R /tmp/templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}/"
+          godot --version
+
+      - name: Import project and reject script errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --path godot --editor --quit-after 2 2>&1 | tee /tmp/godot-import.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-import.log; then
+            echo "Godot reported a script load error."
+            exit 1
+          fi
+
+      - name: Run deterministic full-flow test
+        run: godot --headless --path godot --script res://tests/test_full_flow.gd
+
+      - name: Export browser build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/sag-web
+          godot --headless --path godot --export-release Web /tmp/sag-web/index.html 2>&1 | tee /tmp/godot-export.log
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-export.log; then
+            echo "Godot reported a script error during export."
+            exit 1
+          fi
+          test -s /tmp/sag-web/index.html
+          test -s /tmp/sag-web/index.wasm
+          test -s /tmp/sag-web/index.pck
 
   package-source:
     runs-on: ubuntu-latest
