@@ -1,15 +1,13 @@
-name: Deploy Playable Browser Build
+name: Deploy Sprint 12 Browser Build
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'godot/**'
       - '.github/workflows/deploy-pages.yml'
   pull_request:
     paths:
-      - 'godot/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -19,70 +17,75 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: pages-production
   cancel-in-progress: true
 
 jobs:
-  build:
+  validate-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      GODOT_VERSION: 4.6.3
-      GODOT_STATUS: stable
     steps:
-      - name: Checkout
+      - name: Checkout Sprint 12 production branch
         uses: actions/checkout@v4
+        with:
+          ref: live
+          fetch-depth: 1
 
-      - name: Install Godot and export templates
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate Sprint 12 production files
         shell: bash
         run: |
           set -euo pipefail
-          GODOT_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64.zip"
-          TEMPLATE_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_export_templates.tpz"
-          RELEASE_BASE="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
-          curl --fail --location --retry 3 "${RELEASE_BASE}/${GODOT_FILE}" --output /tmp/godot.zip
-          unzip -q /tmp/godot.zip -d /tmp/godot
-          sudo install -m 0755 "/tmp/godot/Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64" /usr/local/bin/godot
-          curl --fail --location --retry 3 "${RELEASE_BASE}/${TEMPLATE_FILE}" --output /tmp/templates.tpz
-          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}"
-          unzip -q /tmp/templates.tpz -d /tmp/templates
-          cp -R /tmp/templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}/"
-          godot --version
+          test -s index.html
+          test -s launch.html
+          test -s sprint12.html
+          test -s sprint12.bundle.css
+          test -s sprint12-config.js
+          test -s sprint12-source.js
+          test -s sprint12-ui.js
+          test -s tests/sprint12-static.cjs
+          test -s tests/sprint12-smoke.mjs
+          grep -q 'sprint12.html' index.html
+          grep -q 'version: 12' sprint12-config.js
+          grep -q 'MODULAR DEEP SPACE 0.12' sprint12.html
+          node --check sprint12-config.js
+          node --check sprint12-source.js
+          node --check sprint12-ui.js
+          node tests/sprint12-static.cjs
 
-      - name: Import project and reject script errors
+      - name: Install Chromium for browser validation
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run Sprint 12 browser smoke test
         shell: bash
         run: |
           set -euo pipefail
-          godot --headless --path godot --editor --quit-after 2 2>&1 | tee /tmp/godot-import.log
-          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-import.log; then
-            exit 1
-          fi
+          python3 -m http.server 4173 > /tmp/sag12-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint12-smoke.mjs
 
-      - name: Run deterministic full-flow test
-        run: godot --headless --path godot --script res://tests/test_full_flow.gd
-
-      - name: Run headless runtime smoke test
-        shell: bash
-        run: |
-          set -euo pipefail
-          godot --headless --path godot --quit-after 10 2>&1 | tee /tmp/godot-smoke.log
-          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-smoke.log; then
-            exit 1
-          fi
-
-      - name: Export game
+      - name: Assemble GitHub Pages site
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p site
-          godot --headless --path godot --export-release Web "$GITHUB_WORKSPACE/site/index.html" 2>&1 | tee /tmp/godot-export.log
-          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/godot-export.log; then
-            exit 1
-          fi
-          test -s site/index.html
-          test -s site/index.wasm
-          test -s site/index.pck
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='site' \
+            ./ site/
           touch site/.nojekyll
+          test -s site/index.html
+          test -s site/sprint12.html
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'
@@ -100,8 +103,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: validate-and-build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy Sprint 12 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
