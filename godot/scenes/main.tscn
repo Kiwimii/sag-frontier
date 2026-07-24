@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scripts/player.gd" type="Script" id="2_player"]
@@ -6,18 +6,108 @@
 [sub_resource type="CircleShape2D" id="PlayerShape"]
 radius = 20.0
 
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.018, 0.035, 0.075, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.18, 0.72, 0.92, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="TransmissionStyle"]
+bg_color = Color(0.015, 0.065, 0.105, 0.93)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.88, 1, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+bg_color = Color(0.035, 0.075, 0.13, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.55, 0.75, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.055, 0.14, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.9, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.09, 0.21, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.75, 0.25, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="ButtonDisabled"]
+bg_color = Color(0.025, 0.04, 0.065, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.25, 0.32, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
 
 [node name="Background" type="ColorRect" parent="."]
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.008, 0.016, 0.043, 1)
+color = Color(0.006, 0.013, 0.035, 1)
 mouse_filter = 2
 
 [node name="Grid" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720)
-color = Color(0.025, 0.075, 0.14, 0.48)
+color = Color(0.02, 0.075, 0.135, 0.44)
 
 [node name="Enemies" type="Node2D" parent="."]
 
@@ -44,31 +134,55 @@ shape = SubResource("PlayerShape")
 offset_left = 22.0
 offset_top = 14.0
 offset_right = 520.0
-offset_bottom = 50.0
-theme_override_font_sizes/font_size = 24
-text = "S.A.G. FRONTIER // EXPEDITION 0.2"
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.38, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 23
+text = "S.A.G. FRONTIER // EXPEDITION 0.3"
 
 [node name="Subtitle" type="Label" parent="HUD"]
 offset_left = 24.0
-offset_top = 48.0
-offset_right = 690.0
-offset_bottom = 74.0
-text = "Survive, gain XP and select ship upgrades. P or Esc pauses the mission."
+offset_top = 47.0
+offset_right = 620.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(0.62, 0.74, 0.84, 1)
+text = "Recover the Frontier Relay. Choose who controls the route."
 
 [node name="HealthBar" type="ProgressBar" parent="HUD"]
 offset_left = 24.0
-offset_top = 86.0
+offset_top = 82.0
 offset_right = 302.0
-offset_bottom = 110.0
+offset_bottom = 106.0
 value = 100.0
 show_percentage = false
 
 [node name="HealthText" type="Label" parent="HUD"]
 offset_left = 32.0
-offset_top = 88.0
+offset_top = 84.0
 offset_right = 294.0
-offset_bottom = 110.0
+offset_bottom = 106.0
 text = "HULL  100 / 100"
+
+[node name="Sector" type="Label" parent="HUD"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 16.0
+offset_right = 150.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(1, 0.78, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "SECTOR  1 / 5"
+horizontal_alignment = 1
+
+[node name="SectorTimer" type="Label" parent="HUD"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 47.0
+offset_right = 150.0
+offset_bottom = 72.0
+text = "JUMP WINDOW  26"
+horizontal_alignment = 1
 
 [node name="Score" type="Label" parent="HUD"]
 anchors_preset = 1
@@ -77,8 +191,8 @@ anchor_right = 1.0
 offset_left = -260.0
 offset_top = 16.0
 offset_right = -24.0
-offset_bottom = 46.0
-theme_override_font_sizes/font_size = 20
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 19
 text = "SCORE  000000"
 horizontal_alignment = 2
 
@@ -87,10 +201,10 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -260.0
-offset_top = 48.0
+offset_top = 44.0
 offset_right = -24.0
-offset_bottom = 76.0
-text = "TIME  00:00"
+offset_bottom = 69.0
+text = "RUN  00:00"
 horizontal_alignment = 2
 
 [node name="HighScore" type="Label" parent="HUD"]
@@ -98,10 +212,22 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -260.0
-offset_top = 76.0
+offset_top = 70.0
 offset_right = -24.0
-offset_bottom = 104.0
+offset_bottom = 95.0
 text = "BEST  000000"
+horizontal_alignment = 2
+
+[node name="Reputation" type="Label" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -360.0
+offset_top = 101.0
+offset_right = -24.0
+offset_bottom = 126.0
+theme_override_colors/font_color = Color(0.7, 0.83, 0.92, 1)
+text = "MUD 0   ONI 0   USTUR 0"
 horizontal_alignment = 2
 
 [node name="Level" type="Label" parent="HUD"]
@@ -145,8 +271,31 @@ offset_left = -385.0
 offset_top = -48.0
 offset_right = -24.0
 offset_bottom = -18.0
+theme_override_colors/font_color = Color(0.55, 0.68, 0.78, 1)
 text = "MOBILE: DRAG LEFT SIDE TO MOVE"
 horizontal_alignment = 2
+
+[node name="Transmission" type="Panel" parent="HUD"]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 94.0
+offset_right = 360.0
+offset_bottom = 176.0
+theme_override_styles/panel = SubResource("TransmissionStyle")
+
+[node name="Message" type="Label" parent="HUD/Transmission"]
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 702.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0.78, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "KIWIMI // COMMAND\nPathfinder, the Frontier Relay has gone dark."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="StartScreen" type="Panel" parent="HUD"]
 anchors_preset = 8
@@ -154,49 +303,195 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -205.0
-offset_right = 280.0
-offset_bottom = 205.0
+offset_left = -380.0
+offset_top = -310.0
+offset_right = 380.0
+offset_bottom = 310.0
+theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="Header" type="Label" parent="HUD/StartScreen"]
-offset_top = 28.0
-offset_right = 560.0
-offset_bottom = 72.0
+offset_top = 20.0
+offset_right = 760.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
 theme_override_font_sizes/font_size = 31
 text = "S.A.G. FRONTIER"
 horizontal_alignment = 1
 
 [node name="Tagline" type="Label" parent="HUD/StartScreen"]
-offset_top = 82.0
-offset_right = 560.0
-offset_bottom = 112.0
-theme_override_font_sizes/font_size = 18
-text = "THE EXPEDITION BEGINS"
+offset_top = 63.0
+offset_right = 760.0
+offset_bottom = 91.0
+theme_override_colors/font_color = Color(1, 0.78, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+text = "THE FRACTURED RELAY"
 horizontal_alignment = 1
 
-[node name="Instructions" type="Label" parent="HUD/StartScreen"]
-offset_left = 48.0
-offset_top = 132.0
-offset_right = 512.0
-offset_bottom = 232.0
-text = "Move with WASD or the arrow keys.\nOn mobile, drag on the left side.\nWeapons target and fire automatically.\nDestroy hostiles, gain XP and upgrade your ship."
+[node name="Story" type="Label" parent="HUD/StartScreen"]
+offset_left = 52.0
+offset_top = 101.0
+offset_right = 708.0
+offset_bottom = 164.0
+theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
+text = "A remote S.A.G. relay has fallen silent. Cross five hostile sectors, choose between MUD, ONI and Ustur interests, and carry recovered data home — even when the ship does not return."
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="BestScore" type="Label" parent="HUD/StartScreen"]
-offset_top = 252.0
-offset_right = 560.0
-offset_bottom = 282.0
+offset_top = 174.0
+offset_right = 760.0
+offset_bottom = 200.0
 text = "BEST SCORE  000000"
 horizontal_alignment = 1
 
+[node name="Account" type="Label" parent="HUD/StartScreen"]
+offset_top = 202.0
+offset_right = 760.0
+offset_bottom = 230.0
+theme_override_colors/font_color = Color(0.42, 0.92, 0.72, 1)
+text = "COMMAND RANK 01    FRONTIER DATA 0    RUNS 0"
+horizontal_alignment = 1
+
+[node name="MetaFeedback" type="Label" parent="HUD/StartScreen"]
+offset_left = 30.0
+offset_top = 232.0
+offset_right = 730.0
+offset_bottom = 260.0
+theme_override_colors/font_color = Color(0.68, 0.76, 0.84, 1)
+text = "Spend recovered data on permanent expedition systems."
+horizontal_alignment = 1
+
+[node name="Meta" type="VBoxContainer" parent="HUD/StartScreen"]
+offset_left = 48.0
+offset_top = 268.0
+offset_right = 712.0
+offset_bottom = 494.0
+theme_override_constants/separation = 10
+
+[node name="Hull" type="Button" parent="HUD/StartScreen/Meta"]
+custom_minimum_size = Vector2(0, 65)
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.36, 0.45, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/disabled = SubResource("ButtonDisabled")
+text = "REINFORCED HULL  0/5\nCOST 5 DATA // +8 starting hull per level"
+
+[node name="Weapons" type="Button" parent="HUD/StartScreen/Meta"]
+custom_minimum_size = Vector2(0, 65)
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.36, 0.45, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/disabled = SubResource("ButtonDisabled")
+text = "CALIBRATED WEAPONS  0/5\nCOST 5 DATA // fire rate + damage scaling"
+
+[node name="Thrusters" type="Button" parent="HUD/StartScreen/Meta"]
+custom_minimum_size = Vector2(0, 65)
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.36, 0.45, 0.52, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/disabled = SubResource("ButtonDisabled")
+text = "VECTOR CONTROL  0/5\nCOST 5 DATA // +16 starting speed per level"
+
 [node name="Start" type="Button" parent="HUD/StartScreen"]
-offset_left = 155.0
-offset_top = 310.0
-offset_right = 405.0
-offset_bottom = 370.0
+offset_left = 220.0
+offset_top = 528.0
+offset_right = 540.0
+offset_bottom = 588.0
+theme_override_colors/font_color = Color(1, 0.87, 0.5, 1)
 theme_override_font_sizes/font_size = 18
-text = "START EXPEDITION"
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "LAUNCH EXPEDITION"
+
+[node name="SectorMap" type="Panel" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -520.0
+offset_top = -270.0
+offset_right = 520.0
+offset_bottom = 270.0
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Header" type="Label" parent="HUD/SectorMap"]
+offset_top = 22.0
+offset_right = 1040.0
+offset_bottom = 58.0
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "SECTOR 1 SECURED // CHOOSE THE NEXT ROUTE"
+horizontal_alignment = 1
+
+[node name="RouteTrack" type="Label" parent="HUD/SectorMap"]
+offset_top = 64.0
+offset_right = 1040.0
+offset_bottom = 94.0
+theme_override_colors/font_color = Color(1, 0.78, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+text = "ORIGIN  ●━━○━━○━━○━━○  FRONTIER CORE"
+horizontal_alignment = 1
+
+[node name="Briefing" type="Label" parent="HUD/SectorMap"]
+offset_left = 80.0
+offset_top = 100.0
+offset_right = 960.0
+offset_bottom = 145.0
+theme_override_colors/font_color = Color(0.68, 0.79, 0.88, 1)
+text = "The relay map fractures into three viable signatures. Your route changes the next battle and who controls the story."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Route1" type="Button" parent="HUD/SectorMap"]
+offset_left = 35.0
+offset_top = 160.0
+offset_right = 325.0
+offset_bottom = 500.0
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "MUD // DISTRESS\nBROKEN CONVOY\n\nRescue the convoy.\n\nRISK x1.08\n+18 max hull"
+autowrap_mode = 2
+
+[node name="Route2" type="Button" parent="HUD/SectorMap"]
+offset_left = 375.0
+offset_top = 160.0
+offset_right = 665.0
+offset_bottom = 500.0
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "ONI // ANOMALY\nLIVING SIGNAL\n\nFollow the chorus.\n\nRISK x1.12\nFaster fire rate"
+autowrap_mode = 2
+
+[node name="Route3" type="Button" parent="HUD/SectorMap"]
+offset_left = 715.0
+offset_top = 160.0
+offset_right = 1005.0
+offset_bottom = 500.0
+theme_override_colors/font_color = Color(0.78, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "USTUR // PACT\nSILENT FORGE\n\nProve your purpose.\n\nRISK x1.20\n+1 damage"
+autowrap_mode = 2
 
 [node name="UpgradePanel" type="Panel" parent="HUD"]
 visible = false
@@ -209,11 +504,13 @@ offset_left = -465.0
 offset_top = -225.0
 offset_right = 465.0
 offset_bottom = 225.0
+theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="Header" type="Label" parent="HUD/UpgradePanel"]
 offset_top = 24.0
 offset_right = 930.0
 offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
 theme_override_font_sizes/font_size = 25
 text = "LEVEL 2 // SELECT SYSTEM UPGRADE"
 horizontal_alignment = 1
@@ -231,7 +528,11 @@ offset_top = 122.0
 offset_right = 296.0
 offset_bottom = 398.0
 theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
 text = "UPGRADE ONE"
+autowrap_mode = 2
 
 [node name="Choice2" type="Button" parent="HUD/UpgradePanel"]
 offset_left = 329.0
@@ -239,7 +540,11 @@ offset_top = 122.0
 offset_right = 601.0
 offset_bottom = 398.0
 theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
 text = "UPGRADE TWO"
+autowrap_mode = 2
 
 [node name="Choice3" type="Button" parent="HUD/UpgradePanel"]
 offset_left = 634.0
@@ -247,7 +552,11 @@ offset_top = 122.0
 offset_right = 906.0
 offset_bottom = 398.0
 theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
 text = "UPGRADE THREE"
+autowrap_mode = 2
 
 [node name="PausePanel" type="Panel" parent="HUD"]
 visible = false
@@ -260,6 +569,7 @@ offset_left = -210.0
 offset_top = -130.0
 offset_right = 210.0
 offset_bottom = 130.0
+theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="Header" type="Label" parent="HUD/PausePanel"]
 offset_top = 30.0
@@ -281,6 +591,9 @@ offset_left = 95.0
 offset_top = 150.0
 offset_right = 325.0
 offset_bottom = 210.0
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
 text = "RESUME"
 
 [node name="GameOver" type="Panel" parent="HUD"]
@@ -290,37 +603,73 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = -170.0
-offset_right = 220.0
-offset_bottom = 170.0
+offset_left = -330.0
+offset_top = -250.0
+offset_right = 330.0
+offset_bottom = 250.0
+theme_override_styles/panel = SubResource("PanelStyle")
 
 [node name="Headline" type="Label" parent="HUD/GameOver"]
-offset_top = 28.0
-offset_right = 440.0
-offset_bottom = 72.0
-theme_override_font_sizes/font_size = 30
+offset_top = 24.0
+offset_right = 660.0
+offset_bottom = 66.0
+theme_override_colors/font_color = Color(0.35, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 29
 text = "SIGNAL LOST"
 horizontal_alignment = 1
 
 [node name="FinalScore" type="Label" parent="HUD/GameOver"]
-offset_top = 92.0
-offset_right = 440.0
-offset_bottom = 124.0
+offset_top = 80.0
+offset_right = 660.0
+offset_bottom = 108.0
 text = "FINAL SCORE  000000"
 horizontal_alignment = 1
 
 [node name="BestScore" type="Label" parent="HUD/GameOver"]
-offset_top = 132.0
-offset_right = 440.0
-offset_bottom = 164.0
+offset_top = 112.0
+offset_right = 660.0
+offset_bottom = 140.0
 text = "BEST SCORE  000000"
 horizontal_alignment = 1
 
+[node name="RunSummary" type="Label" parent="HUD/GameOver"]
+offset_left = 40.0
+offset_top = 154.0
+offset_right = 620.0
+offset_bottom = 216.0
+theme_override_colors/font_color = Color(0.42, 0.92, 0.72, 1)
+theme_override_font_sizes/font_size = 16
+text = "SECTORS 0 / 5    FRONTIER DATA +1\nACCOUNT DATA 1    COMMAND RANK 1"
+horizontal_alignment = 1
+
+[node name="Epilogue" type="Label" parent="HUD/GameOver"]
+offset_left = 50.0
+offset_top = 230.0
+offset_right = 610.0
+offset_bottom = 310.0
+theme_override_colors/font_color = Color(0.72, 0.82, 0.9, 1)
+text = "The relay keeps your final telemetry. No expedition is wasted."
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="Restart" type="Button" parent="HUD/GameOver"]
-offset_left = 95.0
-offset_top = 214.0
-offset_right = 345.0
-offset_bottom = 276.0
-theme_override_font_sizes/font_size = 17
-text = "RESTART EXPEDITION"
+offset_left = 55.0
+offset_top = 365.0
+offset_right = 305.0
+offset_bottom = 425.0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "NEW EXPEDITION"
+
+[node name="Command" type="Button" parent="HUD/GameOver"]
+offset_left = 355.0
+offset_top = 365.0
+offset_right = 605.0
+offset_bottom = 425.0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "RETURN TO COMMAND"
