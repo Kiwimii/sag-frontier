@@ -46,6 +46,11 @@ await page.waitForFunction(() => window.__SAG13__?.snapshot().objects > 0);
 const fringe = await page.evaluate(() => window.__SAG13__.snapshot());
 if (fringe.frontierTier !== 0) throw new Error(`Wrong origin tier: ${JSON.stringify(fringe)}`);
 
+await page.keyboard.press('p');
+await page.waitForFunction(() => !document.querySelector('#pauseOverlay').classList.contains('hidden'));
+await page.keyboard.press('p');
+await page.waitForFunction(() => document.querySelector('#pauseOverlay').classList.contains('hidden'));
+
 await page.evaluate(() => window.__SAG13__.teleport(1700, 0));
 const deep = await page.evaluate(() => ({
   snapshot: window.__SAG13__.snapshot(),
@@ -97,11 +102,6 @@ for (const id of ['warden', 'siege', 'carrier', 'hunter', 'architect']) {
   bossTypes.push(await page.evaluate(value => window.__SAG13__.spawnBossType(value), id));
 }
 if (bossTypes.join(',') !== 'warden,siege,carrier,hunter,architect') throw new Error(`Boss roster failed: ${bossTypes}`);
-
-await page.keyboard.press('p');
-await page.waitForFunction(() => !document.querySelector('#pauseOverlay').classList.contains('hidden'));
-await page.keyboard.press('p');
-await page.waitForFunction(() => document.querySelector('#pauseOverlay').classList.contains('hidden'));
 
 if (errors.length) throw new Error(errors.join('\n'));
 await browser.close();
