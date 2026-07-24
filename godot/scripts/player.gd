@@ -20,14 +20,18 @@ func _ready() -> void:
 	starting_speed = speed
 	starting_max_health = max_health
 	health = max_health
+	velocity = Vector2.ZERO
+	visible = false
+	set_physics_process(false)
+	set_process_unhandled_input(false)
 	health_changed.emit(health, max_health)
 
 func _physics_process(delta: float) -> void:
 	invulnerability_left = maxf(0.0, invulnerability_left - delta)
-	var keyboard := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var direction := touch_vector if touch_vector.length() > 0.05 else keyboard
-	var target_velocity := direction.normalized() * speed
-	var rate := acceleration if direction.length() > 0.05 else deceleration
+	var keyboard: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var direction: Vector2 = touch_vector if touch_vector.length() > 0.05 else keyboard
+	var target_velocity: Vector2 = direction.normalized() * speed
+	var rate: float = acceleration if direction.length() > 0.05 else deceleration
 	velocity = velocity.move_toward(target_velocity, rate * delta)
 	move_and_slide()
 	_clamp_to_viewport()
@@ -38,7 +42,7 @@ func take_damage(amount: int) -> void:
 	if health <= 0 or not is_physics_processing() or invulnerability_left > 0.0:
 		return
 	invulnerability_left = 0.35
-	health = maxi(0, health - amount)
+	health = maxi(0, health - maxi(0, amount))
 	health_changed.emit(health, max_health)
 	modulate = Color(1.0, 0.35, 0.35, 1.0)
 	create_tween().tween_property(self, "modulate", Color.WHITE, 0.18)
@@ -62,15 +66,17 @@ func reset_player(reset_stats: bool = false) -> void:
 	health_changed.emit(health, max_health)
 
 func increase_speed(amount: float) -> void:
-	speed += amount
+	speed = maxf(40.0, speed + amount)
 
 func increase_max_health(amount: int) -> void:
-	max_health += amount
-	health = mini(max_health, health + amount)
+	max_health = maxi(1, max_health + amount)
+	health = mini(max_health, health + maxi(0, amount))
 	health_changed.emit(health, max_health)
 
 func repair(amount: int) -> void:
-	health = mini(max_health, health + amount)
+	if health <= 0:
+		return
+	health = mini(max_health, health + maxi(0, amount))
 	health_changed.emit(health, max_health)
 
 func cancel_touch() -> void:
@@ -85,8 +91,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_update_touch_vector(event.position)
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
-	var half_width := get_viewport_rect().size.x * 0.7
-	if event.pressed and active_touch == -1 and event.position.x <= half_width:
+	var touch_width: float = get_viewport_rect().size.x * 0.7
+	if event.pressed and active_touch == -1 and event.position.x <= touch_width:
 		active_touch = event.index
 		touch_origin = event.position
 		touch_vector = Vector2.ZERO
@@ -94,10 +100,10 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 		cancel_touch()
 
 func _update_touch_vector(position: Vector2) -> void:
-	var displacement := position - touch_origin
+	var displacement: Vector2 = position - touch_origin
 	touch_vector = displacement.limit_length(110.0) / 110.0
 
 func _clamp_to_viewport() -> void:
-	var bounds := get_viewport_rect().size
-	global_position.x = clampf(global_position.x, 24.0, bounds.x - 24.0)
-	global_position.y = clampf(global_position.y, 24.0, bounds.y - 24.0)
+	var bounds: Vector2 = get_viewport_rect().size
+	global_position.x = clampf(global_position.x, 24.0, maxf(24.0, bounds.x - 24.0))
+	global_position.y = clampf(global_position.y, 24.0, maxf(24.0, bounds.y - 24.0))
