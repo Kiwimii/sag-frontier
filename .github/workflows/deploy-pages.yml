@@ -1,15 +1,13 @@
-name: Deploy Production and Vertical Slice
+name: Deploy Sprint 12 Browser Build
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'godot/**'
       - '.github/workflows/deploy-pages.yml'
   pull_request:
     paths:
-      - 'godot/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -25,24 +23,12 @@ concurrency:
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      GODOT_VERSION: 4.6.3
-      GODOT_STATUS: stable
-
+    timeout-minutes: 20
     steps:
       - name: Checkout Sprint 12 production branch
         uses: actions/checkout@v4
         with:
           ref: live
-          path: production
-          fetch-depth: 1
-
-      - name: Checkout current Vertical Slice source
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-          path: vertical-source
           fetch-depth: 1
 
       - name: Set up Node.js
@@ -51,7 +37,6 @@ jobs:
           node-version: '22'
 
       - name: Validate Sprint 12 production files
-        working-directory: production
         shell: bash
         run: |
           set -euo pipefail
@@ -72,13 +57,12 @@ jobs:
           node --check sprint12-ui.js
           node tests/sprint12-static.cjs
 
-      - name: Install Chromium for Sprint 12 validation
+      - name: Install Chromium for browser validation
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
       - name: Run Sprint 12 browser smoke test
-        working-directory: production
         shell: bash
         run: |
           set -euo pipefail
@@ -88,60 +72,7 @@ jobs:
           sleep 2
           node tests/sprint12-smoke.mjs
 
-      - name: Install Godot and export templates
-        shell: bash
-        run: |
-          set -euo pipefail
-          GODOT_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64.zip"
-          TEMPLATE_FILE="Godot_v${GODOT_VERSION}-${GODOT_STATUS}_export_templates.tpz"
-          RELEASE_BASE="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-${GODOT_STATUS}"
-
-          curl --fail --location --retry 3 "${RELEASE_BASE}/${GODOT_FILE}" --output /tmp/godot.zip
-          unzip -q /tmp/godot.zip -d /tmp/godot
-          sudo install -m 0755 "/tmp/godot/Godot_v${GODOT_VERSION}-${GODOT_STATUS}_linux.x86_64" /usr/local/bin/godot
-
-          curl --fail --location --retry 3 "${RELEASE_BASE}/${TEMPLATE_FILE}" --output /tmp/templates.tpz
-          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}"
-          unzip -q /tmp/templates.tpz -d /tmp/templates
-          cp -R /tmp/templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_STATUS}/"
-
-          godot --version
-
-      - name: Import Vertical Slice and reject script errors
-        shell: bash
-        run: |
-          set -euo pipefail
-          godot --headless --path vertical-source/godot --editor --quit-after 2 2>&1 | tee /tmp/vertical-import.log
-          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/vertical-import.log; then
-            exit 1
-          fi
-
-      - name: Run Vertical Slice full-flow test
-        run: godot --headless --path vertical-source/godot --script res://tests/test_full_flow.gd
-
-      - name: Export Vertical Slice browser build
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p vertical-build
-          godot --headless --path vertical-source/godot --export-release Web "$GITHUB_WORKSPACE/vertical-build/index.html" 2>&1 | tee /tmp/vertical-export.log
-          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script" /tmp/vertical-export.log; then
-            exit 1
-          fi
-          test -s vertical-build/index.html
-          test -s vertical-build/index.wasm
-          test -s vertical-build/index.pck
-          touch vertical-build/.nojekyll
-          cat > vertical-build/build-info.json <<EOF
-          {
-            "release": "vertical-slice",
-            "repository": "${GITHUB_REPOSITORY}",
-            "sha": "${GITHUB_SHA}",
-            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          }
-          EOF
-
-      - name: Assemble combined GitHub Pages site
+      - name: Assemble GitHub Pages site
         shell: bash
         run: |
           set -euo pipefail
@@ -151,22 +82,16 @@ jobs:
             --exclude='.github' \
             --exclude='node_modules' \
             --exclude='site' \
-            production/ site/
-          mkdir -p site/vertical-slice
-          rsync -a vertical-build/ site/vertical-slice/
+            ./ site/
           touch site/.nojekyll
-          touch site/vertical-slice/.nojekyll
           test -s site/index.html
           test -s site/sprint12.html
-          test -s site/vertical-slice/index.html
-          test -s site/vertical-slice/index.wasm
-          test -s site/vertical-slice/index.pck
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
-      - name: Upload combined Pages artifact
+      - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
@@ -180,6 +105,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy Sprint 12 and Vertical Slice to GitHub Pages
+      - name: Deploy Sprint 12 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
