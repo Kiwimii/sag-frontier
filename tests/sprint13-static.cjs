@@ -23,10 +23,6 @@ const requiredSource = [
   "const bossProfiles=CONFIG.outerFrontier.bosses",
   "function updateEnemies",
   "function updateBoss",
-  "SIEGE WARDEN",
-  "CARRIER PRIME",
-  "VOID HUNTER",
-  "RIFT ARCHITECT",
   "window.__SAG13__"
 ];
 for (const fragment of requiredSource) {
@@ -44,7 +40,11 @@ const requiredConfig = [
   "anomaly",
   "rift",
   "overclock",
-  "hunter",
+  "label: 'FRONTIER WARDEN'",
+  "label: 'SIEGE WARDEN'",
+  "label: 'CARRIER PRIME'",
+  "label: 'VOID HUNTER'",
+  "label: 'RIFT ARCHITECT'",
   "architect"
 ];
 for (const fragment of requiredConfig) {
