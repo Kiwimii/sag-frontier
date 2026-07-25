@@ -1,3 +1,4 @@
+# Validation probe for SAG Recruitment Campaign 0.19 deployment
 # Deploy the validated Recruitment Campaign 0.19 from the live branch
 name: Deploy SAG Recruitment Campaign 0.19
 
