@@ -1,0 +1,38 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const read=name=>fs.readFileSync(`${__dirname}/../${name}`,'utf8');
+const html=read('sprint19.html');
+const core=read('sprint15-story-core.js');
+const cinematic=read('sprint15-cinematic.js');
+const lore=read('sprint16-lore-kiwimi.js');
+const campaign=read('sprint17-campaign.js');
+const events=read('sprint18-world-events.js');
+const finale=read('sprint19-finale.js');
+const cssFiles=['sprint15-cinematic.css','sprint16-lore.css','sprint17-campaign.css','sprint18-events.css','sprint19-finale.css'];
+
+assert.match(html,/Recruitment Campaign 0\.19/);
+assert.match(html,/sag-frontier-reset-v019/);
+assert.match(html,/sprint13\.html\?build=0190/);
+for(const file of ['sprint15-story-core.js','sprint15-cinematic.js','sprint16-lore-kiwimi.js','sprint17-campaign.js','sprint18-world-events.js','sprint19-finale.js'])assert.match(html,new RegExp(file.replaceAll('.','\\.')));
+for(const file of cssFiles){assert.match(html,new RegExp(file.replaceAll('.','\\.')));assert.ok(read(file).length>1000,`${file} should contain substantial styling`)}
+assert.match(core,/Kiwimi, Gründer von SAG/);
+assert.match(core,/const FACTIONS/);
+assert.match(core,/const MISSIONS/);
+assert.match(core,/const EVENTS/);
+assert.match(cinematic,/DIE FRONTIER VERÄNDERT SICH/);
+assert.match(cinematic,/WÄHLE DEINE HERKUNFT/);
+assert.match(lore,/SAG-CODEX/);
+assert.match(lore,/GRÜNDERPROTOKOLL/);
+assert.match(campaign,/Fünf Kapitel/);
+assert.match(campaign,/playChapterScene/);
+assert.match(events,/showRandomEvent/);
+assert.match(events,/DEBRIEFING/);
+assert.match(finale,/AUFNAHME BESTÄTIGT/);
+assert.match(finale,/onAdmission/);
+assert.ok(core.length>15000);
+assert.ok(cinematic.length>9000);
+assert.ok(lore.length>6000);
+assert.ok(campaign.length>6000);
+assert.ok(events.length>7000);
+assert.ok(finale.length>6000);
+console.log('Sprint 19 static integration tests passed');
