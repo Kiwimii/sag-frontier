@@ -1,7 +1,7 @@
 const fs=require('node:fs');
 const assert=require('node:assert/strict');
 const html=fs.readFileSync('sprint25.html','utf8');
-for(const file of ['sprint21-canon-lore.js','sprint22-sag-dac.js','sprint23-campaign-narrative.js','sprint24-kiwimi-dialogue.js','sprint24-kiwimi-dialogue.css','sprint25-narrative-ui.js','sprint25-narrative.css','sprint25-finale-editorial.js'])assert.ok(fs.existsSync(file)&&fs.statSync(file).size>0,file);
+for(const file of ['sprint21-canon-lore.js','sprint22-sag-dac.js','sprint23-campaign-narrative.js','sprint24-kiwimi-dialogue.js','sprint24-kiwimi-dialogue.css','sprint25-narrative-ui.js','sprint25-narrative.css','sprint25-finale-editorial.js','NARRATIVE_SOURCES.md'])assert.ok(fs.existsSync(file)&&fs.statSync(file).size>0,file);
 assert.match(html,/data-build="0250"/);
 assert.match(html,/Galia Narrative 0\.25/);
 assert.match(html,/sprint21-canon-lore\.js\?build=0250/);
@@ -20,4 +20,9 @@ assert.match(lore,/KAMPAGNENFIKTION/);
 const ui=fs.readFileSync('sprint25-narrative-ui.js','utf8');
 assert.match(ui,/Kanon, SAG-Chronik und Feldberichte/);
 assert.match(ui,/SAG IST KEINE VIERTE FRAKTION/);
+const sources=fs.readFileSync('NARRATIVE_SOURCES.md','utf8');
+assert.match(sources,/Offizieller Star-Atlas-Kanon/);
+assert.match(sources,/keine direkte organisatorische Verbindung zu Star Atlas oder ATMTA/);
+assert.match(sources,/Vertrauliche Treasury-, Token-Verteilungs-/);
+assert.match(sources,/Frei erfundene SAG-Frontier-Kampagne/);
 console.log('sprint25 static integration tests passed');

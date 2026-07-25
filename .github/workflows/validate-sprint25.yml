@@ -11,6 +11,7 @@ on:
       - 'sprint24-*'
       - 'sprint25*'
       - 'tests/sprint25-*'
+      - 'NARRATIVE_SOURCES.md'
       - '.github/workflows/validate-sprint25.yml'
   workflow_dispatch:
 
@@ -48,6 +49,7 @@ jobs:
           test -s sprint24-kiwimi-dialogue.css
           test -s sprint25-narrative.css
           test -s sprint25.html
+          test -s NARRATIVE_SOURCES.md
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
           node tests/sprint14-progression.cjs
