@@ -1,4 +1,4 @@
-name: Deploy Outer Frontier 0.13 Browser Build
+name: Deploy Command Progression 0.14 Browser Build
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout Outer Frontier production branch
+      - name: Checkout Command Progression production branch
         uses: actions/checkout@v4
         with:
           ref: live
@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate Outer Frontier production files
+      - name: Validate Command Progression production files
         shell: bash
         run: |
           set -euo pipefail
@@ -47,31 +47,50 @@ jobs:
           test -s sprint13-config.js
           test -s sprint13-source.js
           test -s sprint12-ui.js
+          test -s sprint14.html
+          test -s sprint14-progression-core.js
+          test -s sprint14-progression-advanced.js
+          test -s sprint14-progression-ui.js
+          test -s sprint14-progression-advanced-ui.js
+          test -s sprint14-progression.css
+          test -s sprint14-progression-advanced.css
           test -s tests/sprint13-static.cjs
           test -s tests/sprint13-smoke.mjs
-          grep -q 'sprint13.html' index.html
+          test -s tests/sprint14-static.cjs
+          test -s tests/sprint14-progression.cjs
+          test -s tests/sprint14-smoke.mjs
+          grep -q 'sprint14.html' index.html
           grep -q 'version: 13' sprint13-config.js
           grep -q 'OUTER FRONTIER 0.13' sprint13.html
+          grep -q 'FRONTIER COMMAND 0.14' sprint14.html
           node --check sprint13-config.js
           node --check sprint13-source.js
           node --check sprint12-ui.js
+          node --check sprint14-progression-core.js
+          node --check sprint14-progression-advanced.js
+          node --check sprint14-progression-ui.js
+          node --check sprint14-progression-advanced-ui.js
           node --check tests/sprint13-smoke.mjs
+          node --check tests/sprint14-smoke.mjs
           node tests/sprint13-static.cjs
+          node tests/sprint14-static.cjs
+          node tests/sprint14-progression.cjs
 
       - name: Install Chromium for browser validation
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run Outer Frontier browser smoke test
+      - name: Run browser regression tests
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag13-http.log 2>&1 &
+          python3 -m http.server 4173 > /tmp/sag14-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
           node tests/sprint13-smoke.mjs
+          node tests/sprint14-smoke.mjs
 
       - name: Assemble GitHub Pages site
         shell: bash
@@ -87,7 +106,7 @@ jobs:
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
           {
-            "release": "Outer Frontier 0.13",
+            "release": "Command Progression 0.14",
             "source_branch": "live",
             "source_sha": "$(git rev-parse HEAD)",
             "deployed_from": "${GITHUB_SHA}",
@@ -96,6 +115,7 @@ jobs:
           EOF
           test -s site/index.html
           test -s site/sprint13.html
+          test -s site/sprint14.html
           test -s site/build-info.json
 
       - name: Configure Pages
@@ -116,6 +136,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy Outer Frontier 0.13 to GitHub Pages
+      - name: Deploy Command Progression 0.14 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
