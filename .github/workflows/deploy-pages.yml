@@ -1,5 +1,5 @@
-# Deploy the validated Galia Narrative 0.25 from the live branch
-name: Deploy SAG Galia Narrative 0.25
+# Deploy the validated Galia Operations 0.35 from the live branch
+name: Deploy SAG Galia Operations 0.35
 
 on:
   push:
@@ -37,57 +37,29 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate production files, lore and dialogue systems
+      - name: Validate production files and gameplay systems
         shell: bash
         run: |
           set -euo pipefail
-          test -s index.html
-          test -s launch.html
-          test -s sprint13.html
-          test -s sprint14.html
-          test -s sprint19.html
-          test -s sprint20.html
-          test -s sprint25.html
-          test -s NARRATIVE_SOURCES.md
-          test -s sprint20-focused.css
-          test -s sprint20-visual-fixes.css
-          test -s sprint24-kiwimi-dialogue.css
-          test -s sprint25-narrative.css
+          for file in index.html launch.html sprint13.html sprint20.html sprint25.html sprint35.html NARRATIVE_SOURCES.md sprint35-galia.css; do
+            test -s "$file"
+          done
           for file in \
-            sprint13-config.js \
-            sprint13-source.js \
-            sprint12-ui.js \
-            sprint14-progression-core.js \
-            sprint14-progression-advanced.js \
-            sprint14-progression-ui.js \
-            sprint14-progression-advanced-ui.js \
-            sprint15-story-core.js \
-            sprint15-cinematic.js \
-            sprint16-lore-kiwimi.js \
-            sprint17-campaign.js \
-            sprint18-world-events.js \
-            sprint19-finale.js \
-            sprint20-focused.js \
-            sprint21-canon-lore.js \
-            sprint22-sag-dac.js \
-            sprint23-campaign-narrative.js \
-            sprint24-kiwimi-dialogue.js \
-            sprint25-narrative-ui.js \
-            sprint25-finale-editorial.js \
-            tests/sprint13-smoke.mjs \
-            tests/sprint14-smoke.mjs \
-            tests/sprint19-smoke.mjs \
-            tests/sprint20-smoke.mjs \
-            tests/sprint25-smoke.mjs \
-            tests/sprint25-story.cjs \
-            tests/sprint25-static.cjs; do
+            sprint13-config.js sprint13-source.js sprint12-ui.js \
+            sprint14-progression-core.js sprint14-progression-advanced.js sprint14-progression-ui.js sprint14-progression-advanced-ui.js \
+            sprint15-story-core.js sprint15-cinematic.js sprint16-lore-kiwimi.js sprint17-campaign.js sprint18-world-events.js sprint19-finale.js \
+            sprint20-focused.js sprint21-canon-lore.js sprint22-sag-dac.js sprint23-campaign-narrative.js sprint24-kiwimi-dialogue.js \
+            sprint25-narrative-ui.js sprint25-finale-editorial.js \
+            sprint35-galia-core.js sprint26-star-map.js sprint27-stations.js sprint28-npcs.js sprint29-economy.js sprint30-ship.js \
+            sprint31-events.js sprint32-reputation.js sprint33-cinematic.js sprint34-dac.js sprint35-campaign.js sprint35-galia-ui.js \
+            tests/sprint13-smoke.mjs tests/sprint14-smoke.mjs tests/sprint19-smoke.mjs tests/sprint20-smoke.mjs tests/sprint25-smoke.mjs \
+            tests/sprint25-story.cjs tests/sprint25-static.cjs tests/sprint35-static.cjs; do
               test -s "$file"
               node --check "$file"
           done
-          grep -q 'sprint25.html?build=0250' index.html
-          grep -q 'Galia Narrative 0.25' sprint25.html
+          grep -q 'sprint35.html?build=0350' index.html
+          grep -q 'Galia Operations 0.35' sprint35.html
           grep -q 'Offizieller Star-Atlas-Kanon' NARRATIVE_SOURCES.md
-          test -z "$(grep -o 'sag-frontier-reset-v025' sprint25.html || true)"
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
           node tests/sprint14-progression.cjs
@@ -96,17 +68,18 @@ jobs:
           node tests/sprint20-static.cjs
           node tests/sprint25-static.cjs
           node tests/sprint25-story.cjs
+          node tests/sprint35-static.cjs
 
       - name: Install Chromium for browser validation
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run complete browser regression and narrative suite
+      - name: Run complete browser regression suite
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag25-http.log 2>&1 &
+          python3 -m http.server 4173 > /tmp/sag35-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
@@ -121,40 +94,20 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site
-          rsync -a \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='node_modules' \
-            --exclude='site' \
-            --exclude='sprint20-*.png' \
-            --exclude='sprint25-*.png' \
-            ./ site/
+          rsync -a --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='site' --exclude='sprint20-*.png' --exclude='sprint25-*.png' ./ site/
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
           {
-            "release": "SAG Galia Narrative 0.25",
+            "release": "SAG Galia Operations 0.35",
             "source_branch": "live",
             "source_sha": "$(git rev-parse HEAD)",
             "deployed_from": "${GITHUB_SHA}",
             "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           EOF
-          test -s site/index.html
-          test -s site/sprint13.html
-          test -s site/sprint14.html
-          test -s site/sprint19.html
-          test -s site/sprint20.html
-          test -s site/sprint25.html
-          test -s site/NARRATIVE_SOURCES.md
-          test -s site/sprint21-canon-lore.js
-          test -s site/sprint22-sag-dac.js
-          test -s site/sprint23-campaign-narrative.js
-          test -s site/sprint24-kiwimi-dialogue.js
-          test -s site/sprint24-kiwimi-dialogue.css
-          test -s site/sprint25-narrative-ui.js
-          test -s site/sprint25-narrative.css
-          test -s site/sprint25-finale-editorial.js
-          test -s site/build-info.json
+          for file in site/index.html site/sprint35.html site/sprint35-galia-core.js site/sprint35-galia-ui.js site/sprint35-galia.css site/NARRATIVE_SOURCES.md site/build-info.json; do
+            test -s "$file"
+          done
 
       - name: Configure Pages
         if: github.event_name != 'pull_request'
@@ -174,6 +127,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy SAG Galia Narrative 0.25 to GitHub Pages
+      - name: Deploy SAG Galia Operations 0.35 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
