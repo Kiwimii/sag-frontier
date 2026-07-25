@@ -1,0 +1,63 @@
+name: Validate Focused Interface 0.20
+
+on:
+  pull_request:
+    paths:
+      - 'sprint20.html'
+      - 'sprint20-focused.css'
+      - 'sprint20-focused.js'
+      - 'tests/sprint20-*'
+      - '.github/workflows/validate-sprint20.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout focused interface build
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate focused architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s sprint20.html
+          test -s sprint20-focused.css
+          test -s sprint20-focused.js
+          test -s tests/sprint20-static.cjs
+          test -s tests/sprint20-smoke.mjs
+          node --check sprint20-focused.js
+          node --check tests/sprint20-smoke.mjs
+          node tests/sprint13-static.cjs
+          node tests/sprint14-static.cjs
+          node tests/sprint14-progression.cjs
+          node tests/sprint19-static.cjs
+          node tests/sprint19-story.cjs
+          node tests/sprint20-static.cjs
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run browser regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/sag20-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs
+          node tests/sprint14-smoke.mjs
+          node tests/sprint19-smoke.mjs
+          node tests/sprint20-smoke.mjs
