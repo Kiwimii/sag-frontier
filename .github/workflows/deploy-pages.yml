@@ -1,6 +1,5 @@
-# Validation probe for SAG Recruitment Campaign 0.19 deployment
-# Deploy the validated Recruitment Campaign 0.19 from the live branch
-name: Deploy SAG Recruitment Campaign 0.19
+# Deploy the validated Focused Interface 0.20 from the live branch
+name: Deploy SAG Focused Interface 0.20
 
 on:
   push:
@@ -25,7 +24,7 @@ concurrency:
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout validated SAG Frontier production branch
         uses: actions/checkout@v4
@@ -38,7 +37,7 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate production files and story systems
+      - name: Validate production files and focused interface
         shell: bash
         run: |
           set -euo pipefail
@@ -47,6 +46,9 @@ jobs:
           test -s sprint13.html
           test -s sprint14.html
           test -s sprint19.html
+          test -s sprint20.html
+          test -s sprint20-focused.css
+          test -s sprint20-visual-fixes.css
           for file in \
             sprint13-config.js \
             sprint13-source.js \
@@ -61,20 +63,23 @@ jobs:
             sprint17-campaign.js \
             sprint18-world-events.js \
             sprint19-finale.js \
+            sprint20-focused.js \
             tests/sprint13-smoke.mjs \
             tests/sprint14-smoke.mjs \
-            tests/sprint19-smoke.mjs; do
+            tests/sprint19-smoke.mjs \
+            tests/sprint20-smoke.mjs; do
             test -s "$file"
             node --check "$file"
           done
-          grep -q 'sprint19.html?build=0190' index.html
-          grep -q 'Recruitment Campaign 0.19' sprint19.html
-          grep -q 'sag-frontier-reset-v019' sprint19.html
+          grep -q 'sprint20.html?build=0200' index.html
+          grep -q 'Focused Interface 0.20' sprint20.html
+          test -z "$(grep -o 'sag-frontier-reset-v020' sprint20.html || true)"
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
           node tests/sprint14-progression.cjs
           node tests/sprint19-static.cjs
           node tests/sprint19-story.cjs
+          node tests/sprint20-static.cjs
 
       - name: Install Chromium for browser validation
         run: |
@@ -85,13 +90,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag19-http.log 2>&1 &
+          python3 -m http.server 4173 > /tmp/sag20-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
           node tests/sprint13-smoke.mjs
           node tests/sprint14-smoke.mjs
           node tests/sprint19-smoke.mjs
+          node tests/sprint20-smoke.mjs
 
       - name: Assemble GitHub Pages site
         shell: bash
@@ -103,11 +109,12 @@ jobs:
             --exclude='.github' \
             --exclude='node_modules' \
             --exclude='site' \
+            --exclude='sprint20-*.png' \
             ./ site/
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
           {
-            "release": "SAG Recruitment Campaign 0.19",
+            "release": "SAG Focused Interface 0.20",
             "source_branch": "live",
             "source_sha": "$(git rev-parse HEAD)",
             "deployed_from": "${GITHUB_SHA}",
@@ -118,8 +125,10 @@ jobs:
           test -s site/sprint13.html
           test -s site/sprint14.html
           test -s site/sprint19.html
-          test -s site/sprint15-story-core.js
-          test -s site/sprint19-finale.js
+          test -s site/sprint20.html
+          test -s site/sprint20-focused.css
+          test -s site/sprint20-visual-fixes.css
+          test -s site/sprint20-focused.js
           test -s site/build-info.json
 
       - name: Configure Pages
@@ -140,6 +149,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy SAG Recruitment Campaign 0.19 to GitHub Pages
+      - name: Deploy SAG Focused Interface 0.20 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
