@@ -1,3 +1,4 @@
+# Validation probe 3 for Command Progression 0.14
 name: Deploy Command Progression 0.14 Browser Build
 
 on:
@@ -81,7 +82,17 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run browser regression tests
+      - name: Run Outer Frontier 0.13 browser regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/sag13-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs
+
+      - name: Run Command Progression 0.14 browser regression
         shell: bash
         run: |
           set -euo pipefail
@@ -89,7 +100,6 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
-          node tests/sprint13-smoke.mjs
           node tests/sprint14-smoke.mjs
 
       - name: Assemble GitHub Pages site
