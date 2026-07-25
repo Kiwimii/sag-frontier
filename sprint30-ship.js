@@ -1,0 +1,1 @@
+(()=>{const G=window.SAGGalia;G.register('ships',[{id:'pathfinder',name:'SAG Pathfinder',class:'Modularer Frontier-Kurier',desc:'Kompakt, reparierbar und für Erkundung, Handel und Hilfseinsätze ausgelegt.',upgrades:['scanner','engine','shield','ai','stealth','drones','cargo']}])})();
