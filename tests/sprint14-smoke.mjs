@@ -6,14 +6,24 @@ const page=await browser.newPage({viewport:{width:1280,height:820}});
 const errors=[];
 page.on('pageerror',error=>errors.push(String(error)));
 page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+await page.addInitScript(()=>{
+  localStorage.setItem('sag-frontier-save-v05',JSON.stringify({credits:99999,pilotXp:99999,stats:{runs:99}}));
+  localStorage.setItem('sag-frontier-progression-v14',JSON.stringify({commandData:99999,completedContracts:99}));
+  localStorage.removeItem('sag-frontier-reset-v0142');
+  localStorage.removeItem('sag-frontier-command-onboarded-v142');
+});
 try{
-  await page.goto('http://127.0.0.1:4173/sprint14.html',{waitUntil:'domcontentloaded'});
+  await page.goto('http://127.0.0.1:4173/sprint14.html?build=0142',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>Boolean(window.SAG14Core?.__advanced14));
+  assert.equal(await page.locator('body').getAttribute('data-build'),'0142');
+  assert.match(await page.locator('.build-ribbon').innerText(),/0\.14\.2/);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sag-frontier-reset-v0142')),'1');
+  assert.notEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sag-frontier-save-v05')||'{}').credits),99999);
+  assert.notEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('sag-frontier-progression-v14')||'{}').commandData),99999);
   const gameFrame=page.frame({url:/sprint13\.html/});
   assert.ok(gameFrame);
   await gameFrame.waitForSelector('#startRunBtn');
-  await page.locator('#commandToggle').click();
-  await page.locator('#commandCenter:not(.hidden)').waitFor();
+  await page.locator('#commandCenter:not(.hidden)').waitFor({timeout:4000});
   assert.match(await page.locator('#commandContent').innerText(),/Meisterschaften/i);
   await page.locator('[data-command-tab="contracts"]').click();
   assert.ok(await page.locator('#contractOffers .contract-card').count()>=3);
@@ -36,7 +46,7 @@ try{
   assert.ok(result.research>=10);
   assert.equal(result.campaign,9);
   assert.deepEqual(errors,[]);
-  console.log('sprint14 browser smoke test passed');
+  console.log('sprint14 0.14.2 browser smoke test passed');
 } finally {
   await browser.close();
 }
