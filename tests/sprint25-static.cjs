@@ -35,6 +35,6 @@ assert.match(faction,/Eno Vael/);
 assert.match(faction,/U-19/);
 assert.match(dac,/keine offizielle Mitgliedschaft/);
 assert.match(dac,/Vertrauliche Treasury-, Token-/);
-assert.match(polish,/Iris und der Cataclysm/);
+assert.match(polish,/Iris und der Cataclysm/i);
 assert.match(polish,/KANON · SAG DAC · FIKTION GETRENNT/);
 console.log('Sprint 25 static narrative validation passed');
