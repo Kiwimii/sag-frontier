@@ -48,6 +48,7 @@ jobs:
           test -s sprint19.html
           test -s sprint20.html
           test -s sprint25.html
+          test -s NARRATIVE_SOURCES.md
           test -s sprint20-focused.css
           test -s sprint20-visual-fixes.css
           test -s sprint24-kiwimi-dialogue.css
@@ -85,6 +86,7 @@ jobs:
           done
           grep -q 'sprint25.html?build=0250' index.html
           grep -q 'Galia Narrative 0.25' sprint25.html
+          grep -q 'Offizieller Star-Atlas-Kanon' NARRATIVE_SOURCES.md
           test -z "$(grep -o 'sag-frontier-reset-v025' sprint25.html || true)"
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
@@ -143,6 +145,7 @@ jobs:
           test -s site/sprint19.html
           test -s site/sprint20.html
           test -s site/sprint25.html
+          test -s site/NARRATIVE_SOURCES.md
           test -s site/sprint21-canon-lore.js
           test -s site/sprint22-sag-dac.js
           test -s site/sprint23-campaign-narrative.js
