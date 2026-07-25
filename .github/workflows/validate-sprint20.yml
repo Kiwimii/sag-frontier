@@ -102,6 +102,8 @@ jobs:
           path: |
             sprint20-browser.log
             sprint20-browser.status
+            sprint20-desktop-home.png
+            sprint20-mobile-profile.png
           if-no-files-found: error
 
   focused-report:
