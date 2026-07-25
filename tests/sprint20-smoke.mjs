@@ -14,8 +14,9 @@ await page.addInitScript(()=>{
 });
 try{
   await page.goto('http://127.0.0.1:4173/sprint20.html?build=0200',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>Boolean(window.SAGRecruitment&&window.SAGStoryCore));
+  await page.waitForFunction(()=>Boolean(window.SAGRecruitment&&window.SAGStoryCore&&window.SAG20_FOCUSED?.installed));
   await page.locator('#sagStoryShell:not(.sag-hidden)').waitFor({timeout:5000});
+  await page.locator('.focus-page').waitFor({timeout:3000});
   assert.equal(await page.locator('body').getAttribute('data-build'),'0200');
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sag-frontier-save-v05')).credits),12345);
   assert.equal(await page.locator('#commandToggle').evaluate(node=>getComputedStyle(node).display),'none');
