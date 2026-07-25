@@ -1,4 +1,5 @@
 # Deploy Command Progression 0.14.2 from the tested live branch
+# Validation probe for visible 0.14.2 rollout
 name: Deploy Command Progression 0.14.2 Browser Build
 
 on:
