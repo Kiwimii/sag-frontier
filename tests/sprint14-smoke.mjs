@@ -7,10 +7,10 @@ const errors=[];
 page.on('pageerror',error=>errors.push(String(error)));
 page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
 await page.addInitScript(()=>{
+  if(window.top!==window)return;
   localStorage.setItem('sag-frontier-save-v05',JSON.stringify({credits:99999,pilotXp:99999,stats:{runs:99}}));
   localStorage.setItem('sag-frontier-progression-v14',JSON.stringify({commandData:99999,completedContracts:99}));
   localStorage.removeItem('sag-frontier-reset-v0142');
-  localStorage.removeItem('sag-frontier-command-onboarded-v142');
 });
 try{
   await page.goto('http://127.0.0.1:4173/sprint14.html?build=0142',{waitUntil:'domcontentloaded'});
