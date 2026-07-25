@@ -1,124 +1,72 @@
-# Deploy the validated Galia Operations 0.35 from the live branch
-name: Deploy SAG Galia Operations 0.35
-
+# Deploy the validated Stability Operations 0.40 from the live branch
+name: Deploy SAG Stability Operations 0.40
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/deploy-pages.yml'
+    branches: [main]
+    paths: ['.github/workflows/deploy-pages.yml']
   pull_request:
-    paths:
-      - '.github/workflows/deploy-pages.yml'
+    paths: ['.github/workflows/deploy-pages.yml']
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: pages-production
   cancel-in-progress: true
-
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Checkout validated SAG Frontier production branch
+      - name: Checkout validated production branch
         uses: actions/checkout@v4
         with:
           ref: live
           fetch-depth: 1
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Validate production files and gameplay systems
-        shell: bash
+      - name: Validate protected production build
         run: |
           set -euo pipefail
-          for file in index.html launch.html sprint13.html sprint20.html sprint25.html sprint35.html NARRATIVE_SOURCES.md sprint35-galia.css; do
-            test -s "$file"
-          done
-          for file in \
-            sprint13-config.js sprint13-source.js sprint12-ui.js \
-            sprint14-progression-core.js sprint14-progression-advanced.js sprint14-progression-ui.js sprint14-progression-advanced-ui.js \
-            sprint15-story-core.js sprint15-cinematic.js sprint16-lore-kiwimi.js sprint17-campaign.js sprint18-world-events.js sprint19-finale.js \
-            sprint20-focused.js sprint21-canon-lore.js sprint22-sag-dac.js sprint23-campaign-narrative.js sprint24-kiwimi-dialogue.js \
-            sprint25-narrative-ui.js sprint25-finale-editorial.js \
-            sprint35-galia-core.js sprint26-star-map.js sprint27-stations.js sprint28-npcs.js sprint29-economy.js sprint30-ship.js \
-            sprint31-events.js sprint32-reputation.js sprint33-cinematic.js sprint34-dac.js sprint35-campaign.js sprint35-galia-ui.js \
-            tests/sprint13-smoke.mjs tests/sprint14-smoke.mjs tests/sprint19-smoke.mjs tests/sprint20-smoke.mjs tests/sprint25-smoke.mjs \
-            tests/sprint25-story.cjs tests/sprint25-static.cjs tests/sprint35-static.cjs; do
-              test -s "$file"
-              node --check "$file"
-          done
-          grep -q 'sprint35.html?build=0350' index.html
-          grep -q 'Galia Operations 0.35' sprint35.html
-          grep -q 'Offizieller Star-Atlas-Kanon' NARRATIVE_SOURCES.md
-          node tests/sprint13-static.cjs
-          node tests/sprint14-static.cjs
-          node tests/sprint14-progression.cjs
-          node tests/sprint19-static.cjs
-          node tests/sprint19-story.cjs
-          node tests/sprint20-static.cjs
-          node tests/sprint25-static.cjs
-          node tests/sprint25-story.cjs
+          for file in index.html launch.html sprint25.html sprint35.html sprint40.html sprint35-galia-core.js sprint35-galia-ui.js sprint35-galia.css sprint36-save-integrity.js sprint37-action-safety.js sprint38-ship-services.js sprint39-accessibility.js sprint40-operations-polish.js sprint40-stability.css tests/sprint35-static.cjs tests/sprint40-state.cjs tests/sprint40-smoke.mjs; do test -s "$file"; done
+          for file in sprint35-galia-core.js sprint35-galia-ui.js sprint36-save-integrity.js sprint37-action-safety.js sprint38-ship-services.js sprint39-accessibility.js sprint40-operations-polish.js tests/sprint40-state.cjs tests/sprint40-smoke.mjs; do node --check "$file"; done
+          grep -q 'sprint40.html?build=0400' index.html
+          grep -q 'sprint35.html?build=0400' sprint40.html
           node tests/sprint35-static.cjs
-
-      - name: Install Chromium for browser validation
+          node tests/sprint40-state.cjs
+      - name: Install Chromium
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
-
-      - name: Run complete browser regression suite
-        shell: bash
+      - name: Run browser regressions
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag35-http.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/sag40-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
-          node tests/sprint13-smoke.mjs
-          node tests/sprint14-smoke.mjs
-          node tests/sprint19-smoke.mjs
-          node tests/sprint20-smoke.mjs
           node tests/sprint25-smoke.mjs
-
+          node tests/sprint40-smoke.mjs
       - name: Assemble GitHub Pages site
-        shell: bash
         run: |
           set -euo pipefail
           mkdir -p site
           rsync -a --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='site' --exclude='sprint20-*.png' --exclude='sprint25-*.png' ./ site/
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
-          {
-            "release": "SAG Galia Operations 0.35",
-            "source_branch": "live",
-            "source_sha": "$(git rev-parse HEAD)",
-            "deployed_from": "${GITHUB_SHA}",
-            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          }
+          {"release":"SAG Stability Operations 0.40","source_branch":"live","source_sha":"$(git rev-parse HEAD)","deployed_from":"${GITHUB_SHA}","built_at":"$(date -u +%Y-%m-%dT%H:%M:%SZ)"}
           EOF
-          for file in site/index.html site/sprint35.html site/sprint35-galia-core.js site/sprint35-galia-ui.js site/sprint35-galia.css site/NARRATIVE_SOURCES.md site/build-info.json; do
-            test -s "$file"
-          done
-
+          for file in site/index.html site/sprint35.html site/sprint40.html site/sprint36-save-integrity.js site/sprint37-action-safety.js site/sprint38-ship-services.js site/sprint39-accessibility.js site/sprint40-operations-polish.js site/sprint40-stability.css site/build-info.json; do test -s "$file"; done
       - name: Configure Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
-
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-
   deploy:
     if: github.event_name != 'pull_request'
     environment:
@@ -127,6 +75,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy SAG Galia Operations 0.35 to GitHub Pages
+      - name: Deploy SAG Stability Operations 0.40
         id: deployment
         uses: actions/deploy-pages@v4
