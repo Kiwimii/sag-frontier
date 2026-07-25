@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="cache-control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <title>S.A.G. Frontier — Recruitment Campaign 0.19</title>
+  <meta name="theme-color" content="#05080c">
+  <meta name="description" content="S.A.G. Frontier 0.19 — Fraktionswahl, Kiwimi-Kampagne, Lore, Story-Ereignisse und Aufnahme in Star Atlas Germany.">
+  <script>
+    (()=>{
+      const RESET='sag-frontier-reset-v019';
+      try{
+        if(localStorage.getItem(RESET)!=='1'){
+          ['sag-frontier-save-v05','sag-frontier-progression-v14','sag-frontier-story-v19','sag-frontier-reset-v0142','sag-frontier-command-onboarded-v142'].forEach(key=>localStorage.removeItem(key));
+          localStorage.setItem('sag-frontier-intro-seen-v06','1');
+          localStorage.setItem(RESET,'1');
+        }
+      }catch{}
+    })();
+  </script>
+  <link rel="stylesheet" href="sprint14-progression.css?build=0190">
+  <link rel="stylesheet" href="sprint14-progression-advanced.css?build=0190">
+  <link rel="stylesheet" href="sprint15-cinematic.css?build=0190">
+</head>
+<body data-build="0190">
+  <iframe id="gameFrame" src="sprint13.html?build=0190" title="S.A.G. Frontier Spiel"></iframe>
+
+  <div class="build-ribbon">SAG RECRUITMENT <b>0.19</b><span class="reset-note">FÜNF STORY-SPRINTS · NEUER SPIELSTAND</span></div>
+
+  <button id="commandToggle" type="button" aria-controls="commandCenter" aria-expanded="false"><span>COMMAND 0.14</span><b id="commandBadge">0</b></button>
+  <section id="commandCenter" class="command-center hidden" aria-modal="true" role="dialog" aria-labelledby="commandTitle">
+    <div class="command-shell">
+      <header class="command-header"><div><span>S.A.G. EXPEDITION COMMAND</span><h1 id="commandTitle">FRONTIER COMMAND</h1><p>Karriere, Einsatzverträge, Forschung und Kampagnenfortschritt.</p></div><button id="commandClose" type="button" aria-label="Command Center schließen">×</button></header>
+      <div class="command-metrics"><article><span>KOMMANDORANG</span><b id="commandRank">1</b><i id="commandXp">0 / 88 XP</i></article><article><span>COMMAND DATA</span><b id="commandData">0</b><i>Forschung &amp; Operationen</i></article><article><span>VERTRÄGE</span><b id="completedContracts">0</b><i id="activeSlots">0 / 1 aktiv</i></article></div>
+      <nav id="commandTabs" class="command-tabs"><button class="active" data-command-tab="career" type="button">KARRIERE</button><button data-command-tab="contracts" type="button">VERTRÄGE</button><button data-command-tab="research" type="button">FORSCHUNG</button><button data-command-tab="campaign" type="button">KAMPAGNE 0.14</button><button data-command-tab="records" type="button">ARCHIV</button></nav>
+      <main id="commandContent" class="command-content" aria-live="polite"></main>
+      <footer><span id="commandStatus">COMMAND LINK ONLINE</span><button id="commandReturn" type="button">ZURÜCK ZUM HANGAR</button></footer>
+    </div>
+  </section>
+  <div id="progressionToast" class="progression-toast" role="status" aria-live="polite"></div>
+
+  <button id="sagStoryToggle" class="sag-story-toggle" type="button" aria-controls="sagStoryShell" aria-expanded="false"><i></i><span>SAG HQ</span><b id="sagStoryBadge">1</b></button>
+  <section id="sagStoryShell" class="sag-story-shell sag-hidden" aria-modal="true" role="dialog" aria-labelledby="sagStoryTitle">
+    <div class="sag-hq">
+      <header class="sag-hq-header"><div><span>STAR ATLAS GERMANY // RECRUITMENT</span><h1 id="sagStoryTitle">SAG OPERATIONS HQ</h1><p>Wähle deine Herkunft, folge Kiwimis Kampagne und verdiene dir deinen Platz bei SAG.</p></div><button id="sagStoryClose" class="sag-close" type="button" aria-label="SAG HQ schließen">×</button></header>
+      <div class="sag-metrics"><article><span>STATUS</span><b id="sagMetricStatus">UNREGISTRIERT</b></article><article><span>FRAKTION</span><b id="sagMetricFaction">OFFEN</b></article><article><span>SAG-RUF</span><b id="sagMetricReputation">0</b></article><article><span>KIWIMI-VERTRAUEN</span><b id="sagMetricTrust">0</b></article></div>
+      <nav id="sagStoryTabs" class="sag-tabs"><button class="active" data-sag-tab="home" type="button">BRIEFING</button><button data-sag-tab="campaign" type="button">KAMPAGNE</button><button data-sag-tab="lore" type="button">SAG-CODEX</button><button data-sag-tab="profile" type="button">BEWERBUNG</button></nav>
+      <main id="sagStoryContent" class="sag-content" aria-live="polite"></main>
+      <footer class="sag-hq-footer"><span>SAG // GEMEINSAM ENTDECKEN · VERBINDEN · BEWÄHREN</span><button id="sagStoryReturn" class="sag-btn" type="button">ZURÜCK ZUM HANGAR</button></footer>
+    </div>
+  </section>
+
+  <section id="sagIntro" class="sag-intro sag-hidden" aria-label="Animiertes SAG Intro"></section>
+  <section id="sagFactionStage" class="sag-faction-stage sag-hidden" aria-label="Fraktionswahl"></section>
+  <aside id="sagKiwimiToast" class="sag-kiwimi-toast" role="status" aria-live="polite"></aside>
+  <section id="sagEventOverlay" class="sag-event-overlay sag-hidden" aria-modal="true" role="dialog"></section>
+  <section id="sagStoryScene" class="sag-story-scene sag-hidden" aria-modal="true" role="dialog"></section>
+  <canvas id="sagAtmosphere" class="sag-atmosphere" aria-hidden="true"></canvas>
+
+  <script src="sprint14-progression-core.js?build=0190"></script>
+  <script src="sprint14-progression-advanced.js?build=0190"></script>
+  <script src="sprint14-progression-ui.js?build=0190"></script>
+  <script src="sprint14-progression-advanced-ui.js?build=0190"></script>
+  <script src="sprint15-story-core.js?build=0190"></script>
+  <script src="sprint15-cinematic.js?build=0190"></script>
+</body>
+</html>
