@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>S.A.G. Frontier — Command Progression 0.14</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="S.A.G. Frontier 0.14 — verknüpfte Karriere-, Vertrags-, Forschungs- und Kampagnenprogression.">
+  <link rel="stylesheet" href="sprint14-progression.css">
+</head>
+<body>
+  <iframe id="gameFrame" src="sprint13.html" title="S.A.G. Frontier Spiel"></iframe>
+  <button id="commandToggle" type="button" aria-controls="commandCenter" aria-expanded="false"><span>COMMAND</span><b id="commandBadge">0</b></button>
+  <section id="commandCenter" class="command-center hidden" aria-modal="true" role="dialog" aria-labelledby="commandTitle">
+    <div class="command-shell">
+      <header class="command-header">
+        <div><span>S.A.G. EXPEDITION COMMAND</span><h1 id="commandTitle">FRONTIER COMMAND 0.14</h1><p>Langfristige Karriere, Einsatzverträge und verknüpfte Fortschrittssysteme.</p></div>
+        <button id="commandClose" type="button" aria-label="Command Center schließen">×</button>
+      </header>
+      <div class="command-metrics">
+        <article><span>KOMMANDORANG</span><b id="commandRank">1</b><i id="commandXp">0 / 88 XP</i></article>
+        <article><span>COMMAND DATA</span><b id="commandData">0</b><i>Forschung &amp; Operationen</i></article>
+        <article><span>VERTRÄGE</span><b id="completedContracts">0</b><i id="activeSlots">0 / 1 aktiv</i></article>
+      </div>
+      <nav id="commandTabs" class="command-tabs">
+        <button class="active" data-command-tab="career" type="button">KARRIERE</button>
+        <button data-command-tab="contracts" type="button">VERTRÄGE</button>
+        <button data-command-tab="research" type="button">FORSCHUNG</button>
+        <button data-command-tab="campaign" type="button">KAMPAGNE</button>
+        <button data-command-tab="records" type="button">ARCHIV</button>
+      </nav>
+      <main id="commandContent" class="command-content" aria-live="polite"></main>
+      <footer><span id="commandStatus">COMMAND LINK ONLINE</span><button id="commandReturn" type="button">ZURÜCK ZUM HANGAR</button></footer>
+    </div>
+  </section>
+  <div id="progressionToast" class="progression-toast" role="status" aria-live="polite"></div>
+  <script src="sprint14-progression-core.js"></script>
+  <script src="sprint14-progression-ui.js"></script>
+</body>
+</html>
