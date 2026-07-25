@@ -24,6 +24,7 @@ try{
   assert.equal(await page.locator('.focus-page').count(),1);
   assert.equal(await page.locator('.sag-hero').count(),0);
   assert.match(await page.locator('#sagStoryContent').innerText(),/Dein nächster Schritt/i);
+  await page.screenshot({path:'sprint20-desktop-home.png',fullPage:true});
   await page.locator('#focusCommand').click();
   await page.locator('#commandCenter:not(.hidden)').waitFor();
   await page.locator('#commandClose').click();
@@ -46,6 +47,7 @@ try{
   assert.ok(mobile.scrollWidth<=mobile.innerWidth+1);
   assert.equal(mobile.position,'fixed');
   assert.notEqual(mobile.bottom,'auto');
+  await page.screenshot({path:'sprint20-mobile-profile.png',fullPage:true});
   assert.deepEqual(errors,[]);
   console.log('sprint20 focused browser smoke test passed');
 } finally {
