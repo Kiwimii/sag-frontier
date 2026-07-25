@@ -24,8 +24,7 @@ await page.addInitScript(value => {
   localStorage.setItem('sag-frontier-save-v05', JSON.stringify(value));
 }, save);
 
-await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'networkidle' });
-await page.waitForURL(/sprint13\.html$/);
+await page.goto('http://127.0.0.1:4173/sprint13.html', { waitUntil: 'networkidle' });
 await page.waitForFunction(() => document.querySelectorAll('#weaponGrid .card').length === 6);
 
 const architecture = await page.evaluate(() => ({
