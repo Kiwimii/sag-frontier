@@ -3,19 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>S.A.G. Frontier — Command Progression 0.14</title>
+  <meta http-equiv="cache-control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <title>S.A.G. Frontier — Command Progression 0.14.2</title>
   <meta name="theme-color" content="#050505">
-  <meta name="description" content="S.A.G. Frontier 0.14 — verknüpfte Karriere-, Vertrags-, Forschungs- und Kampagnenprogression.">
-  <link rel="stylesheet" href="sprint14-progression.css">
-  <link rel="stylesheet" href="sprint14-progression-advanced.css">
+  <meta name="description" content="S.A.G. Frontier 0.14.2 — verknüpfte Karriere-, Vertrags-, Forschungs- und Kampagnenprogression.">
+  <script>
+    (()=>{
+      const RESET='sag-frontier-reset-v0142';
+      try{
+        if(localStorage.getItem(RESET)!=='1'){
+          ['sag-frontier-save-v05','sag-frontier-progression-v14','sag-frontier-command-seen-v14','sag-frontier-command-onboarded-v142'].forEach(key=>localStorage.removeItem(key));
+          localStorage.setItem('sag-frontier-intro-seen-v06','1');
+          localStorage.setItem(RESET,'1');
+        }
+      }catch{}
+    })();
+  </script>
+  <link rel="stylesheet" href="sprint14-progression.css?build=0142">
+  <link rel="stylesheet" href="sprint14-progression-advanced.css?build=0142">
+  <style>
+    .build-ribbon{position:fixed;z-index:55;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));padding:8px 11px;border:1px solid #55eaff88;background:#071119ee;color:#9ef4ff;font:800 10px/1 system-ui,Segoe UI,sans-serif;letter-spacing:.14em;box-shadow:0 8px 26px #000a;pointer-events:none}.build-ribbon b{color:#f2c85f}.reset-note{display:block;margin-top:4px;color:#9caab3;font-size:8px;letter-spacing:.08em}
+  </style>
 </head>
-<body>
-  <iframe id="gameFrame" src="sprint13.html" title="S.A.G. Frontier Spiel"></iframe>
-  <button id="commandToggle" type="button" aria-controls="commandCenter" aria-expanded="false"><span>COMMAND</span><b id="commandBadge">0</b></button>
+<body data-build="0142">
+  <div class="build-ribbon">COMMAND PROGRESSION <b>0.14.2</b><span class="reset-note">NEUER SPIELSTAND · CACHE RESET</span></div>
+  <iframe id="gameFrame" src="sprint13.html?build=0142" title="S.A.G. Frontier Spiel"></iframe>
+  <button id="commandToggle" type="button" aria-controls="commandCenter" aria-expanded="false"><span>COMMAND 0.14.2</span><b id="commandBadge">0</b></button>
   <section id="commandCenter" class="command-center hidden" aria-modal="true" role="dialog" aria-labelledby="commandTitle">
     <div class="command-shell">
       <header class="command-header">
-        <div><span>S.A.G. EXPEDITION COMMAND</span><h1 id="commandTitle">FRONTIER COMMAND 0.14</h1><p>Langfristige Karriere, Einsatzverträge und verknüpfte Fortschrittssysteme.</p></div>
+        <div><span>S.A.G. EXPEDITION COMMAND</span><h1 id="commandTitle">FRONTIER COMMAND 0.14.2</h1><p>Langfristige Karriere, Einsatzverträge, Forschung und Kampagnenfortschritt.</p></div>
         <button id="commandClose" type="button" aria-label="Command Center schließen">×</button>
       </header>
       <div class="command-metrics">
@@ -31,13 +50,14 @@
         <button data-command-tab="records" type="button">ARCHIV</button>
       </nav>
       <main id="commandContent" class="command-content" aria-live="polite"></main>
-      <footer><span id="commandStatus">COMMAND LINK ONLINE</span><button id="commandReturn" type="button">ZURÜCK ZUM HANGAR</button></footer>
+      <footer><span id="commandStatus">COMMAND LINK ONLINE · BUILD 0.14.2</span><button id="commandReturn" type="button">ZURÜCK ZUM HANGAR</button></footer>
     </div>
   </section>
   <div id="progressionToast" class="progression-toast" role="status" aria-live="polite"></div>
-  <script src="sprint14-progression-core.js"></script>
-  <script src="sprint14-progression-advanced.js"></script>
-  <script src="sprint14-progression-ui.js"></script>
-  <script src="sprint14-progression-advanced-ui.js"></script>
+  <script src="sprint14-progression-core.js?build=0142"></script>
+  <script src="sprint14-progression-advanced.js?build=0142"></script>
+  <script src="sprint14-progression-ui.js?build=0142"></script>
+  <script src="sprint14-progression-advanced-ui.js?build=0142"></script>
+  <script src="sprint14-bootstrap.js?build=0142"></script>
 </body>
 </html>
