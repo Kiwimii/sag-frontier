@@ -27,6 +27,7 @@ assert.match(advanced,/campaignStates/);
 assert.match(advanced,/purchaseResearch/);
 assert.match(advancedUi,/renderCampaign/);
 assert.match(advancedUi,/patchContractCost/);
-assert.match(bootstrap,/sag-frontier-command-onboarded-v142/);
+assert.match(bootstrap,/revealCommand/);
+assert.match(bootstrap,/commandVisible:true/);
 assert.match(bootstrap,/serviceWorker/);
 console.log('sprint14 static integration tests passed');
