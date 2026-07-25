@@ -1,6 +1,5 @@
-# Deploy Command Progression 0.14.2 from the tested live branch
-# Validation probe for visible 0.14.2 rollout
-name: Deploy Command Progression 0.14.2 Browser Build
+# Deploy the validated Recruitment Campaign 0.19 from the live branch
+name: Deploy SAG Recruitment Campaign 0.19
 
 on:
   push:
@@ -25,9 +24,9 @@ concurrency:
 jobs:
   validate-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
-      - name: Checkout Command Progression production branch
+      - name: Checkout validated SAG Frontier production branch
         uses: actions/checkout@v4
         with:
           ref: live
@@ -38,73 +37,60 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate Command Progression production files
+      - name: Validate production files and story systems
         shell: bash
         run: |
           set -euo pipefail
           test -s index.html
           test -s launch.html
           test -s sprint13.html
-          test -s sprint13.bundle.css
-          test -s sprint13-config.js
-          test -s sprint13-source.js
-          test -s sprint12-ui.js
           test -s sprint14.html
-          test -s sprint14-bootstrap.js
-          test -s sprint14-progression-core.js
-          test -s sprint14-progression-advanced.js
-          test -s sprint14-progression-ui.js
-          test -s sprint14-progression-advanced-ui.js
-          test -s sprint14-progression.css
-          test -s sprint14-progression-advanced.css
-          test -s tests/sprint13-static.cjs
-          test -s tests/sprint13-smoke.mjs
-          test -s tests/sprint14-static.cjs
-          test -s tests/sprint14-progression.cjs
-          test -s tests/sprint14-smoke.mjs
-          grep -q 'sprint14.html?build=0142' index.html
-          grep -q 'version: 13' sprint13-config.js
-          grep -q 'OUTER FRONTIER 0.13' sprint13.html
-          grep -q 'FRONTIER COMMAND 0.14.2' sprint14.html
-          grep -q 'sag-frontier-reset-v0142' sprint14.html
-          node --check sprint13-config.js
-          node --check sprint13-source.js
-          node --check sprint12-ui.js
-          node --check sprint14-bootstrap.js
-          node --check sprint14-progression-core.js
-          node --check sprint14-progression-advanced.js
-          node --check sprint14-progression-ui.js
-          node --check sprint14-progression-advanced-ui.js
-          node --check tests/sprint13-smoke.mjs
-          node --check tests/sprint14-smoke.mjs
+          test -s sprint19.html
+          for file in \
+            sprint13-config.js \
+            sprint13-source.js \
+            sprint12-ui.js \
+            sprint14-progression-core.js \
+            sprint14-progression-advanced.js \
+            sprint14-progression-ui.js \
+            sprint14-progression-advanced-ui.js \
+            sprint15-story-core.js \
+            sprint15-cinematic.js \
+            sprint16-lore-kiwimi.js \
+            sprint17-campaign.js \
+            sprint18-world-events.js \
+            sprint19-finale.js \
+            tests/sprint13-smoke.mjs \
+            tests/sprint14-smoke.mjs \
+            tests/sprint19-smoke.mjs; do
+            test -s "$file"
+            node --check "$file"
+          done
+          grep -q 'sprint19.html?build=0190' index.html
+          grep -q 'Recruitment Campaign 0.19' sprint19.html
+          grep -q 'sag-frontier-reset-v019' sprint19.html
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
           node tests/sprint14-progression.cjs
+          node tests/sprint19-static.cjs
+          node tests/sprint19-story.cjs
 
       - name: Install Chromium for browser validation
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run Outer Frontier 0.13 browser regression
+      - name: Run complete browser regression suite
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag13-http.log 2>&1 &
+          python3 -m http.server 4173 > /tmp/sag19-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID' EXIT
           sleep 2
           node tests/sprint13-smoke.mjs
-
-      - name: Run Command Progression 0.14.2 browser regression
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m http.server 4173 > /tmp/sag14-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID' EXIT
-          sleep 2
           node tests/sprint14-smoke.mjs
+          node tests/sprint19-smoke.mjs
 
       - name: Assemble GitHub Pages site
         shell: bash
@@ -120,7 +106,7 @@ jobs:
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
           {
-            "release": "Command Progression 0.14.2",
+            "release": "SAG Recruitment Campaign 0.19",
             "source_branch": "live",
             "source_sha": "$(git rev-parse HEAD)",
             "deployed_from": "${GITHUB_SHA}",
@@ -130,7 +116,9 @@ jobs:
           test -s site/index.html
           test -s site/sprint13.html
           test -s site/sprint14.html
-          test -s site/sprint14-bootstrap.js
+          test -s site/sprint19.html
+          test -s site/sprint15-story-core.js
+          test -s site/sprint19-finale.js
           test -s site/build-info.json
 
       - name: Configure Pages
@@ -151,6 +139,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy Command Progression 0.14.2 to GitHub Pages
+      - name: Deploy SAG Recruitment Campaign 0.19 to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
