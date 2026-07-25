@@ -21,7 +21,7 @@
     document.getElementById('focusCommand')?.addEventListener('click',()=>{App.closeHQ();document.getElementById('commandToggle')?.click()});
   }
   function renderCampaign(){
-    const all=states(),chapter=Core.CHAPTERS[selectedChapter-1]||Core.CHAPTERS[0],chapterStates=all.filter(item=>item.chapter===selectedChapter),active=chapterStates.find(item=>!item.claimed),claimed=chapterStates.filter(item=>item.claimed).length;
+    const all=states(),chapter=Core.CHAPTERS[selectedChapter-1]||Core.CHAPTERS[0],chapterStates=all.filter(item=>item.chapter===selectedChapter),active=chapterStates.find(item=>!item.claimed);
     content.innerHTML=`<div class="focus-page">${header(`KAPITEL ${selectedChapter} // ${chapter.title}`,chapter.subtitle,chapter.scene)}<nav id="focusChapters" class="focus-chapters"></nav><section class="focus-card focus-primary" id="focusMission"></section><section class="focus-history" id="focusHistory"></section></div>`;
     const nav=document.getElementById('focusChapters');
     Core.CHAPTERS.forEach(item=>{const chapterMissions=all.filter(state=>state.chapter===item.id),done=chapterMissions.every(state=>state.claimed),available=item.id===1||all.filter(state=>state.chapter<item.id).every(state=>state.claimed),button=document.createElement('button');button.type='button';button.className=`focus-chapter ${item.id===selectedChapter?'active':''} ${done?'complete':''}`;button.disabled=!available;button.textContent=`${item.id}. ${item.title}`;button.addEventListener('click',()=>{selectedChapter=item.id;renderCampaign()});nav.append(button)});
@@ -64,6 +64,7 @@
   }
   App.registerTab('home',renderHome);App.registerTab('campaign',renderCampaign);App.registerTab('lore',renderLore);App.registerTab('profile',renderProfile);
   App.renderHome=renderHome;App.renderCampaign=renderCampaign;
+  App.refreshCampaign=()=>{const shell=document.getElementById('sagStoryShell'),tab=document.querySelector('[data-sag-tab="campaign"]');if(shell&&!shell.classList.contains('sag-hidden')&&tab?.classList.contains('active'))renderCampaign()};
   harmonizeChrome();
   const observer=new MutationObserver(harmonizeChrome);observer.observe(document.getElementById('sagStoryTabs'),{childList:true,subtree:true});
   if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden'))App.setTab('home');
