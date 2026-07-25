@@ -1,0 +1,81 @@
+name: Validate Galia Lore Campaign 0.25
+
+on:
+  pull_request:
+    branches:
+      - live
+    paths:
+      - 'sprint21-*'
+      - 'sprint22-*'
+      - 'sprint23-*'
+      - 'sprint24-*'
+      - 'sprint25*'
+      - 'index.html'
+      - 'launch.html'
+      - 'tests/sprint25-*'
+      - '.github/workflows/validate-sprint25.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sprint25-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Galia lore build
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate narrative files and continuity
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            sprint21-lore-bible.js \
+            sprint22-dialogue.js \
+            sprint23-faction-paths.js \
+            sprint24-dac.js \
+            sprint25-narrative.js \
+            tests/sprint25-static.cjs \
+            tests/sprint25-story.cjs \
+            tests/sprint25-smoke.mjs; do
+              test -s "$file"
+              node --check "$file"
+          done
+          node tests/sprint13-static.cjs
+          node tests/sprint14-static.cjs
+          node tests/sprint14-progression.cjs
+          node tests/sprint19-static.cjs
+          node tests/sprint19-story.cjs
+          node tests/sprint20-static.cjs
+          node tests/sprint25-static.cjs
+          node tests/sprint25-story.cjs
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run browser regressions and narrative interactions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/sag25-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs
+          node tests/sprint14-smoke.mjs
+          node tests/sprint19-smoke.mjs
+          node tests/sprint20-smoke.mjs
+          node tests/sprint25-smoke.mjs
