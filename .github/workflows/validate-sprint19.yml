@@ -46,7 +46,7 @@ jobs:
             test -s "$file"
             node --check "$file"
           done
-          grep -q 'sprint19.html?build=0190' index.html
+          # 0.19 remains a supported direct build even when the public entry advances.
           grep -q 'Recruitment Campaign 0.19' sprint19.html
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
