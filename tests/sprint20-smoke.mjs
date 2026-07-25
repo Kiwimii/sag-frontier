@@ -10,7 +10,7 @@ await page.addInitScript(()=>{
   if(window!==window.top)return;
   localStorage.setItem('sag-frontier-save-v05',JSON.stringify({credits:12345,pilotXp:120,stats:{runs:2,kills:18,discoveries:3,distance:6500}}));
   localStorage.setItem('sag-frontier-progression-v14',JSON.stringify({commandData:8,completedContracts:0,activeContracts:[],contractOffers:[]}));
-  localStorage.setItem('sag-frontier-story-v19',JSON.stringify({version:19,introSeen:true,faction:'mud',sagReputation:18,kiwimiTrust:9,factionReputation:{mud:10,oni:0,ustur:0},claimedMissions:[],loreUnlocked:['sag-origin','kiwimi-founder'],storyFlags:{},seenScenes:[],eventHistory:[],totalEvents:0,lastEventRun:0,lastDebriefRun:0,reducedMotion:true,admitted:false,ending:null,chapter:1}));
+  localStorage.setItem('sag-frontier-story-v19',JSON.stringify({version:19,introSeen:true,faction:'mud',sagReputation:18,kiwimiTrust:9,factionReputation:10,claimedMissions:[],loreUnlocked:['sag-origin','kiwimi-founder'],storyFlags:{},seenScenes:[],eventHistory:[],totalEvents:0,lastEventRun:0,lastDebriefRun:0,reducedMotion:true,admitted:false,ending:null,chapter:1}));
 });
 try{
   await page.goto('http://127.0.0.1:4173/sprint20.html?build=0200',{waitUntil:'domcontentloaded'});
@@ -32,7 +32,9 @@ try{
   assert.equal(await page.locator('.sag-mission-node').count(),0);
   assert.equal(await page.locator('.focus-history article').count(),3);
   await page.locator('[data-sag-tab="lore"]').click();
-  assert.ok(await page.locator('#focusLoreList button').count()<=3);
+  const loreCounts=await page.evaluate(()=>({buttons:document.querySelectorAll('#focusLoreList button').length,unlocked:window.SAGRecruitment.story.loreUnlocked.length,locked:document.querySelectorAll('#focusLoreList button.locked').length,total:window.SAGStoryCore.LORE.length}));
+  assert.ok(loreCounts.buttons<=Math.min(loreCounts.total,loreCounts.unlocked+1));
+  assert.ok(loreCounts.locked<=1);
   assert.equal(await page.locator('.sag-lore-card').count(),0);
   await page.locator('[data-sag-tab="profile"]').click();
   assert.equal(await page.locator('.focus-requirement').count(),4);
