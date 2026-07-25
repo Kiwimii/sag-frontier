@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate narrative files and continuity
+      - name: Validate narrative files and syntax
         shell: bash
         run: |
           set -euo pipefail
@@ -52,14 +52,22 @@ jobs:
               test -s "$file"
               node --check "$file"
           done
+
+      - name: Run legacy static regressions
+        run: |
+          set -euo pipefail
           node tests/sprint13-static.cjs
           node tests/sprint14-static.cjs
           node tests/sprint14-progression.cjs
           node tests/sprint19-static.cjs
           node tests/sprint19-story.cjs
           node tests/sprint20-static.cjs
-          node tests/sprint25-static.cjs
-          node tests/sprint25-story.cjs
+
+      - name: Validate narrative architecture
+        run: node tests/sprint25-static.cjs
+
+      - name: Validate story continuity
+        run: node tests/sprint25-story.cjs
 
       - name: Install Chromium
         run: |
