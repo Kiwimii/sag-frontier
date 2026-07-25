@@ -4,7 +4,7 @@
   if(!App||!Core)throw new Error('Focused SAG interface dependencies missing');
   const content=document.getElementById('sagStoryContent');
   let selectedChapter=Math.max(1,Math.min(5,App.story.chapter||1));
-  let selectedLore=null;
+  let selectedLore=null,installed=false;
   const labels={sagReputation:'SAG-Ruf',kiwimiTrust:'Vertrauen',factionReputation:'Fraktionsruf',credits:'Credits',cores:'Kerne',pilotXp:'Piloten-EP',skillPoints:'Skill-Punkt',commandData:'Command Data'};
   const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
   const rewardHtml=reward=>Object.entries(reward||{}).filter(([,value])=>typeof value==='number'&&value>0).map(([key,value])=>`<i>+${value} ${labels[key]||key}</i>`).join('');
@@ -62,10 +62,16 @@
     const title=document.getElementById('sagStoryTitle');if(title)title.textContent='SAG HQ';
     const toggle=document.querySelector('#sagStoryToggle span');if(toggle)toggle.textContent='SAG HQ';
   }
-  App.registerTab('home',renderHome);App.registerTab('campaign',renderCampaign);App.registerTab('lore',renderLore);App.registerTab('profile',renderProfile);
-  App.renderHome=renderHome;App.renderCampaign=renderCampaign;
-  App.refreshCampaign=()=>{const shell=document.getElementById('sagStoryShell'),tab=document.querySelector('[data-sag-tab="campaign"]');if(shell&&!shell.classList.contains('sag-hidden')&&tab?.classList.contains('active'))renderCampaign()};
-  harmonizeChrome();
-  const observer=new MutationObserver(harmonizeChrome);observer.observe(document.getElementById('sagStoryTabs'),{childList:true,subtree:true});
-  if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden'))App.setTab('home');
+  function installFocused(){
+    if(installed)return;installed=true;
+    App.registerTab('home',renderHome);App.registerTab('campaign',renderCampaign);App.registerTab('lore',renderLore);App.registerTab('profile',renderProfile);
+    App.renderHome=renderHome;App.renderCampaign=renderCampaign;
+    App.refreshCampaign=()=>{const shell=document.getElementById('sagStoryShell'),tab=document.querySelector('[data-sag-tab="campaign"]');if(shell&&!shell.classList.contains('sag-hidden')&&tab?.classList.contains('active'))renderCampaign()};
+    harmonizeChrome();
+    const tabs=document.getElementById('sagStoryTabs');if(tabs)new MutationObserver(harmonizeChrome).observe(tabs,{childList:true,subtree:true});
+    window.SAG20_FOCUSED={version:'0.20',installed:true};
+    const active=document.querySelector('#sagStoryTabs button.active')?.dataset.sagTab||'home';
+    if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden'))App.setTab(active==='admission'?'profile':active);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(installFocused,0),{once:true});else installFocused();
 })();
