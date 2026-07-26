@@ -34,7 +34,7 @@
       });
 
       timeoutId = window.setTimeout(() => {
-        fail('Der Spielkern hat nicht rechtzeitig geantwortet. Prüfe, ob der Godot-Webexport im Plugin enthalten ist.');
+        fail('Der Spielkern hat nicht rechtzeitig geantwortet. Prüfe, ob der Browser-Build im Plugin enthalten ist.');
       }, LOAD_TIMEOUT_MS);
     };
 

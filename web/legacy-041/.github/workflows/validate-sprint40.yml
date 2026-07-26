@@ -1,0 +1,44 @@
+name: Validate Sprint 40
+on:
+  pull_request:
+    paths:
+      - 'sprint36-save-integrity.js'
+      - 'sprint37-action-safety.js'
+      - 'sprint38-ship-services.js'
+      - 'sprint39-accessibility.js'
+      - 'sprint40-operations-polish.js'
+      - 'sprint40-stability.css'
+      - 'sprint40.html'
+      - 'tests/sprint40-*'
+      - '.github/workflows/validate-sprint40.yml'
+  workflow_dispatch:
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax and state safety
+        run: |
+          set -euo pipefail
+          for file in sprint36-save-integrity.js sprint37-action-safety.js sprint38-ship-services.js sprint39-accessibility.js sprint40-operations-polish.js tests/sprint40-state.cjs tests/sprint40-smoke.mjs; do node --check "$file"; done
+          grep -q 'sprint35.html?build=0400' sprint40.html
+          grep -q 'sprint40-operations-polish.js?build=0400' sprint40.html
+          node tests/sprint35-static.cjs
+          node tests/sprint40-state.cjs
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run protected browser regression
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/sag40-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint25-smoke.mjs
+          node tests/sprint40-smoke.mjs

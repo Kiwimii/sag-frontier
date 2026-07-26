@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>S.A.G. Frontier — Ascension 0.7</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="S.A.G. Frontier Ascension — Arsenal, permanenter Skill Tree und Expeditionen der Star Atlas Germany Community.">
+  <script>try{if(localStorage.getItem('sag-frontier-intro-seen-v06')==='1')document.documentElement.classList.add('intro-seen')}catch{}</script>
+  <link rel="stylesheet" href="sprint05.css">
+  <link rel="stylesheet" href="sprint06-branding.css">
+  <link rel="stylesheet" href="sprint06-polish.css">
+  <link rel="stylesheet" href="sprint07.css">
+</head>
+<body data-version-title="S.A.G. FRONTIER // ASCENSION 0.7">
+<canvas id="game"></canvas>
+<div class="language-switch"><button id="langDe" class="active" type="button">DE</button><button id="langEn" type="button">EN</button></div>
+
+<section id="brandIntro" class="brand-intro" aria-label="S.A.G. Frontier Intro">
+  <div class="intro-stage">
+    <div class="intro-banner" aria-hidden="true"></div><div class="intro-vignette"></div>
+    <div class="intro-content"><div class="intro-logo" role="img" aria-label="S.A.G. Star Atlas Germany"></div><div class="frontier-wordmark">A S C E N S I O N</div><p id="introLead">Eine Expedition der Star Atlas Germany Community.</p><button id="enterHangarBtn" class="brand-primary" type="button">HANGAR BETRETEN</button><button id="skipIntroBtn" class="brand-ghost" type="button">INTRO ÜBERSPRINGEN</button></div>
+    <aside class="intro-kiwimi"><div class="kiwimi-portrait" aria-hidden="true"></div><div class="intro-kiwimi-copy"><span>KIWIMI // INSTRUKTOR</span><strong id="introKiwimiTitle">Willkommen, Pilot.</strong><p id="introKiwimiText">Ich führe dich durch den Hangar, deine Systeme und die Frontier.</p><div class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></aside>
+    <div class="intro-status"><span>SYSTEM ONLINE</span><span>ASCENSION PROTOCOL 0.7</span><span>REGION // S.A.G.</span></div>
+  </div>
+</section>
+
+<div id="hud" class="hidden">
+  <div class="hud-brand-lockup"><div class="hud-logo"></div><span>FRONTIER // COMBAT LINK</span></div>
+  <div class="hud"><div class="hud-left"><div id="gameTitle" class="title">S.A.G. FRONTIER // ASCENSION 0.7</div><div id="controlsHint" class="muted">WASD / Pfeiltasten · Leertaste Dash · E EMP · P Pause</div><div class="bar"><div id="hpFill" class="fill"></div></div><div id="hpText">HÜLLE 100 / 100</div><div id="shieldRow" class="hidden"><div class="bar"><div id="shieldFill" class="fill shield-fill"></div></div><div id="shieldText">SCHILD 0 / 0</div></div></div><div class="hud-right"><div id="scoreText">PUNKTE 000000</div><div id="timeText">ZEIT 00:00</div><div id="bestText">REKORD 000000</div><div id="waveText">SEKTOR 01 · WELLE 01</div><div id="comboText">KOMBO x1.0</div></div></div>
+  <div id="bossWrap" class="boss-wrap"><div class="bar"><div id="bossFill" class="fill"></div></div><div id="bossText" class="boss-text">WARDEN 100%</div></div>
+  <div class="bottom-left"><div id="levelText">LEVEL 01</div><div id="dashText">DASH BEREIT</div><div id="empText">EMP BEREIT</div></div>
+  <div class="bottom-right"><div id="objectiveText">NÄCHSTE WELLE 44s</div><div id="directiveText" class="directive">DIREKTIVE</div><div id="weaponText" class="weapon-status">IMPULSLASER</div><div id="majorStatus" class="major-status"></div></div>
+  <div class="xp-wrap"><div class="bar"><div id="xpFill" class="fill" style="width:0"></div></div><div id="xpText" class="xp-text">XP 0 / 34</div></div>
+  <div class="ability-stack"><button id="dashBtn" class="round-btn" type="button">DASH</button><button id="empBtn" class="round-btn emp-btn" type="button">EMP</button></div>
+  <aside id="kiwimiComms" class="kiwimi-comms" role="status" aria-live="polite" aria-atomic="true"><div class="kiwimi-comms-portrait"></div><div><span>KIWIMI // COM-LINK</span><p id="kiwimiCommsText">Systemverbindung stabil.</p></div></aside>
+</div>
+<div id="toast" class="toast">SYSTEM ONLINE</div>
+
+<section id="hangar" class="hangar">
+  <div class="hangar-shell">
+    <header class="brand-hero"><div class="brand-hero-bg"></div><div class="brand-hero-content"><div class="hero-logo"></div><div class="hero-title-wrap"><span>COMMUNITY EXPEDITION NETWORK</span><h1 id="hangarTitle">S.A.G. FRONTIER // HANGAR</h1><p id="hangarSubtitle">Rüste dein Schiff aus und bereite den nächsten Einsatz vor.</p></div><div class="wallet"><div class="currency"><span id="creditsValue">250</span> <i id="creditsLabel">CREDITS</i></div><div class="currency"><span id="coresValue">0</span> <i id="coresLabel">TECH-KERNE</i></div><div class="currency skill-currency"><span id="skillPointsValue">0</span> <i id="skillPointsLabel">SKILL-PUNKTE</i></div><div class="currency"><span id="bestValue">0</span> <i id="hangarBestLabel">REKORD</i></div></div></div></header>
+
+    <div class="hangar-workspace">
+      <main class="hangar-main">
+        <nav class="tabs"><button class="active" data-tab="deployment" id="tabDeployment">EINSATZ</button><button data-tab="weapons" id="tabWeapons">WAFFEN</button><button data-tab="ships" id="tabShips">SCHIFFE</button><button data-tab="modules" id="tabModules">MODULE</button><button data-tab="skills" id="tabSkills">SKILL TREE</button><button data-tab="data" id="tabData">SPIELSTAND</button></nav>
+        <div id="pageDeployment" class="tab-page active"><div class="section-heading"><span>MISSION CONTROL</span><h2 id="deploymentHeading">Bereit für die Frontier</h2></div><div class="loadout"><div class="loadout-visual"><div class="loadout-radar"></div><div id="shipIcon" class="ship-icon"></div><div class="ship-platform"></div></div><div class="loadout-data"><div class="loadout-slots"><div class="slot"><label id="shipSlotLabel">SCHIFF</label><b id="shipSlot">Vanguard</b></div><div class="slot"><label id="primarySlotLabel">PRIMÄRWAFFE</label><b id="primarySlot">Impulslaser</b></div><div class="slot"><label id="secondarySlotLabel">SEKUNDÄRWAFFE</label><b id="secondarySlot">Nicht ausgerüstet</b></div><div class="slot"><label id="moduleSlotLabel">MODUL</label><b id="moduleSlot">Zielcomputer</b></div></div><div class="economy-note" id="economyNote">Einsätze bringen Credits. Wardens und Eliteverbände liefern seltene Technologiekerne.</div><button id="startRunBtn" class="primary mission-launch" type="button">EINSATZ STARTEN</button></div></div></div>
+        <div id="pageWeapons" class="tab-page"><div class="section-heading"><span>ARSENAL // 6 SYSTEME</span><h2 id="weaponsHeading">Waffen konfigurieren</h2></div><div id="weaponGrid" class="grid arsenal-grid"></div></div>
+        <div id="pageShips" class="tab-page"><div class="section-heading"><span>FLEET BAY // 5 RAHMEN</span><h2 id="shipsHeading">Schiff auswählen</h2></div><div id="shipGrid" class="grid arsenal-grid"></div></div>
+        <div id="pageModules" class="tab-page"><div class="section-heading"><span>SYSTEM LAB // 6 MODULE</span><h2 id="modulesHeading">Module installieren</h2></div><div id="moduleGrid" class="grid arsenal-grid"></div></div>
+        <div id="pageSkills" class="tab-page"><div class="section-heading"><span>ASCENSION MATRIX</span><h2>Permanent Skill Tree</h2><p class="skill-tree-note">Skill-Punkte erhältst du nach ernsthaften Expeditionen. Die Boni sind dauerhaft, aber bewusst begrenzt.</p></div><div id="skillGrid" class="grid skill-grid"></div></div>
+        <div id="pageData" class="tab-page"><div class="section-heading"><span>ARCHIVE</span><h2 id="dataHeading">Spielstand sichern</h2></div><div class="data-box"><div class="card"><h3 id="exportTitle">Spielstand exportieren</h3><p id="exportText">Kopiere den Text und bewahre ihn als Sicherung auf.</p><textarea id="exportArea" readonly></textarea><div class="card-actions"><button id="refreshExportBtn" type="button">EXPORT AKTUALISIEREN</button></div></div><div class="card"><h3 id="importTitle">Spielstand importieren</h3><p id="importText">Füge einen zuvor exportierten Spielstand ein.</p><textarea id="importArea"></textarea><div class="card-actions"><button id="importBtn" type="button">IMPORTIEREN</button><button id="resetSaveBtn" class="danger" type="button">FORTSCHRITT ZURÜCKSETZEN</button></div><div id="dataNotice" class="notice"></div></div></div></div>
+      </main>
+
+      <aside id="kiwimiPanel" class="kiwimi-panel"><div class="kiwimi-panel-head"><div><span>COM-LINK 01</span><h2>KIWIMI // INSTRUKTOR</h2></div><i class="online-dot">ONLINE</i></div><div class="kiwimi-panel-portrait"><div class="portrait-scan"></div></div><div class="kiwimi-dialogue"><span id="kiwimiContext">HANGARPROTOKOLL</span><h3 id="kiwimiTitle">Willkommen im Hangar, Pilot.</h3><p id="kiwimiMessage">Hier stellst du dein Schiff, deine Waffen und deine Systeme für die nächste Expedition zusammen.</p></div><div class="tutorial-block"><div class="tutorial-title"><span id="tutorialTitle">ERSTE SCHRITTE</span><b id="tutorialProgress">0 / 4</b></div><ol id="tutorialList"><li id="tutorialStep1"><i>1</i><span>Schiffsdaten prüfen</span></li><li id="tutorialStep2"><i>2</i><span>Waffe prüfen oder ausrüsten</span></li><li id="tutorialStep3"><i>3</i><span>Modul prüfen oder installieren</span></li><li id="tutorialStep4"><i>4</i><span>Expedition starten</span></li></ol></div><blockquote id="kiwimiQuote">„Wissen ist dein Kompass. Entschlossenheit ist dein Antrieb.“</blockquote><button id="replayIntroBtn" class="replay-intro" type="button">INTRO ERNEUT ABSPIELEN</button></aside>
+    </div>
+    <div class="hangar-footer"><span id="progressHint" class="muted">Dauerhafte Boni bleiben bewusst moderat. Neue Waffen und Spielweisen sind der Hauptfortschritt.</span><span id="careerStats" class="muted"></span></div>
+  </div>
+</section>
+
+<div id="upgradeOverlay" class="overlay hidden"><div class="panel branded-panel"><div class="panel-kicker">KIWIMI // SYSTEMANALYSE</div><h2 id="upgradeTitle">SYSTEM-UPGRADE</h2><p id="upgradeSubtitle">Große Upgrades erscheinen zuverlässig mit Abstand.</p><div id="choices" class="choices"></div></div></div>
+<div id="pauseOverlay" class="overlay hidden"><div class="panel branded-panel"><div class="panel-kicker">S.A.G. COMBAT LINK</div><h2 id="pauseTitle">MISSION PAUSIERT</h2><p id="pauseText">Drücke P oder Escape, um fortzufahren.</p><button id="resumeBtn" class="primary" type="button">FORTSETZEN</button></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="panel branded-panel"><div class="panel-kicker">KIWIMI // AUSWERTUNG</div><h2 id="gameOverTitle">SIGNAL VERLOREN</h2><p id="finalText"></p><div class="summary-grid"><div class="stat"><b id="sumScore">0</b><span id="sumScoreLabel">PUNKTE</span></div><div class="stat"><b id="sumCredits">0</b><span id="sumCreditsLabel">CREDITS</span></div><div class="stat"><b id="sumCores">0</b><span id="sumCoresLabel">TECH-KERNE</span></div><div class="stat skill-stat"><b id="sumSkills">0</b><span id="sumSkillsLabel">SKILL-PUNKTE</span></div><div class="stat"><b id="sumKills">0</b><span id="sumKillsLabel">ABSCHÜSSE</span></div><div class="stat"><b id="sumBosses">0</b><span id="sumBossesLabel">WARDENS</span></div><div class="stat"><b id="sumLevel">1</b><span id="sumLevelLabel">LEVEL</span></div></div><button id="retryBtn" class="primary" type="button">NOCH EIN EINSATZ</button><button id="returnHangarBtn" class="secondary" type="button">ZURÜCK ZUM HANGAR</button></div></div>
+
+<script src="sprint07-source.js"></script>
+<script src="sprint06-branding.js"></script>
+<script src="sprint07-branding.js"></script>
+</body>
+</html>

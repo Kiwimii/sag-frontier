@@ -1,0 +1,95 @@
+name: Build and validate Sprint 07
+on:
+  pull_request:
+    branches: [live]
+permissions:
+  contents: write
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Sprint 05 source
+        run: |
+          test -s sprint05-source.js
+          echo "Runtime source: $(wc -c < sprint05-source.js) bytes"
+      - name: Repair build source
+        run: node tools/repair-build-sprint07.cjs
+      - name: Build Sprint 07 source
+        run: |
+          rm -f sprint07-build.failed sprint07-build.log
+          node tools/build-sprint07.cjs > sprint07-build.log 2>&1 || touch sprint07-build.failed
+          cat sprint07-build.log
+      - name: Sanitize generated runtime
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: node tools/sanitize-sprint07.cjs
+      - name: Make branding title version-aware
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const file = 'sprint06-branding.js';
+          let source = fs.readFileSync(file, 'utf8');
+          source = source.replace("const VERSION_TITLE = 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';", "const VERSION_TITLE = document.body?.dataset.versionTitle || 'S.A.G. FRONTIER // KIWIMI PROTOCOL 0.6';");
+          fs.writeFileSync(file, source);
+          NODE
+      - name: Validate JavaScript and regression guards
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: |
+          node --check sprint07-source.js
+          node --check sprint06-branding.js
+          node --check sprint07-branding.js
+          node --check tools/sanitize-sprint07.cjs
+          node --check tests/sprint07-smoke.mjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('sprint07-source.js', 'utf8');
+          const required = [
+            "const ready=lastMajorAt===0?elapsed>=45:elapsed-lastMajorAt>=65",
+            "if(waveClock>=44&&!boss)advanceWave();maybeMajorUpgrade();",
+            "weaponChipsDropped<6&&r<.18",
+            "boost.total<8",
+            "function drawShip(){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.invuln>0&&Math.floor(player.invuln*20)%2===0?.38:1;if(player.chipPulse>0)",
+            "for(const b of bullets){ctx.fillStyle=b.color||'#ffb35c'"
+          ];
+          for (const fragment of required) {
+            if (!source.includes(fragment)) throw new Error(`Missing regression guard: ${fragment}`);
+          }
+          const damage = source.match(/function damagePlayer\([^\n]+/u)?.[0] || '';
+          if (damage.includes('ctx.')) throw new Error('Rendering code leaked into damagePlayer');
+          const updateStart = source.indexOf('function update(dt){');
+          const updateEnd = source.indexOf('\nfunction updateHUD', updateStart);
+          const update = source.slice(updateStart, updateEnd);
+          if (update.includes("for(const b of bullets){ctx.fillStyle")) throw new Error('Projectile rendering leaked into update');
+          const drawStart = source.indexOf('function draw(){');
+          const drawEnd = source.indexOf('\nfunction loop', drawStart);
+          const draw = source.slice(drawStart, drawEnd);
+          if (!draw.includes("for(const b of bullets){ctx.fillStyle")) throw new Error('Projectile rendering missing from draw');
+          console.log('Sprint 0.7 regression guards passed');
+          NODE
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint07-build-diagnostics
+          path: |
+            sprint07-build.log
+            sprint07-build.failed
+            sprint07-source.js
+          if-no-files-found: ignore
+      - name: Commit generated runtime
+        if: ${{ !hashFiles('sprint07-build.failed') }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tools/build-sprint07.cjs tools/sanitize-sprint07.cjs sprint07-build.log sprint07-source.js sprint06-branding.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate validated Sprint 0.7 runtime'
+          git push origin HEAD:feat/live-sprint-07-progression
+      - name: Fail on build diagnostics
+        run: test ! -f sprint07-build.failed

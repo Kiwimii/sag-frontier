@@ -1,42 +1,41 @@
-# Godot Migration
+# Godot migration
 
 ## Decision
 
-S.A.G. Frontier uses Godot 4 as its gameplay runtime and exports to WebAssembly/WebGL for delivery inside WordPress.
+Godot 4 remains the future gameplay runtime. Build 0.41.1 remains the production runtime until Godot reaches verified content parity.
 
-The previous monolithic Canvas prototype remains a historical reference only. New gameplay work is implemented in Godot.
+This is a strangler migration: the current game stays playable while systems are moved behind explicit Godot services. There is no big-bang rewrite and no implicit removal of existing content.
 
-## Delivery architecture
+## Implemented foundation
 
-1. Godot project lives in `godot/`.
-2. `npm run export:web` exports the game into `wordpress/sag-frontier-game/public/game/`.
-3. The WordPress plugin exposes `[sag_frontier]` and keeps `[sag_voidrunner]` as a compatibility alias.
-4. A guarded iframe loader displays progress and explicit errors instead of leaving users on a black screen.
-5. `npm run build` packages the exported game and WordPress wrapper into `dist/sag-frontier-game.zip`.
+- `FrontierGameFlow` owns command, running, upgrade, route, pause and result states.
+- `FrontierSaveService` persists a schema version and loads existing progress keys.
+- `FrontierCombatDirector` owns spawning, target selection, firing and entity limits.
+- `FrontierCatalog` owns route and upgrade definitions.
+- `main.gd` coordinates these systems and has been reduced from 792 to roughly 640 lines.
+- The deterministic full-flow test covers launch, movement, pause, upgrades, five sectors, success, failure, persistence and mobile entity caps.
 
-## Current verification level
+## Parity gate
 
-The repository validates source syntax and export wiring in CI. It does not yet claim a successful Godot web binary export because the project has not been executed in a Godot 4 build environment through this connector.
+Godot becomes production only when automated or documented checks cover:
 
-Before merging a release, complete these checks locally or in a dedicated Godot CI runner:
+- action combat and all current loadouts;
+- Command progression and contracts;
+- Galia map, trade, ship, events, reputation and facilities;
+- SAG campaign, faction narrative and Kiwimi depth;
+- existing savegame migration;
+- keyboard, touch and narrow-screen flows;
+- Pages deployment and WordPress packaging.
 
-- Open `godot/project.godot` in Godot 4.
-- Run the main scene.
-- Test keyboard movement.
-- Test drag movement using device emulation or a touch device.
-- Export the `Web` preset.
-- Load the generated `index.html` through a web server, not directly from the filesystem.
-- Install the generated WordPress ZIP on a staging site.
-- Confirm that missing game files produce the visible loader error.
+Until that gate passes, the protected web runtime remains the default plugin payload.
 
-## Browser constraints
+## Export path
 
-The initial web preset deliberately avoids thread support. This reduces hosting requirements because cross-origin isolation headers are not required for the first playable build. Threaded export can be reconsidered after performance profiling.
+```bash
+npm run export:web
+npm run build
+```
 
-## Next implementation checkpoint
+The export writes to `wordpress/sag-frontier-game/public/game/`. The plugin builder detects it automatically. If no export exists, `npm run build` uses `web/legacy-041/`.
 
-- Add player health and weapon components.
-- Add projectile pooling.
-- Add the first enemy archetype and spawner.
-- Add a deterministic smoke-test arena.
-- Only after that, expand to elites, upgrades and boss phases.
+The web preset remains unthreaded for broad hosting compatibility. Threading should be considered only after measurement demonstrates a clear benefit and hosting headers are controlled.

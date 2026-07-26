@@ -1,53 +1,53 @@
 # Architecture
 
-## Delivery model
+## One repository source, two controlled runtimes
 
-S.A.G. Frontier is developed as a browser game packaged inside a WordPress plugin. WordPress is responsible for page integration, asset loading and future authenticated API endpoints. The game runtime must remain independent from Elementor and should only require a mount element rendered by the shortcode.
+`main` is the only development and deployment source.
 
-## Runtime boundaries
+| Runtime | Purpose | Production status |
+|---|---|---|
+| `web/legacy-041/` | Complete protected browser release and content reference | Current production |
+| `godot/` | Modular destination for future gameplay and content | Migration target |
 
-The target runtime is split into these layers:
+The former `live` branch is retained only as history. GitHub Pages no longer checks out another branch during a `main` deployment.
+
+## Delivery paths
+
+- GitHub Pages validates and publishes `web/legacy-041/`.
+- The WordPress builder packages an existing Godot web export when available.
+- Without a Godot export, the same protected 0.41.1 runtime is packaged into the plugin.
+- Both `[sag_frontier]` and `[sag_voidrunner]` remain supported.
+
+## Godot boundaries
 
 ```text
-bootstrap     WordPress-provided configuration and mount lifecycle
-core          clock, fixed-step loop, scene lifecycle and events
-input         keyboard, pointer and virtual controls
-render        canvas sizing, camera and drawing
-entities      player, enemies, projectiles and pickups
-combat        weapons, damage, effects and encounters
-content       factions, enemy definitions and upgrades
-ui            HUD, menus, tutorial and upgrade selection
-save          versioned local persistence and migrations
+main.gd                 scene coordination and UI wiring
+services/game_flow.gd   authoritative screen/run state
+services/save_service.gd versioned persistence
+services/combat_director.gd spawning, targeting, fire and entity limits
+content/frontier_catalog.gd route and upgrade data
+player/enemy/projectile focused entity behavior
 ```
 
-Sprint 1 may temporarily retain a monolithic JavaScript file while tests and interfaces are established. Sprint 2 will extract combat behavior behind stable modules instead of adding more global state.
+New features should extend these boundaries or add focused services/resources. They should not reintroduce unrelated logic into `main.gd`.
+
+## Protected web runtime
+
+The browser release remains a compatibility layer during migration. Its `release-manifest.json` records every imported file and hash. `npm run check:web` verifies:
+
+- full file inventory and hashes;
+- JavaScript syntax;
+- all CJS regressions;
+- protected story/game feature tokens;
+- local HTML asset references.
+
+The runtime may receive critical fixes, but it is not the place for another sequence of patch sprints.
 
 ## Engineering rules
 
-- Mobile-first layout and pointer input are mandatory.
-- The canvas backing resolution must account for device pixel ratio while limiting excessive resolution on weak devices.
-- Gameplay advances on a fixed timestep; rendering may interpolate or run independently.
-- Reusable projectiles, particles and enemies should use pools where allocation pressure becomes measurable.
-- Save data must include a schema version and tolerate corrupt or outdated local storage.
-- WordPress globals are read only during bootstrap and never throughout gameplay logic.
-- Every release must be buildable into an installable plugin ZIP from the repository.
-
-## Supported baseline
-
-- Current Chrome, Edge, Firefox and Safari
-- Current Android Chrome
-- Current iOS Safari
-- WordPress 6.0+
-- PHP 7.4+
-
-## Sprint 2 design direction
-
-Combat is organized around data-driven definitions:
-
-- weapons specify cadence, projectile behavior and damage model;
-- enemies specify movement behavior, attacks and encounter weight;
-- encounters control spawning and completion;
-- bosses use explicit phases with readable telegraphs;
-- run upgrades modify player stats through a constrained modifier system.
-
-This avoids hard-coding every new weapon or enemy directly into the main loop.
+- Mobile-first controls and layout are mandatory.
+- Save formats are versioned and migrations preserve valid player state.
+- UI renders state; core operations return structured results.
+- Combat entity counts remain bounded for mobile performance.
+- Content definitions stay separate from coordinating code.
+- Every release must build reproducibly for Pages and WordPress.

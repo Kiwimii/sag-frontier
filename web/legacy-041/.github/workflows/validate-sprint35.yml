@@ -1,0 +1,21 @@
+name: Validate Sprint 35
+on:
+  pull_request:
+    paths:
+      - 'sprint2*.js'
+      - 'sprint3*.js'
+      - 'sprint35.html'
+      - 'sprint35-galia.css'
+      - 'tests/sprint35-static.cjs'
+      - '.github/workflows/validate-sprint35.yml'
+  workflow_dispatch:
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tests/sprint35-static.cjs
+      - run: node tests/sprint25-static.cjs

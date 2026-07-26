@@ -1,114 +1,15 @@
 extends Node2D
 
-const PROJECTILE_SCENE: PackedScene = preload("res://scenes/projectile.tscn")
-const ENEMY_SCENE: PackedScene = preload("res://scenes/enemy.tscn")
+const GameFlow = preload("res://scripts/services/game_flow.gd")
+const SaveService = preload("res://scripts/services/save_service.gd")
+const CombatDirector = preload("res://scripts/services/combat_director.gd")
+const ContentCatalog = preload("res://scripts/content/frontier_catalog.gd")
 const SAVE_PATH := "user://frontier_save.cfg"
 const MAX_SECTORS := 5
 const BASE_SECTOR_DURATION := 26.0
 const MAX_META_LEVEL := 5
-const MAX_ACTIVE_ENEMIES := 90
-const MAX_ACTIVE_PROJECTILES := 100
-
-const UPGRADE_CATALOG: Array[Dictionary] = [
-	{"id": "rapid_fire", "title": "OVERCLOCKED ARRAY", "description": "Weapons fire 18% faster."},
-	{"id": "heavy_laser", "title": "HEAVY LASER", "description": "+1 projectile damage."},
-	{"id": "thrusters", "title": "VECTOR THRUSTERS", "description": "+45 movement speed."},
-	{"id": "multishot", "title": "SPLIT LANCE", "description": "+1 simultaneous projectile."},
-	{"id": "plating", "title": "REACTOR PLATING", "description": "+20 maximum hull and repair 20."},
-	{"id": "accelerator", "title": "MAGNETIC ACCELERATOR", "description": "+140 projectile speed."},
-	{"id": "repair", "title": "FIELD REPAIRS", "description": "Restore 35 hull immediately."}
-]
-
-const ROUTE_CATALOG: Array[Dictionary] = [
-	{
-		"id": "mud_convoy",
-		"faction": "MUD",
-		"kind": "DISTRESS",
-		"title": "BROKEN CONVOY",
-		"description": "A MUD civilian convoy is pinned inside a debris field.",
-		"reward": "+18 max hull, full repair, +60 score",
-		"risk": 1.08,
-		"effect": "mud_hull",
-		"result": "The convoy survives. MUD engineers reinforce your outer plating before you depart."
-	},
-	{
-		"id": "mud_salvage",
-		"faction": "MUD",
-		"kind": "SALVAGE",
-		"title": "IRON HARVEST",
-		"description": "A stripped refinery still broadcasts an obsolete S.A.G. claim code.",
-		"reward": "+2 Frontier Data at run end, +90 score",
-		"risk": 1.14,
-		"effect": "mud_salvage",
-		"result": "The refinery yields intact survey cores. Command marks them for permanent research."
-	},
-	{
-		"id": "oni_signal",
-		"faction": "ONI",
-		"kind": "ANOMALY",
-		"title": "LIVING SIGNAL",
-		"description": "An ONI chorus is trapped inside a signal that should not be alive.",
-		"reward": "8% faster fire rate, +80 projectile speed",
-		"risk": 1.12,
-		"effect": "oni_precision",
-		"result": "The chorus aligns with your targeting lattice. Every shot now follows the same impossible rhythm."
-	},
-	{
-		"id": "oni_garden",
-		"faction": "ONI",
-		"kind": "RESCUE",
-		"title": "GLASS GARDEN",
-		"description": "A drifting ONI bio-vault is losing atmosphere around its seed archives.",
-		"reward": "Repair 30 hull, +1 projectile count",
-		"risk": 1.18,
-		"effect": "oni_flux",
-		"result": "The archive survives. Its caretakers gift you a refractive weapon node grown from living crystal."
-	},
-	{
-		"id": "ustur_forge",
-		"faction": "USTUR",
-		"kind": "PACT",
-		"title": "SILENT FORGE",
-		"description": "A dormant Ustur forge offers one exchange: power for proof of purpose.",
-		"reward": "+1 projectile damage, +75 score",
-		"risk": 1.20,
-		"effect": "ustur_weapons",
-		"result": "The forge accepts your combat record. A cold new emitter locks into the weapon spine."
-	},
-	{
-		"id": "ustur_clock",
-		"faction": "USTUR",
-		"kind": "PURSUIT",
-		"title": "CLOCKWORK HUNT",
-		"description": "Ustur scouts request a joint strike against a Null Cartel relay swarm.",
-		"reward": "12% faster fire rate, +125 score",
-		"risk": 1.28,
-		"effect": "ustur_overclock",
-		"result": "The relay swarm collapses. Ustur timing code pushes your weapon cycle past safe doctrine."
-	},
-	{
-		"id": "frontier_cache",
-		"faction": "S.A.G.",
-		"kind": "CACHE",
-		"title": "OLD FRONTIER CACHE",
-		"description": "A forgotten S.A.G. beacon opens only for a current expedition signature.",
-		"reward": "Repair 25 hull, +150 score",
-		"risk": 1.05,
-		"effect": "frontier_cache",
-		"result": "Inside: spare cells, field notes and one message — 'The frontier remembers who returns.'"
-	},
-	{
-		"id": "null_signal",
-		"faction": "UNKNOWN",
-		"kind": "BLACK SIGNAL",
-		"title": "THE HOLLOW STAR",
-		"description": "A forbidden route cuts directly through the Null Cartel sensor lattice.",
-		"reward": "+1 damage, +3 Frontier Data at run end",
-		"risk": 1.38,
-		"effect": "null_signal",
-		"result": "You cross unseen, but something crosses with you. The recovered signal contains coordinates to the core."
-	}
-]
+const UPGRADE_CATALOG: Array[Dictionary] = ContentCatalog.UPGRADE_CATALOG
+const ROUTE_CATALOG: Array[Dictionary] = ContentCatalog.ROUTE_CATALOG
 
 @onready var player = $Player
 @onready var enemies: Node2D = $Enemies
@@ -138,12 +39,26 @@ var sector_elapsed := 0.0
 var sector_time_left := BASE_SECTOR_DURATION
 var spawn_clock := 0.2
 var shot_clock := 0.0
-var game_running := false
-var paused_by_player := false
-var choosing_upgrade := false
-var choosing_route := false
-var run_finalized := false
 var transmission_timer := 0.0
+var flow = GameFlow.new()
+var save_service = SaveService.new(SAVE_PATH)
+var combat_director = CombatDirector.new()
+
+var game_running: bool:
+	get:
+		return flow.is_run_active()
+var paused_by_player: bool:
+	get:
+		return flow.is_paused()
+var choosing_upgrade: bool:
+	get:
+		return flow.is_choosing_upgrade()
+var choosing_route: bool:
+	get:
+		return flow.is_choosing_route()
+var run_finalized: bool:
+	get:
+		return flow.is_finalized()
 
 var current_sector := 1
 var sectors_cleared := 0
@@ -234,11 +149,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_toggle_pause()
 
 func _show_start_screen() -> void:
-	game_running = false
-	paused_by_player = false
-	choosing_upgrade = false
-	choosing_route = false
-	run_finalized = false
+	flow.transition(GameFlow.State.COMMAND)
 	_clear_combat_nodes()
 	player.visible = false
 	player.set_physics_process(false)
@@ -276,16 +187,12 @@ func _start_game() -> void:
 	projectile_count = 1
 	selected_upgrade_ids.clear()
 	selected_route_ids.clear()
-	paused_by_player = false
-	choosing_upgrade = false
-	choosing_route = false
-	run_finalized = false
 	start_panel.visible = false
 	route_panel.visible = false
 	upgrade_panel.visible = false
 	pause_panel.visible = false
 	game_over_panel.visible = false
-	game_running = true
+	flow.transition(GameFlow.State.RUNNING)
 	player.reset_player(true)
 	_apply_meta_loadout()
 	_set_world_paused(false)
@@ -306,79 +213,28 @@ func _apply_meta_loadout() -> void:
 		projectile_damage += floori(float(meta_weapons_level) / 2.0)
 
 func _spawn_enemy() -> void:
-	if not game_running or paused_by_player or choosing_upgrade or choosing_route or run_finalized:
+	if not flow.can_simulate():
 		return
-	if enemies.get_child_count() >= MAX_ACTIVE_ENEMIES:
-		return
-	var enemy = ENEMY_SCENE.instantiate()
-	if enemy == null:
-		push_error("Enemy scene could not be instantiated")
-		return
-	var viewport_size: Vector2 = get_viewport_rect().size
-	var side: int = randi() % 4
-	match side:
-		0: enemy.global_position = Vector2(randf_range(0.0, viewport_size.x), -45.0)
-		1: enemy.global_position = Vector2(viewport_size.x + 45.0, randf_range(0.0, viewport_size.y))
-		2: enemy.global_position = Vector2(randf_range(0.0, viewport_size.x), viewport_size.y + 45.0)
-		_: enemy.global_position = Vector2(-45.0, randf_range(0.0, viewport_size.y))
-	var difficulty: float = 1.0 + float(current_sector - 1) * 0.18 + minf(elapsed / 240.0, 0.7)
-	difficulty *= sector_spawn_modifier
-	enemy.setup(player, difficulty, _pick_enemy_profile())
-	enemy.destroyed.connect(_on_enemy_destroyed)
-	enemy.reached_player.connect(_on_enemy_reached_player)
-	enemies.add_child(enemy)
-
-func _pick_enemy_profile() -> String:
-	var roll: float = randf()
-	if current_sector >= 5 and roll < 0.14:
-		return "juggernaut"
-	if current_sector >= 3 and roll < 0.28:
-		return "tank"
-	if current_sector >= 2 and roll < 0.58:
-		return "rusher"
-	if roll < 0.34:
-		return "scout"
-	return "drone"
+	combat_director.spawn_enemy(
+		enemies,
+		player,
+		get_viewport_rect().size,
+		current_sector,
+		elapsed,
+		sector_spawn_modifier,
+		_on_enemy_destroyed,
+		_on_enemy_reached_player
+	)
 
 func _auto_fire() -> void:
-	if projectiles.get_child_count() >= MAX_ACTIVE_PROJECTILES:
-		return
-	var target: Node2D = _nearest_enemy()
-	if target == null:
-		return
-	var player_position: Vector2 = player.global_position
-	var base_direction: Vector2 = player_position.direction_to(target.global_position)
-	var spread_step: float = deg_to_rad(8.0)
-	var available_slots: int = maxi(0, MAX_ACTIVE_PROJECTILES - projectiles.get_child_count())
-	var shots_to_fire: int = mini(projectile_count, available_slots)
-	for index: int in range(shots_to_fire):
-		var centered_index: float = float(index) - float(shots_to_fire - 1) * 0.5
-		var projectile = PROJECTILE_SCENE.instantiate()
-		if projectile == null:
-			continue
-		projectile.setup(
-			player_position,
-			base_direction.rotated(centered_index * spread_step),
-			projectile_damage,
-			projectile_speed
-		)
-		projectiles.add_child(projectile)
-
-func _nearest_enemy() -> Node2D:
-	var nearest: Node2D = null
-	var best_distance_sq: float = INF
-	var player_position: Vector2 = player.global_position
-	for child: Node in enemies.get_children():
-		if not is_instance_valid(child) or child.is_queued_for_deletion():
-			continue
-		var enemy_node: Node2D = child as Node2D
-		if enemy_node == null:
-			continue
-		var distance_sq: float = player_position.distance_squared_to(enemy_node.global_position)
-		if distance_sq < best_distance_sq:
-			best_distance_sq = distance_sq
-			nearest = enemy_node
-	return nearest
+	combat_director.auto_fire(
+		projectiles,
+		enemies,
+		player,
+		projectile_count,
+		projectile_damage,
+		projectile_speed
+	)
 
 func _on_enemy_destroyed(points: int, xp_amount: int) -> void:
 	if not game_running or run_finalized:
@@ -406,7 +262,7 @@ func _gain_xp(amount: int) -> void:
 func _show_upgrade_choices() -> void:
 	if run_finalized or not game_running:
 		return
-	choosing_upgrade = true
+	flow.transition(GameFlow.State.UPGRADE)
 	upgrade_panel.visible = true
 	_set_world_paused(true)
 	var pool: Array = UPGRADE_CATALOG.duplicate(true)
@@ -427,7 +283,7 @@ func _on_upgrade_selected(index: int) -> void:
 	if pending_level_ups > 0:
 		call_deferred("_show_upgrade_choices")
 	else:
-		choosing_upgrade = false
+		flow.transition(GameFlow.State.RUNNING)
 		_set_world_paused(false)
 	_update_hud()
 
@@ -450,7 +306,7 @@ func _complete_sector() -> void:
 	if current_sector >= MAX_SECTORS:
 		_finish_run(true)
 		return
-	choosing_route = true
+	flow.transition(GameFlow.State.ROUTE)
 	route_panel.visible = true
 	_set_world_paused(true)
 	_prepare_route_choices()
@@ -506,7 +362,7 @@ func _on_route_selected(index: int) -> void:
 	sector_time_left = BASE_SECTOR_DURATION + float(current_sector - 1) * 2.0
 	spawn_clock = 0.25
 	shot_clock = 0.0
-	choosing_route = false
+	flow.transition(GameFlow.State.RUNNING)
 	route_panel.visible = false
 	_set_world_paused(false)
 	_show_transmission("%s // %s" % [route["faction"], route["title"]], String(route["result"]), 7.0)
@@ -565,15 +421,17 @@ func _show_transmission(source: String, message: String, duration: float) -> voi
 	transmission_timer = maxf(0.0, duration)
 
 func _toggle_pause() -> void:
-	if not game_running or choosing_upgrade or choosing_route or game_over_panel.visible or start_panel.visible or run_finalized:
+	if not flow.can_toggle_pause() or game_over_panel.visible or start_panel.visible:
 		return
-	paused_by_player = not paused_by_player
+	flow.transition(
+		GameFlow.State.RUNNING if paused_by_player else GameFlow.State.PAUSED
+	)
 	pause_panel.visible = paused_by_player
 	_set_world_paused(paused_by_player)
 
 func _resume_game() -> void:
 	if paused_by_player and game_running and not run_finalized:
-		paused_by_player = false
+		flow.transition(GameFlow.State.RUNNING)
 		pause_panel.visible = false
 		_set_world_paused(false)
 
@@ -602,11 +460,7 @@ func _on_player_died() -> void:
 func _finish_run(success: bool) -> void:
 	if run_finalized:
 		return
-	run_finalized = true
-	game_running = false
-	paused_by_player = false
-	choosing_upgrade = false
-	choosing_route = false
+	flow.transition(GameFlow.State.RESULT)
 	player.visible = false
 	player.set_physics_process(false)
 	player.set_process_unhandled_input(false)
@@ -726,27 +580,25 @@ func _update_hud() -> void:
 	]
 
 func _load_progress() -> void:
-	var config := ConfigFile.new()
-	if config.load(SAVE_PATH) != OK:
-		return
-	high_score = maxi(0, int(config.get_value("scores", "high_score", 0)))
-	frontier_data = maxi(0, int(config.get_value("meta", "frontier_data", 0)))
-	lifetime_data = maxi(0, int(config.get_value("meta", "lifetime_data", 0)))
-	completed_runs = maxi(0, int(config.get_value("meta", "completed_runs", 0)))
-	meta_hull_level = clampi(int(config.get_value("meta", "hull_level", 0)), 0, MAX_META_LEVEL)
-	meta_weapons_level = clampi(int(config.get_value("meta", "weapons_level", 0)), 0, MAX_META_LEVEL)
-	meta_thrusters_level = clampi(int(config.get_value("meta", "thrusters_level", 0)), 0, MAX_META_LEVEL)
+	var progress: Dictionary = save_service.load_progress(MAX_META_LEVEL)
+	high_score = int(progress.high_score)
+	frontier_data = int(progress.frontier_data)
+	lifetime_data = int(progress.lifetime_data)
+	completed_runs = int(progress.completed_runs)
+	meta_hull_level = int(progress.hull_level)
+	meta_weapons_level = int(progress.weapons_level)
+	meta_thrusters_level = int(progress.thrusters_level)
 
 func _save_progress() -> void:
-	var config := ConfigFile.new()
-	config.set_value("scores", "high_score", high_score)
-	config.set_value("meta", "frontier_data", frontier_data)
-	config.set_value("meta", "lifetime_data", lifetime_data)
-	config.set_value("meta", "completed_runs", completed_runs)
-	config.set_value("meta", "hull_level", meta_hull_level)
-	config.set_value("meta", "weapons_level", meta_weapons_level)
-	config.set_value("meta", "thrusters_level", meta_thrusters_level)
-	var save_result: Error = config.save(SAVE_PATH)
+	var save_result: Error = save_service.save_progress({
+		"high_score": high_score,
+		"frontier_data": frontier_data,
+		"lifetime_data": lifetime_data,
+		"completed_runs": completed_runs,
+		"hull_level": meta_hull_level,
+		"weapons_level": meta_weapons_level,
+		"thrusters_level": meta_thrusters_level,
+	})
 	if save_result != OK:
 		push_error("Could not save Frontier progress: %s" % error_string(save_result))
 
@@ -766,10 +618,7 @@ func _register_key_action(action_name: StringName, keys: Array[int]) -> void:
 			InputMap.action_add_event(action_name, event)
 
 func _clear_combat_nodes() -> void:
-	for child: Node in enemies.get_children():
-		child.queue_free()
-	for child: Node in projectiles.get_children():
-		child.queue_free()
+	combat_director.clear(enemies, projectiles)
 
 func _on_viewport_size_changed() -> void:
 	var viewport_size: Vector2 = get_viewport_rect().size

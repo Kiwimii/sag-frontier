@@ -1,0 +1,72 @@
+name: Validate Recruitment Campaign 0.19
+
+on:
+  pull_request:
+    branches:
+      - live
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sprint19-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout proposed Recruitment Campaign build
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate JavaScript and static integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s sprint13.html
+          test -s sprint14.html
+          test -s sprint19.html
+          for file in \
+            sprint15-story-core.js \
+            sprint15-cinematic.js \
+            sprint16-lore-kiwimi.js \
+            sprint17-campaign.js \
+            sprint18-world-events.js \
+            sprint19-finale.js \
+            tests/sprint19-story.cjs \
+            tests/sprint19-static.cjs \
+            tests/sprint19-smoke.mjs; do
+            test -s "$file"
+            node --check "$file"
+          done
+          # 0.19 remains a supported direct build even when the public entry advances.
+          grep -q 'Recruitment Campaign 0.19' sprint19.html
+          node tests/sprint13-static.cjs
+          node tests/sprint14-static.cjs
+          node tests/sprint14-progression.cjs
+          node tests/sprint19-static.cjs
+          node tests/sprint19-story.cjs
+
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run browser regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/sag19-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs
+          node tests/sprint14-smoke.mjs
+          node tests/sprint19-smoke.mjs

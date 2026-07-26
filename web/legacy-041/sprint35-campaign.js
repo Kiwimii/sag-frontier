@@ -1,0 +1,105 @@
+(() => {
+  const G = window.SAGGalia;
+  G.register("campaign", [
+    {
+      id: "signal",
+      chapter: "I",
+      title: "Das schwarze Signal",
+      text: "Ein Signal aus Echo Colony enthält Fragmente alter Kolonieprotokolle. Herkunft und Absicht sind unklar.",
+      choices: [
+        {
+          label: "Als unbestätigte Hypothese archivieren",
+          result:
+            "SAG trennt Beleg und Vermutung. NODE-9 unterstützt die Analyse.",
+          effect: { "rep:SAG": 3, "rep:USTUR": 2, method: "evidence" },
+        },
+        {
+          label: "Sofort öffentlich warnen",
+          result:
+            "Die Warnung erzeugt Aufmerksamkeit, aber auch Zweifel an der Datenqualität.",
+          effect: { "rep:NEUTRAL": 2, "rep:SAG": -1, method: "alarm" },
+        },
+      ],
+    },
+    {
+      id: "corridor",
+      chapter: "II",
+      title: "Der fragile Korridor",
+      text: "Versorgungsflüge nach Jorvik werden blockiert. Keine Seite beansprucht offiziell Verantwortung.",
+      choices: [
+        {
+          label: "Neutralen Hilfskonvoi organisieren",
+          result:
+            "Nahrung erreicht Jorvik. Der Council registriert SAG als stabilisierenden Partner.",
+          effect: { "rep:COUNCIL": 4, "rep:NEUTRAL": 4, path: "relief" },
+        },
+        {
+          label: "Eskorte gegen Bezahlung anbieten",
+          result:
+            "Der Korridor öffnet sich, doch die lokale Bevölkerung zweifelt an SAGs Motivation.",
+          effect: { "rep:MUD": 2, "rep:NEUTRAL": -1, path: "contract" },
+        },
+      ],
+    },
+    {
+      id: "archive",
+      chapter: "III",
+      title: "Die gelöschte Kolonie",
+      text: "Elen Rook findet Beweise, dass Teile des Echo-Archivs nachträglich verändert wurden.",
+      choices: [
+        {
+          label: "Daten mit allen Fraktionen spiegeln",
+          result:
+            "Manipulation wird erschwert. ONI und Ustur bestätigen Teilfragmente.",
+          effect: { "rep:ONI": 3, "rep:USTUR": 3, archive: "shared" },
+        },
+        {
+          label: "Beweise im SAG-Archiv sichern",
+          result:
+            "SAG behält Kontrolle, muss aber Unabhängigkeit und Transparenz erklären.",
+          effect: { "rep:SAG": 3, archive: "internal" },
+        },
+      ],
+    },
+    {
+      id: "claim",
+      chapter: "IV",
+      title: "Kein Besitzanspruch",
+      text: "Ein Investor bietet SAG Exklusivrechte an Echo Colony im Austausch gegen militärische Absicherung.",
+      choices: [
+        {
+          label: "Exklusivanspruch ablehnen",
+          result:
+            "SAG schützt Zugang und Forschung, ohne eine vierte Fraktionsmacht zu spielen.",
+          effect: { "rep:SAG": 5, "rep:COUNCIL": 4, claim: "rejected" },
+        },
+        {
+          label: "Zeitlich begrenzte Verwaltung prüfen",
+          result:
+            "Ressourcen werden verfügbar, aber die freien Kolonien reagieren skeptisch.",
+          effect: { credits: 400, "rep:NEUTRAL": -3, claim: "temporary" },
+        },
+      ],
+    },
+    {
+      id: "council",
+      chapter: "V",
+      title: "Der gemeinsame Rat",
+      text: "Die gesammelten Entscheidungen bestimmen, wie SAG in der Frontier wahrgenommen wird.",
+      choices: [
+        {
+          label: "Charta: Freiheit und Verantwortung",
+          result:
+            "SAG tritt als unabhängige, friedliche und verlässliche DAC auf. Die Frontier bleibt offen.",
+          effect: { "rep:SAG": 8, ending: "charter" },
+        },
+        {
+          label: "Charta: Wachstum vor Zurückhaltung",
+          result:
+            "SAG gewinnt Einfluss, trägt aber höhere politische Erwartungen.",
+          effect: { "rep:MUD": 3, "rep:ONI": 3, ending: "growth" },
+        },
+      ],
+    },
+  ]);
+})();

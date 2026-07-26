@@ -1,0 +1,89 @@
+import assert from 'node:assert/strict';
+import { createReadStream } from 'node:fs';
+import { stat } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { chromium } from 'playwright';
+
+const runtimeRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const contentTypes = new Map([
+  ['.css', 'text/css; charset=utf-8'],
+  ['.html', 'text/html; charset=utf-8'],
+  ['.js', 'text/javascript; charset=utf-8'],
+  ['.json', 'application/json; charset=utf-8'],
+  ['.txt', 'text/plain; charset=utf-8'],
+]);
+
+const server = createServer(async (request, response) => {
+  try {
+    const requestPath = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    const relative = requestPath === '/' ? 'index.html' : requestPath.replace(/^\/+/, '');
+    const absolute = path.resolve(runtimeRoot, relative);
+    if (!absolute.startsWith(`${runtimeRoot}${path.sep}`) && absolute !== path.join(runtimeRoot, 'index.html')) {
+      response.writeHead(403).end();
+      return;
+    }
+    const details = await stat(absolute);
+    if (!details.isFile()) throw new Error('Not a file');
+    response.writeHead(200, {
+      'content-type': contentTypes.get(path.extname(absolute)) || 'application/octet-stream',
+      'cache-control': 'no-store',
+    });
+    createReadStream(absolute).pipe(response);
+  } catch {
+    response.writeHead(404).end();
+  }
+});
+
+await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+const address = server.address();
+const browser = await chromium.launch({ headless: true });
+
+try {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'networkidle' });
+
+  const galiaFrame = page.frames().find((frame) => frame.url().includes('sprint35.html'));
+  assert.ok(galiaFrame, 'current 0.41 wrapper must load the Galia runtime');
+  await galiaFrame.locator('#galiaToggle').click({ force: true });
+  await galiaFrame.locator('#galiaShell:not(.g-hidden)').waitFor();
+
+  await galiaFrame.locator('.g-tab[data-tab="ship"]').click({ force: true });
+  await galiaFrame.locator('[data-galia-services]').waitFor({ state: 'visible' });
+  await galiaFrame.locator('text=3 / 12').waitFor({ state: 'visible' });
+
+  await galiaFrame.locator('.g-tab[data-tab="map"]').click({ force: true });
+  assert.equal(
+    await galiaFrame.locator('[data-action="travel:jorvik"]').isDisabled(),
+    true,
+    'undiscovered sectors must be disabled on mobile',
+  );
+  await galiaFrame.locator('[data-action="travel:cinder"]').click({ force: true });
+  assert.equal(
+    await galiaFrame.locator('[data-action="travel:saand"]').isDisabled(),
+    false,
+    'travelling a valid route must reveal the next linked sector',
+  );
+
+  const campaignResult = await galiaFrame.evaluate(() => {
+    const game = window.SAGGalia;
+    game.state.campaignStep = 3;
+    const before = game.state.credits;
+    const result = game.chooseCampaign(1);
+    return {
+      ok: result.ok,
+      delta: game.state.credits - before,
+      creditFlag: Object.hasOwn(game.state.flags, 'credits'),
+    };
+  });
+  assert.deepEqual(campaignResult, { ok: true, delta: 400, creditFlag: false });
+
+  await galiaFrame.locator('[data-kiwimi-depth]').waitFor({ state: 'visible' });
+  assert.equal(await galiaFrame.locator('[data-kiwimi-depth]').count(), 1);
+  console.log('Sprint 41 mobile browser regression passed');
+} finally {
+  await browser.close();
+  await new Promise((resolve) => server.close(resolve));
+}
