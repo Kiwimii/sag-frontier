@@ -1,0 +1,22 @@
+name: Validate Sprint 41
+on:
+  pull_request:
+    paths:
+      - 'sprint41*'
+      - 'tests/sprint41-static.cjs'
+      - '.github/workflows/validate-sprint41.yml'
+  workflow_dispatch:
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --check sprint41-kiwimi-depth.js
+          node --check tests/sprint41-static.cjs
+          node tests/sprint41-static.cjs
+          node tests/sprint40-state.cjs
+          node tests/sprint35-static.cjs
