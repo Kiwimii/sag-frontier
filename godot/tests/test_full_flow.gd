@@ -1,5 +1,8 @@
 extends SceneTree
 
+const SaveService = preload("res://scripts/services/save_service.gd")
+const GameFlow = preload("res://scripts/services/game_flow.gd")
+
 var failures := 0
 
 func _initialize() -> void:
@@ -12,7 +15,73 @@ func _check(condition: bool, message: String) -> void:
 	failures += 1
 	push_error("[FLOW FAIL] %s" % message)
 
+func _remove_user_file(path: String) -> void:
+	var absolute_path: String = ProjectSettings.globalize_path(path)
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(absolute_path)
+
+func _test_flow_transitions() -> void:
+	var flow = GameFlow.new()
+	_check(not flow.transition(GameFlow.State.RESULT), "invalid command-to-result transition is rejected")
+	_check(flow.state == GameFlow.State.COMMAND, "rejected transition preserves the current state")
+	_check(flow.transition(GameFlow.State.RUNNING), "command can start a run")
+	_check(flow.transition(GameFlow.State.PAUSED), "running can pause")
+	_check(flow.transition(GameFlow.State.RUNNING), "paused can resume")
+	_check(flow.transition(GameFlow.State.RESULT), "running can finish")
+	_check(flow.transition(GameFlow.State.COMMAND), "result can return to command")
+
+func _test_save_migration() -> void:
+	var canonical_path := "user://frontier_migrated_test.cfg"
+	var legacy_path := "user://frontier_legacy_test.cfg"
+	_remove_user_file(canonical_path)
+	_remove_user_file(legacy_path)
+
+	var legacy := ConfigFile.new()
+	legacy.set_value("scores", "best_score", 1234)
+	legacy.set_value("meta", "data", 42)
+	legacy.set_value("meta", "runs", 7)
+	legacy.set_value("upgrades", "hull", 2)
+	legacy.set_value("upgrades", "weapons", 3)
+	legacy.set_value("upgrades", "thrusters", 9)
+	_check(legacy.save(legacy_path) == OK, "legacy save fixture is written")
+
+	var service = SaveService.new(canonical_path, [legacy_path])
+	var progress: Dictionary = service.load_progress(5)
+	var report: Dictionary = service.get_last_load_report()
+	_check(int(progress["high_score"]) == 1234, "legacy best score migrates")
+	_check(int(progress["frontier_data"]) == 42, "legacy Frontier Data migrates")
+	_check(int(progress["lifetime_data"]) == 42, "missing lifetime data receives a safe fallback")
+	_check(int(progress["completed_runs"]) == 7, "legacy completed runs migrate")
+	_check(int(progress["hull_level"]) == 2, "legacy hull level migrates")
+	_check(int(progress["weapons_level"]) == 3, "legacy weapons level migrates")
+	_check(int(progress["thrusters_level"]) == 5, "legacy levels are clamped to the supported maximum")
+	_check(bool(report["rewritten"]), "legacy save is rewritten into the canonical path")
+	_check(String(report["source_path"]) == legacy_path, "migration report records the legacy source")
+
+	var canonical := ConfigFile.new()
+	_check(canonical.load(canonical_path) == OK, "canonical migrated save is readable")
+	_check(
+		int(canonical.get_value("save", "schema_version", 0)) == SaveService.SCHEMA_VERSION,
+		"canonical save records the current schema",
+	)
+	_check(int(canonical.get_value("meta", "thrusters_level", 0)) == 5, "canonical save stores normalized values")
+
+	canonical.set_value("save", "schema_version", SaveService.SCHEMA_VERSION + 10)
+	canonical.set_value("meta", "frontier_data", 77)
+	_check(canonical.save(canonical_path) == OK, "future-schema fixture is written")
+	var future_service = SaveService.new(canonical_path)
+	var future_progress: Dictionary = future_service.load_progress(5)
+	var future_report: Dictionary = future_service.get_last_load_report()
+	_check(int(future_progress["frontier_data"]) == 77, "known values from a future schema remain readable")
+	_check(not bool(future_report["rewritten"]), "future schema is never downgraded")
+
+	_remove_user_file(canonical_path)
+	_remove_user_file(legacy_path)
+
 func _run() -> void:
+	_test_flow_transitions()
+	_test_save_migration()
+
 	var save_file := ProjectSettings.globalize_path("user://frontier_save.cfg")
 	if FileAccess.file_exists(save_file):
 		DirAccess.remove_absolute(save_file)
