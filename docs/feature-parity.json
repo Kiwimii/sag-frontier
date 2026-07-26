@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-26",
+  "productionRuntime": "web/legacy-041",
+  "migrationTarget": "godot",
+  "godotReleaseAllowed": false,
+  "statusDefinitions": {
+    "missing": "The production capability is not implemented in Godot.",
+    "partial": "A working foundation exists, but production behavior or coverage is incomplete.",
+    "parity": "The production capability is implemented and protected by release-level evidence."
+  },
+  "features": [
+    {
+      "id": "action-combat",
+      "area": "Core gameplay",
+      "label": "Action combat and expedition loop",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "godot/scripts/services/combat_director.gd",
+        "godot/tests/test_full_flow.gd"
+      ],
+      "nextGate": "Port all production loadouts, enemy behavior, bosses, run modifiers and mobile combat feedback."
+    },
+    {
+      "id": "command-progression",
+      "area": "Meta progression",
+      "label": "Command ranks, contracts and research",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint14-progression-core.js"
+      ],
+      "nextGate": "Implement Command progression, contract lifecycle and research with deterministic persistence tests."
+    },
+    {
+      "id": "galia-map",
+      "area": "Galia operations",
+      "label": "Star map, sectors, stations and travel",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint26-star-map.js",
+        "web/legacy-041/sprint27-stations.js"
+      ],
+      "nextGate": "Port sector discovery, route locking, travel costs, stations and map state."
+    },
+    {
+      "id": "economy-trade",
+      "area": "Galia operations",
+      "label": "Markets, cargo, credits and trade",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint29-economy.js",
+        "web/legacy-041/tests/sprint41-state-regression.cjs"
+      ],
+      "nextGate": "Port inventory, cargo limits, fuel cells, market pricing and transaction result contracts."
+    },
+    {
+      "id": "ship-services",
+      "area": "Galia operations",
+      "label": "Ship modules, refuel, repair and logistics services",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint30-ship.js",
+        "web/legacy-041/sprint38-ship-services.js"
+      ],
+      "nextGate": "Port modular ship state and safe service transactions with insufficient-resource tests."
+    },
+    {
+      "id": "events-reputation",
+      "area": "World systems",
+      "label": "World events, faction reputation and consequences",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "godot/scripts/content/frontier_catalog.gd",
+        "web/legacy-041/sprint31-events.js",
+        "web/legacy-041/sprint32-reputation.js"
+      ],
+      "nextGate": "Port production event chains, reputation thresholds and persistent consequences."
+    },
+    {
+      "id": "sag-campaign",
+      "area": "Narrative",
+      "label": "SAG HQ, recruitment campaign and finale",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint17-campaign.js",
+        "web/legacy-041/sprint19-finale.js",
+        "web/legacy-041/sprint35-campaign.js"
+      ],
+      "nextGate": "Port campaign steps, faction choices, rewards, finale and replay-safe state transitions."
+    },
+    {
+      "id": "kiwimi-narrative",
+      "area": "Narrative",
+      "label": "Kiwimi dialogue depth, trust and archive",
+      "godotStatus": "missing",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint24-kiwimi-dialogue.js",
+        "web/legacy-041/sprint41-kiwimi-depth.js"
+      ],
+      "nextGate": "Port dialogue branches, trust conditions, one-time rewards and the Kiwimi archive."
+    },
+    {
+      "id": "save-migration",
+      "area": "Persistence",
+      "label": "Versioned saves and existing-player migration",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "godot/scripts/services/save_service.gd",
+        "godot/tests/test_full_flow.gd"
+      ],
+      "nextGate": "Add an explicit browser-localStorage export/import bridge and verify migration from every production namespace."
+    },
+    {
+      "id": "mobile-input",
+      "area": "Platform",
+      "label": "Touch controls and narrow-screen flows",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "godot/scripts/player.gd",
+        "godot/scripts/responsive_ui.gd",
+        "web/legacy-041/tests/sprint41-browser.mjs"
+      ],
+      "nextGate": "Add real touch-event regression, orientation changes and low-end mobile performance budgets for the Godot export."
+    },
+    {
+      "id": "accessibility",
+      "area": "Platform",
+      "label": "Accessibility settings and readable interaction states",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "web/legacy-041/sprint39-accessibility.js"
+      ],
+      "nextGate": "Port reduced motion, contrast, text scaling, focus handling and keyboard-only menu coverage."
+    },
+    {
+      "id": "pages-deployment",
+      "area": "Delivery",
+      "label": "GitHub Pages deployment from the release source",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        ".github/workflows/deploy-pages.yml",
+        ".github/workflows/ci.yml"
+      ],
+      "nextGate": "Deploy a validated Godot artifact through the same protected Pages pipeline and run a post-deploy smoke test."
+    },
+    {
+      "id": "wordpress-packaging",
+      "area": "Delivery",
+      "label": "Reproducible WordPress plugin packaging",
+      "godotStatus": "partial",
+      "requiredForGodotRelease": true,
+      "evidence": [
+        "tools/build-plugin.mjs",
+        "wordpress/sag-frontier-game/sag-frontier-game.php"
+      ],
+      "nextGate": "Validate the generated Godot plugin ZIP, required WASM/PCK assets and readiness handshake in CI."
+    }
+  ]
+}
