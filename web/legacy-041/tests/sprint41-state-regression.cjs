@@ -105,4 +105,13 @@ function boot(savedState) {
   );
 }
 
+{
+  const kiwimiSource = fs.readFileSync("sprint41-kiwimi-depth.js", "utf8");
+  assert.match(
+    kiwimiSource,
+    /document\.readyState === 'loading'/,
+    "the Kiwimi UI must support scripts injected after DOMContentLoaded",
+  );
+}
+
 console.log("Sprint 41 state regression passed");

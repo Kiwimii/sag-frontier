@@ -740,8 +740,8 @@
     },
     {
       "path": "sprint41-kiwimi-depth.js",
-      "bytes": 7179,
-      "sha256": "351050f3bf4bc8755de955d3e0ca50b20864bf68a374889044f81786e36355e8"
+      "bytes": 8446,
+      "sha256": "9f5056db72c202f958c52714b474eaee68e3f3859e5c4c495be80ad561ed65e9"
     },
     {
       "path": "sprint41.html",
@@ -885,8 +885,8 @@
     },
     {
       "path": "tests/sprint41-state-regression.cjs",
-      "bytes": 2926,
-      "sha256": "a2eb5559cc30b604ef1b7de5454f449e4457c81a2d97f9dd1b2dcd74264417a9"
+      "bytes": 3162,
+      "sha256": "6e277416f9020f37f7dded83cccda771f16d0d65db96224a7aaa834d8a39e0dc"
     },
     {
       "path": "tests/sprint41-static.cjs",
