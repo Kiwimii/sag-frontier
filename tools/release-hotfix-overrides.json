@@ -3,16 +3,40 @@
   "purpose": "Explicit reviewed hash overrides for production hotfixes applied after the immutable 0.41.1 import.",
   "files": [
     {
+      "path": "index.html",
+      "bytes": 795,
+      "sha256": "b8aa54d1e808409f54d58584d49e9bb2bb96fac866958682626512be36eff6d9",
+      "reason": "Route the root entry point to the cache-busted 0.41.1 hotfix wrapper."
+    },
+    {
       "path": "sprint25-narrative-ui.js",
       "bytes": 16152,
       "sha256": "dd5b0dc308e448c8406a0a19101d5949b1c4d01638b9aa8b492f23b8c8bce9ed",
       "reason": "Prevent recursive MutationObserver writes from freezing the browser intro."
     },
     {
+      "path": "sprint35.html",
+      "bytes": 7205,
+      "sha256": "48404495544621420fdc10ce836d7a10271632c5322fdc2603849e428aad803e",
+      "reason": "Load the corrected narrative observer from a new cache key."
+    },
+    {
+      "path": "sprint41.html",
+      "bytes": 1808,
+      "sha256": "3df2c9de7fdc0dd3c1078138bb61d3a11b39cc3bfe92c2b26f0f98d798f18d4e",
+      "reason": "Cache-bust the Galia wrapper and display the 0.41.1 hotfix release."
+    },
+    {
       "path": "tests/sprint41-browser.mjs",
       "bytes": 4493,
       "sha256": "77a491529bd3ee125217716eae60c5b2c326e7ae4c357ca3c5eb6501bf814ced",
       "reason": "Regression coverage proving the intro observer settles and the main thread remains responsive."
+    },
+    {
+      "path": "tests/sprint41-static.cjs",
+      "bytes": 500,
+      "sha256": "ac7bf0ef4b94500044045848394d42b6ec0b4ce0054a154a5c9b0d486530fbea",
+      "reason": "Keep the static release regression aligned with the cache-busted 0.41.1 wrapper."
     }
   ]
 }
