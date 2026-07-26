@@ -64,7 +64,25 @@ if (!Array.isArray(manifest.files) || manifest.files.length < 180) {
 const expected = JSON.stringify(manifest.files);
 const actual = JSON.stringify(describedFiles);
 if (actual !== expected) {
-  throw new Error('The protected browser runtime differs from release-manifest.json. Review the content change and regenerate the manifest intentionally.');
+  const expectedByPath = new Map(manifest.files.map((file) => [file.path, file]));
+  const actualByPath = new Map(describedFiles.map((file) => [file.path, file]));
+  const differences = [...new Set([...expectedByPath.keys(), ...actualByPath.keys()])]
+    .sort()
+    .filter((filePath) => (
+      JSON.stringify(expectedByPath.get(filePath)) !== JSON.stringify(actualByPath.get(filePath))
+    ))
+    .slice(0, 10)
+    .map((filePath) => {
+      const expectedFile = expectedByPath.get(filePath);
+      const actualFile = actualByPath.get(filePath);
+      if (!actualFile) return `missing: ${filePath}`;
+      if (!expectedFile) return `untracked by manifest: ${filePath}`;
+      return `changed: ${filePath}`;
+    });
+  throw new Error(
+    `The protected browser runtime differs from release-manifest.json (${differences.join(', ')}). `
+    + 'Review the content change and regenerate the manifest intentionally.',
+  );
 }
 
 const syntaxFiles = runtimeFiles.filter((file) => /\.(?:c?js|mjs)$/.test(file));

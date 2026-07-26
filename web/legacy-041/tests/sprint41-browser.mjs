@@ -67,6 +67,8 @@ try {
     'travelling a valid route must reveal the next linked sector',
   );
 
+  // Core actions deliberately hold a short lock to suppress accidental double taps.
+  await page.waitForTimeout(150);
   const campaignResult = await galiaFrame.evaluate(() => {
     const game = window.SAGGalia;
     game.state.campaignStep = 3;

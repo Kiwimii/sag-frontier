@@ -35,7 +35,9 @@ if (runtimeSource === protectedWebRuntime) {
     filter(sourcePath) {
       const relative = path.relative(protectedWebRuntime, sourcePath);
       const rootFolder = relative.split(path.sep)[0];
-      return !excludedRoots.has(rootFolder) && rootFolder !== 'release-manifest.json';
+      return !excludedRoots.has(rootFolder)
+        && rootFolder !== 'release-manifest.json'
+        && path.extname(relative) !== '.log';
     },
   });
 }

@@ -43,6 +43,7 @@ jobs:
             --exclude='tests' \
             --exclude='tools' \
             --exclude='release-manifest.json' \
+            --exclude='*.log' \
             web/legacy-041/ site/
           touch site/.nojekyll
           cat > site/build-info.json <<EOF

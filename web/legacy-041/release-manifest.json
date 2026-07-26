@@ -880,8 +880,8 @@
     },
     {
       "path": "tests/sprint41-browser.mjs",
-      "bytes": 3646,
-      "sha256": "4289f70ce30d28278b358261e72d99c2f4473b35930e6c050de29fb866670d8f"
+      "bytes": 3765,
+      "sha256": "b55445a0088c191f86a353077b635fc790be3568f5efb004c736ba4b466e8c49"
     },
     {
       "path": "tests/sprint41-state-regression.cjs",
