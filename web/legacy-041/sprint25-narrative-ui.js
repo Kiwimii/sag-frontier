@@ -59,11 +59,24 @@
       ['STAR ATLAS GERMANY // SEIT 2022','SAG IST KEINE VIERTE FRAKTION','Kiwimi gründete eine eigenständige deutschsprachige DAC: multifraktional, friedlich ausgerichtet und offen für Mitglieder, die Freiheit mit Verantwortung verbinden.'],
       ['DEIN AUFNAHMEWEG','BAUE DEINEN PLATZ AUF','Wähle deine Herkunft. Lerne aus Galias Geschichte. Teile Wissen, halte Zusagen und entscheide, welchen Wert du für eine gemeinsame Crew schaffen willst.']
     ];
-    document.querySelectorAll('.sag-intro-scene').forEach((scene,index)=>{const copy=scene.querySelector('.sag-intro-copy'),data=copies[index];if(copy&&data)copy.innerHTML=`<span>${data[0]}</span><h2>${data[1]}</h2><p>${data[2]}</p>`});
-    const factionHead=document.querySelector('.sag-faction-head p');if(factionHead)factionHead.textContent='Deine Fraktion ist dauerhaft Teil deiner Identität. SAG ist eine eigenständige multifraktionale DAC und verlangt nicht, diese Herkunft abzulegen.';
+    document.querySelectorAll('.sag-intro-scene').forEach((scene,index)=>{
+      const copy=scene.querySelector('.sag-intro-copy'),data=copies[index];
+      if(!copy||!data)return;
+      const next=`<span>${data[0]}</span><h2>${data[1]}</h2><p>${data[2]}</p>`;
+      if(copy.innerHTML!==next)copy.innerHTML=next;
+    });
+    const factionHead=document.querySelector('.sag-faction-head p');
+    const factionCopy='Deine Fraktion ist dauerhaft Teil deiner Identität. SAG ist eine eigenständige multifraktionale DAC und verlangt nicht, diese Herkunft abzulegen.';
+    if(factionHead&&factionHead.textContent!==factionCopy)factionHead.textContent=factionCopy;
+  }
+  let introRewriteScheduled=false;
+  function scheduleIntroRewrite(){
+    if(introRewriteScheduled)return;
+    introRewriteScheduled=true;
+    requestAnimationFrame(()=>{introRewriteScheduled=false;rewriteIntro()});
   }
   function install(){
-    if(installed)return;installed=true;App.registerTab('home',renderHome);App.registerTab('campaign',renderCampaign);App.registerTab('lore',renderLore);App.registerTab('profile',renderProfile);App.renderHome=renderHome;App.renderCampaign=renderCampaign;App.refreshCampaign=()=>{if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden')&&document.querySelector('[data-sag-tab="campaign"]')?.classList.contains('active'))renderCampaign()};App.replayIntro=()=>{sessionStorage.setItem('sag-replay-intro','1');location.replace(`sprint25.html?build=0250&replay=${Date.now()}`)};rewriteIntro();new MutationObserver(rewriteIntro).observe(document.getElementById('sagIntro'),{childList:true,subtree:true});window.SAG25_NARRATIVE={version:'0.25',installed:true};const active=document.querySelector('#sagStoryTabs button.active')?.dataset.sagTab||'home';if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden'))App.setTab(active==='admission'?'profile':active);
+    if(installed)return;installed=true;App.registerTab('home',renderHome);App.registerTab('campaign',renderCampaign);App.registerTab('lore',renderLore);App.registerTab('profile',renderProfile);App.renderHome=renderHome;App.renderCampaign=renderCampaign;App.refreshCampaign=()=>{if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden')&&document.querySelector('[data-sag-tab="campaign"]')?.classList.contains('active'))renderCampaign()};App.replayIntro=()=>{sessionStorage.setItem('sag-replay-intro','1');location.replace(`sprint25.html?build=0250&replay=${Date.now()}`)};rewriteIntro();const introRoot=document.getElementById('sagIntro');if(introRoot)new MutationObserver(scheduleIntroRewrite).observe(introRoot,{childList:true,subtree:true});window.SAG25_NARRATIVE={version:'0.25',installed:true};const active=document.querySelector('#sagStoryTabs button.active')?.dataset.sagTab||'home';if(!document.getElementById('sagStoryShell')?.classList.contains('sag-hidden'))App.setTab(active==='admission'?'profile':active);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(install,25),{once:true});else setTimeout(install,25);
 })();

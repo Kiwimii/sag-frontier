@@ -1,0 +1,18 @@
+{
+  "release": "SAG Kiwimi Depth 0.41.1",
+  "purpose": "Explicit reviewed hash overrides for production hotfixes applied after the immutable 0.41.1 import.",
+  "files": [
+    {
+      "path": "sprint25-narrative-ui.js",
+      "bytes": 16152,
+      "sha256": "dd5b0dc308e448c8406a0a19101d5949b1c4d01638b9aa8b492f23b8c8bce9ed",
+      "reason": "Prevent recursive MutationObserver writes from freezing the browser intro."
+    },
+    {
+      "path": "tests/sprint41-browser.mjs",
+      "bytes": 4493,
+      "sha256": "77a491529bd3ee125217716eae60c5b2c326e7ae4c357ca3c5eb6501bf814ced",
+      "reason": "Regression coverage proving the intro observer settles and the main thread remains responsive."
+    }
+  ]
+}

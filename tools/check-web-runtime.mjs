@@ -7,6 +7,7 @@ import process from 'node:process';
 const root = process.cwd();
 const runtimeRoot = path.join(root, 'web', 'legacy-041');
 const manifestPath = path.join(runtimeRoot, 'release-manifest.json');
+const overridePath = path.join(root, 'tools', 'release-hotfix-overrides.json');
 const shouldWriteManifest = process.argv.includes('--write');
 
 async function walk(directory) {
@@ -58,13 +59,40 @@ if (shouldWriteManifest) {
 }
 
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+const overrideDocument = JSON.parse(await readFile(overridePath, 'utf8'));
+const overrides = Array.isArray(overrideDocument.files) ? overrideDocument.files : [];
 if (!Array.isArray(manifest.files) || manifest.files.length < 180) {
   throw new Error('The protected 0.41 runtime inventory is incomplete.');
 }
-const expected = JSON.stringify(manifest.files);
+const manifestByPath = new Map(manifest.files.map((file) => [file.path, file]));
+const overridesByPath = new Map();
+for (const override of overrides) {
+  if (!override || typeof override.path !== 'string' || !override.path) {
+    throw new Error('Every release hotfix override requires a valid path.');
+  }
+  if (!manifestByPath.has(override.path)) {
+    throw new Error(`Hotfix override references an unprotected file: ${override.path}`);
+  }
+  if (overridesByPath.has(override.path)) {
+    throw new Error(`Duplicate hotfix override: ${override.path}`);
+  }
+  if (!Number.isInteger(override.bytes) || !/^[a-f0-9]{64}$/.test(override.sha256 || '')) {
+    throw new Error(`Invalid hotfix integrity data for ${override.path}.`);
+  }
+  if (typeof override.reason !== 'string' || !override.reason.trim()) {
+    throw new Error(`Hotfix override requires a review reason: ${override.path}`);
+  }
+  overridesByPath.set(override.path, {
+    path: override.path,
+    bytes: override.bytes,
+    sha256: override.sha256,
+  });
+}
+const effectiveExpectedFiles = manifest.files.map((file) => overridesByPath.get(file.path) || file);
+const expected = JSON.stringify(effectiveExpectedFiles);
 const actual = JSON.stringify(describedFiles);
 if (actual !== expected) {
-  const expectedByPath = new Map(manifest.files.map((file) => [file.path, file]));
+  const expectedByPath = new Map(effectiveExpectedFiles.map((file) => [file.path, file]));
   const actualByPath = new Map(describedFiles.map((file) => [file.path, file]));
   const differences = [...new Set([...expectedByPath.keys(), ...actualByPath.keys()])]
     .sort()
@@ -125,4 +153,4 @@ for (const htmlFile of htmlFiles) {
   }
 }
 
-console.log(`Protected web runtime verified: ${describedFiles.length} files, ${regressionTests.length} regressions, ${htmlFiles.length} HTML entry points.`);
+console.log(`Protected web runtime verified: ${describedFiles.length} files, ${regressionTests.length} regressions, ${htmlFiles.length} HTML entry points, ${overrides.length} reviewed hotfix overrides.`);
