@@ -47,6 +47,24 @@ try {
 
   const galiaFrame = page.frames().find((frame) => frame.url().includes('sprint35.html'));
   assert.ok(galiaFrame, 'current 0.41 wrapper must load the Galia runtime');
+
+  const introHeartbeat = await galiaFrame.evaluate(async () => {
+    const root = document.getElementById('sagIntro');
+    if (!root) return { responsive: false, reason: 'missing intro root' };
+    root.innerHTML = '<article class="sag-intro-scene"><div class="sag-intro-copy"></div></article>';
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    return {
+      responsive: true,
+      scenes: root.querySelectorAll('.sag-intro-scene').length,
+      title: root.querySelector('.sag-intro-copy h2')?.textContent || '',
+    };
+  });
+  assert.deepEqual(introHeartbeat, {
+    responsive: true,
+    scenes: 1,
+    title: 'DER FRIEDEN IST KEINE LEERE',
+  }, 'intro observer must settle without freezing the browser');
+
   await galiaFrame.locator('#galiaToggle').click({ force: true });
   await galiaFrame.locator('#galiaShell:not(.g-hidden)').waitFor();
 
