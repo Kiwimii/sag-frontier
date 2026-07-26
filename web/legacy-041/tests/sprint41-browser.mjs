@@ -64,7 +64,6 @@ try {
     scenes: 1,
     title: 'DER FRIEDEN IST KEINE LEERE',
   }, 'intro observer must settle without freezing the browser');
-
   await galiaFrame.locator('#galiaToggle').click({ force: true });
   await galiaFrame.locator('#galiaShell:not(.g-hidden)').waitFor();
 
