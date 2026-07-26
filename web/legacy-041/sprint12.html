@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>S.A.G. Frontier — Modular Deep Space 0.12</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="S.A.G. Frontier Deep Space — prozedurale Erkundung, Schiffspassiven, Waffen-Evolutionen und dauerhafte Progression.">
+  <script>try{if(localStorage.getItem('sag-frontier-intro-seen-v06')==='1')document.documentElement.classList.add('intro-seen')}catch{}</script>
+  <link rel="stylesheet" href="sprint12.bundle.css">
+</head>
+<body data-version-title="S.A.G. FRONTIER // MODULAR DEEP SPACE 0.12">
+<canvas id="game" tabindex="0" role="application" aria-label="S.A.G. Frontier Spielfeld. Steuere das Schiff mit WASD oder den Pfeiltasten."></canvas>
+<div class="language-switch"><button id="langDe" class="active" type="button">DE</button><button id="langEn" type="button">EN</button></div>
+
+<section id="brandIntro" class="brand-intro" aria-label="S.A.G. Frontier Intro">
+  <div class="intro-stage">
+    <div class="intro-banner" aria-hidden="true"></div><div class="intro-vignette"></div>
+    <div class="intro-content"><div class="intro-logo" role="img" aria-label="S.A.G. Star Atlas Germany"></div><div class="frontier-wordmark">D E E P&nbsp;&nbsp; S P A C E&nbsp;&nbsp; R E F I N E D</div><p id="introLead">Eine Expedition der Star Atlas Germany Community.</p><button id="enterHangarBtn" class="brand-primary" type="button">HANGAR BETRETEN</button><button id="skipIntroBtn" class="brand-ghost" type="button">INTRO ÜBERSPRINGEN</button></div>
+    <aside class="intro-kiwimi"><div class="kiwimi-portrait" aria-hidden="true"></div><div class="intro-kiwimi-copy"><span>KIWIMI // INSTRUKTOR</span><strong id="introKiwimiTitle">Willkommen, Pilot.</strong><p id="introKiwimiText">Wähle deinen Sektor und wachse mit jeder Expedition.</p><div class="voice-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></aside>
+    <div class="intro-status"><span>SYSTEM ONLINE</span><span>MODULAR DEEP SPACE 0.12</span><span>REGION // S.A.G.</span></div>
+  </div>
+</section>
+
+<div id="hud" class="hidden">
+  <div class="hud-brand-lockup"><div class="hud-logo"></div><span>FRONTIER // COMBAT LINK</span></div>
+  <div class="hud"><div class="hud-left"><div id="gameTitle" class="title">S.A.G. FRONTIER // MODULAR DEEP SPACE 0.12</div><div id="controlsHint" class="muted">WASD / Pfeiltasten · Leertaste Dash · E EMP · P Pause</div><div class="bar"><div id="hpFill" class="fill"></div></div><div id="hpText">HÜLLE 100 / 100</div><div id="shieldRow" class="hidden"><div class="bar"><div id="shieldFill" class="fill shield-fill"></div></div><div id="shieldText">SCHILD 0 / 0</div></div></div><div class="hud-right"><div id="scoreText">PUNKTE 000000</div><div id="timeText">ZEIT 00:00</div><div id="bestText">REKORD 000000</div><div id="waveText">ÄUSSERE GRENZE · WELLE 01</div><div id="comboText">KOMBO x1.0</div></div></div>
+  <div id="bossWrap" class="boss-wrap"><div class="bar"><div id="bossFill" class="fill"></div></div><div id="bossText" class="boss-text">WARDEN 100%</div></div>
+  <div class="bottom-left"><div id="levelText">LEVEL 01</div><div id="dashText">DASH BEREIT</div><div id="empText">EMP BEREIT</div></div>
+  <div class="bottom-right"><div id="objectiveText">NÄCHSTE WELLE 48s</div><div id="directiveText" class="directive">DIREKTIVE</div><div id="weaponText" class="weapon-status">IMPULSLASER</div><div id="majorStatus" class="major-status"></div><div id="explorationText" class="exploration-status"></div><div id="discoveryText" class="discovery-status"></div></div>
+  <div class="xp-wrap"><div class="bar"><div id="xpFill" class="fill" style="width:0"></div></div><div id="xpText" class="xp-text">XP 0 / 34</div></div>
+  <div class="ability-stack"><button id="dashBtn" class="round-btn" type="button">DASH</button><button id="empBtn" class="round-btn emp-btn" type="button">EMP</button></div>
+  <aside id="kiwimiComms" class="kiwimi-comms" role="status" aria-live="polite" aria-atomic="true"><div class="kiwimi-comms-portrait"></div><div><span>KIWIMI // COM-LINK</span><p id="kiwimiCommsText">Systemverbindung stabil.</p></div></aside>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true">SYSTEM ONLINE</div>
+
+<section id="hangar" class="hangar">
+  <div class="hangar-shell">
+    <header class="brand-hero"><div class="brand-hero-bg"></div><div class="brand-hero-content"><div class="hero-logo"></div><div class="hero-title-wrap"><span>COMMUNITY EXPEDITION NETWORK</span><h1 id="hangarTitle">S.A.G. FRONTIER // HANGAR</h1><p id="hangarSubtitle">Wähle einen Sektor, passe die Einsatzstufe an und entwickle deinen Piloten.</p></div><div class="wallet"><div class="currency"><span id="creditsValue">250</span> <i id="creditsLabel">CREDITS</i></div><div class="currency"><span id="coresValue">0</span> <i id="coresLabel">TECH-KERNE</i></div><div class="currency skill-currency"><span id="skillPointsValue">0</span> <i id="skillPointsLabel">SKILL-PUNKTE</i></div><div class="currency"><span id="bestValue">0</span> <i id="hangarBestLabel">REKORD</i></div></div></div></header>
+
+    <div class="hangar-workspace">
+      <main class="hangar-main">
+        <nav class="tabs"><button class="active" data-tab="deployment" id="tabDeployment">EINSATZ</button><button data-tab="weapons" id="tabWeapons">WAFFEN</button><button data-tab="ships" id="tabShips">SCHIFFE</button><button data-tab="modules" id="tabModules">MODULE</button><button data-tab="skills" id="tabSkills">SKILL TREE</button><button data-tab="data" id="tabData">SPIELSTAND</button></nav>
+
+        <div id="pageDeployment" class="tab-page active">
+          <section class="pilot-progression">
+            <div class="pilot-rank-emblem"><span>RANG</span><b id="pilotRankValue">1</b></div>
+            <div class="pilot-rank-data"><div class="pilot-rank-head"><strong>PILOTENFORTSCHRITT</strong><i id="rookieProtection"></i></div><div class="pilot-xp-track"><span id="pilotXpFill"></span></div><div class="pilot-xp-meta"><span id="pilotXpText">0 / 108 PILOTEN-EP</span><span id="rankRewardText">NÄCHSTE RANGBELOHNUNG</span></div></div>
+          </section>
+
+          <section class="deployment-config">
+            <div class="section-heading compact"><span>FRONTIER NAVIGATION</span><h2 id="deploymentHeading">Wähle deinen nächsten Einsatz</h2></div>
+            <div id="sectorMap" class="sector-map" aria-label="Sektorauswahl"></div>
+            <div class="difficulty-panel"><label for="difficultySelect">EINSATZSTUFE</label><select id="difficultySelect"><option value="explorer">ERKUNDUNG</option><option value="operation">EINSATZ</option><option value="veteran">VETERAN</option></select><p id="difficultyDescription"></p><strong id="sectorRewardText"></strong></div>
+          </section>
+
+          <section class="deep-space-brief"><div><span id="deepSpaceKicker">PROZEDURALER TIEFENRAUM</span><h2 id="deepSpaceHeading">Die Karte endet nicht mehr am Bildschirmrand</h2><p id="deepSpaceDescription">Fliege in jede Richtung, erschließe neue Raumsektoren und entdecke Ressourcen-Asteroiden sowie verlassene Stationen. Aktive Chunk-Streams halten die Welt auch auf Mobilgeräten stabil.</p><div class="exploration-record"><b id="explorationRecordLabel">BESTE DISTANZ</b><span id="explorationRecordValue">0</span><i id="discoveryRecordLabel">ENTDECKUNGEN</i><span id="explorationRecordDiscoveries">0</span></div></div><div class="exploration-loop"><b id="exploreLoop1">ERKUNDEN</b><i>→</i><b id="exploreLoop2">ENTDECKEN</b><i>→</i><b id="exploreLoop3">BERGEN</b><i>→</i><b id="exploreLoop4">AUFRÜSTEN</b></div></section><div class="section-heading loadout-heading"><span>MISSION CONTROL</span><h2>Loadout</h2></div>
+          <div class="loadout"><div class="loadout-visual"><div class="loadout-radar"></div><div id="shipIcon" class="ship-icon"></div><div class="ship-platform"></div></div><div class="loadout-data"><div class="loadout-slots"><div class="slot"><label id="shipSlotLabel">SCHIFF</label><b id="shipSlot">Vanguard</b></div><div class="slot"><label id="primarySlotLabel">PRIMÄRWAFFE</label><b id="primarySlot">Impulslaser</b></div><div class="slot"><label id="secondarySlotLabel">SEKUNDÄRWAFFE</label><b id="secondarySlot">Nicht ausgerüstet</b></div><div class="slot"><label id="moduleSlotLabel">MODUL</label><b id="moduleSlot">Zielcomputer</b></div></div><div class="economy-note" id="economyNote">Jeder Einsatz bringt Piloten-EP und garantierte Credits.</div><button id="startRunBtn" class="primary mission-launch" type="button">EINSATZ STARTEN</button></div></div>
+        </div>
+
+        <div id="pageWeapons" class="tab-page"><div class="section-heading"><span>ARSENAL // WAFFENSYSTEME</span><h2 id="weaponsHeading">Waffen entwickeln und ausrüsten</h2><p id="weaponsSectionNote" class="hangar-section-note">Jede Waffe besitzt eine eigene Rolle, Entwicklung und sichtbare Waffen-Evolution.</p></div><div id="weaponGrid" class="grid arsenal-grid upgraded-grid"></div></div>
+        <div id="pageShips" class="tab-page"><div class="section-heading"><span>FLEET BAY // SCHIFFSRAHMEN</span><h2 id="shipsHeading">Schiff auswählen</h2><p id="shipsSectionNote" class="hangar-section-note">Jedes Schiff besitzt eine eigene Silhouette, Werteverteilung und aktive Schiffspassive.</p></div><div id="shipGrid" class="grid arsenal-grid upgraded-grid"></div></div>
+        <div id="pageModules" class="tab-page"><div class="section-heading"><span>SYSTEM LAB // MODULE</span><h2 id="modulesHeading">Module installieren</h2><p id="modulesSectionNote" class="hangar-section-note">Module verändern nicht nur Werte, sondern aktivieren eigene Synergien im Einsatz.</p></div><div id="moduleGrid" class="grid arsenal-grid upgraded-grid"></div></div>
+        <div id="pageSkills" class="tab-page"><div class="section-heading"><span>ASCENSION MATRIX</span><h2>Permanenter Skill Tree</h2><p id="skillTreeNote" class="skill-tree-note">Drei Entwicklungszweige mit echten Voraussetzungen. Höhere Knoten werden erst über ihre Vorgänger freigeschaltet.</p></div><div class="skill-tree-legend"><span class="combat">KAMPF</span><span class="survival">ÜBERLEBEN</span><span class="systems">SYSTEME</span></div><div id="skillGrid" class="skill-tree"></div></div>
+        <div id="pageData" class="tab-page"><div class="section-heading"><span>ARCHIVE</span><h2 id="dataHeading">Spielstand sichern</h2></div><div class="data-box"><div class="card"><h3 id="exportTitle">Spielstand exportieren</h3><p id="exportText">Kopiere den Text und bewahre ihn als Sicherung auf.</p><textarea id="exportArea" readonly></textarea><div class="card-actions"><button id="refreshExportBtn" type="button">EXPORT AKTUALISIEREN</button><button id="copyExportBtn" type="button">EXPORT KOPIEREN</button></div></div><div class="card"><h3 id="importTitle">Spielstand importieren</h3><p id="importText">Füge einen zuvor exportierten Spielstand ein.</p><textarea id="importArea"></textarea><div class="card-actions"><button id="importBtn" type="button">IMPORTIEREN</button><button id="resetSaveBtn" class="danger" type="button">FORTSCHRITT ZURÜCKSETZEN</button></div><div id="dataNotice" class="notice"></div></div></div></div>
+      </main>
+
+      <aside id="kiwimiPanel" class="kiwimi-panel"><div class="kiwimi-panel-head"><div><span>COM-LINK 01</span><h2>KIWIMI // INSTRUKTOR</h2></div><i class="online-dot">ONLINE</i></div><div class="kiwimi-panel-portrait"><div class="portrait-scan"></div></div><div class="kiwimi-dialogue"><span id="kiwimiContext">FRONTIER-PFAD</span><h3 id="kiwimiTitle">Beginne mit der Erkundung.</h3><p id="kiwimiMessage">Die Äußere Grenze verzeiht Fehler. Jeder Einsatz bringt Piloten-EP, Credits und neue Möglichkeiten.</p></div><div class="tutorial-block"><div class="tutorial-title"><span id="tutorialTitle">ERSTE SCHRITTE</span><b id="tutorialProgress">0 / 4</b></div><ol id="tutorialList"><li id="tutorialStep1"><i>1</i><span>Schiffsdaten prüfen</span></li><li id="tutorialStep2"><i>2</i><span>Waffe prüfen oder ausrüsten</span></li><li id="tutorialStep3"><i>3</i><span>Modul prüfen oder installieren</span></li><li id="tutorialStep4"><i>4</i><span>Expedition starten</span></li></ol></div><blockquote id="kiwimiQuote">„Jeder verlorene Einsatz liefert Daten für den nächsten.“</blockquote><button id="replayIntroBtn" class="replay-intro" type="button">INTRO ERNEUT ABSPIELEN</button></aside>
+    </div>
+    <div class="hangar-footer"><span id="progressHint" class="muted">Schnelle frühe Fortschritte, langfristige Spezialisierung über Rang, Sektoren und Skill Tree.</span><span id="careerStats" class="muted"></span></div>
+  </div>
+</section>
+
+<div id="upgradeOverlay" class="overlay hidden"><div class="panel branded-panel"><div class="panel-kicker">KIWIMI // SYSTEMANALYSE</div><h2 id="upgradeTitle">SYSTEM-UPGRADE</h2><p id="upgradeSubtitle">Große Upgrades erscheinen zuverlässig und mit ausreichend Abstand.</p><div id="choices" class="choices"></div></div></div>
+<div id="pauseOverlay" class="overlay hidden"><div class="panel branded-panel pause-panel"><div class="panel-kicker">S.A.G. COMBAT LINK</div><h2 id="pauseTitle">MISSION PAUSIERT</h2><p id="pauseText">Drücke P oder Escape, um fortzufahren.</p><div class="pause-settings"><label><input id="screenShakeToggle" type="checkbox" checked><span id="screenShakeLabel">BILDSCHIRMRÜTTELN</span></label><label><input id="autoPauseToggle" type="checkbox" checked><span id="autoPauseLabel">AUTOMATISCH PAUSIEREN</span></label><label><input id="radarToggle" type="checkbox" checked><span id="radarLabel">RADAR &amp; ZIELKOMPASS</span></label></div><div class="pause-actions"><button id="resumeBtn" class="primary" type="button">FORTSETZEN</button><button id="restartRunBtn" class="secondary" type="button">EINSATZ NEU STARTEN</button><button id="abandonRunBtn" class="danger" type="button">EINSATZ ABBRECHEN</button></div></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="panel branded-panel"><div class="panel-kicker">KIWIMI // EINSATZAUSWERTUNG</div><h2 id="gameOverTitle">SIGNAL VERLOREN</h2><p id="finalText"></p><div class="summary-grid frontier-summary"><div class="stat"><b id="sumScore">0</b><span id="sumScoreLabel">PUNKTE</span></div><div class="stat"><b id="sumCredits">0</b><span id="sumCreditsLabel">CREDITS</span></div><div class="stat"><b id="sumCores">0</b><span id="sumCoresLabel">TECH-KERNE</span></div><div class="stat skill-stat"><b id="sumSkills">0</b><span id="sumSkillsLabel">SKILL-PUNKTE</span></div><div class="stat pilot-stat"><b id="sumPilotXp">0</b><span id="sumPilotXpLabel">PILOTEN-EP</span></div><div class="stat pilot-stat"><b id="sumPilotRank">1</b><span id="sumPilotRankLabel">PILOTENRANG</span></div><div class="stat"><b id="sumKills">0</b><span id="sumKillsLabel">ABSCHÜSSE</span></div><div class="stat"><b id="sumBosses">0</b><span id="sumBossesLabel">WARDENS</span></div><div class="stat"><b id="sumLevel">1</b><span id="sumLevelLabel">LEVEL</span></div><div class="stat exploration-stat"><b id="sumDistance">0</b><span id="sumDistanceLabel">ERKUNDETE DISTANZ</span></div><div class="stat exploration-stat"><b id="sumDiscoveries">0</b><span id="sumDiscoveriesLabel">ENTDECKUNGEN</span></div></div><button id="retryBtn" class="primary" type="button">NOCH EIN EINSATZ</button><button id="returnHangarBtn" class="secondary" type="button">ZURÜCK ZUM HANGAR</button></div></div>
+
+<script src="sprint12-config.js"></script>
+<script src="sprint12-source.js"></script>
+<script src="sprint12-ui.js"></script>
+</body>
+</html>

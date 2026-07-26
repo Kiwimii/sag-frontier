@@ -1,0 +1,14 @@
+(()=>{
+  'use strict';
+  const App=window.SAGRecruitment,Core=window.SAGStoryCore,Content=window.SAG25Content;
+  if(!App||!Core||!Content)throw new Error('Sprint 25 finale dependencies missing');
+  function title(story){if(story.ending==='elite')return'BEREIT, VERANTWORTUNG ZU TEILEN';if(story.ending?.includes('envoy'))return'FRAKTIONSGESANDTER IN SAG';return'AUFNAHME IN SAG'}
+  function text(story){const faction=story.faction?Core.FACTIONS[story.faction].name:'deiner Fraktion';if(story.ending==='elite')return'Deine Leistung ist außergewöhnlich. Der Rat erkennt dich jedoch nicht wegen einer Rangliste an, sondern weil deine Einsatzdaten zeigen, dass andere von deinem Wissen und deiner Verlässlichkeit profitieren können.';if(story.ending?.includes('envoy'))return`Du bleibst sichtbar mit ${faction} verbunden und hast zugleich bewiesen, dass du diese Herkunft offen in eine multifraktionale DAC einbringen kannst.`;return'Du hast Wissen geteilt, Zusagen eingehalten und Unsicherheit nicht als Gewissheit verkauft. Damit erfüllst du die Grundlage für eine Mitgliedschaft in Star Atlas Germany.'}
+  function showFinale(story=App.story,replay=false){
+    const overlay=document.getElementById('sagStoryScene');if(!overlay)return;overlay.classList.remove('sag-hidden');overlay.classList.add('sag-finale');overlay.innerHTML=`<article class="sag-finale-panel"><div class="sag-finale-emblem">SAG</div><span>STAR ATLAS GERMANY // EIGENSTÄNDIGE DAC</span><h2>${title(story)}</h2><p>${text(story)}</p><blockquote class="sag-finale-quote">„Du bist nicht aufgenommen, weil du keine Fehler machst. Du bist aufgenommen, weil du Verantwortung übernimmst, wenn eine Entscheidung Folgen für andere hat.“<br><small>— KIWIMI, GRÜNDER VON SAG</small></blockquote><p class="narrative-disclaimer">${Content.SAG.disclaimer}</p><div class="sag-finale-actions"><button id="sagAcceptMembership25" class="sag-btn primary">${replay?'ZURÜCK ZUM PROFIL':'CHARTA ANNEHMEN'}</button><button id="sagReturnHangar25" class="sag-btn">ZUM HANGAR</button></div></article>`;
+    const close=tab=>{overlay.classList.add('sag-hidden');overlay.classList.remove('sag-finale');overlay.innerHTML='';if(tab)App.openHQ(tab)};
+    document.getElementById('sagAcceptMembership25').addEventListener('click',()=>close('profile'));document.getElementById('sagReturnHangar25').addEventListener('click',()=>{close();App.closeHQ()});
+    if(!replay&&!story.seenScenes.includes('sag-admission-finale-25'))App.saveStory({...story,seenScenes:[...story.seenScenes,'sag-admission-finale-25']});
+  }
+  App.showFinale=showFinale;App.onAdmission=story=>setTimeout(()=>showFinale(story),300);window.SAG25Finale={showFinale,version:25};
+})();

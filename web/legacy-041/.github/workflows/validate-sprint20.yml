@@ -1,0 +1,121 @@
+name: Validate Focused Interface 0.20
+
+on:
+  pull_request:
+    paths:
+      - 'sprint20.html'
+      - 'sprint20-focused.css'
+      - 'sprint20-focused.js'
+      - 'tests/sprint20-*'
+      - '.github/workflows/validate-sprint20.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout focused interface build
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate focused architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s sprint20.html
+          test -s sprint20-focused.css
+          test -s sprint20-focused.js
+          test -s tests/sprint20-static.cjs
+          test -s tests/sprint20-smoke.mjs
+          node --check sprint20-focused.js
+          node --check tests/sprint20-smoke.mjs
+          node tests/sprint13-static.cjs
+          node tests/sprint14-static.cjs
+          node tests/sprint14-progression.cjs
+          node tests/sprint19-static.cjs
+          node tests/sprint19-story.cjs
+          node tests/sprint20-static.cjs
+
+  legacy-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout focused interface build
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run legacy browser regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/sag20-legacy-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs
+          node tests/sprint14-smoke.mjs
+          node tests/sprint19-smoke.mjs
+
+  focused-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout focused interface build
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Capture focused browser result
+        shell: bash
+        run: |
+          set -u
+          python3 -m http.server 4173 > /tmp/sag20-focused-http.log 2>&1 &
+          SERVER_PID=$!
+          sleep 2
+          set +e
+          node tests/sprint20-smoke.mjs > sprint20-browser.log 2>&1
+          STATUS=$?
+          set -e
+          kill $SERVER_PID || true
+          echo "$STATUS" > sprint20-browser.status
+      - name: Upload focused browser diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint20-browser-diagnostics
+          path: |
+            sprint20-browser.log
+            sprint20-browser.status
+            sprint20-desktop-home.png
+            sprint20-mobile-profile.png
+          if-no-files-found: error
+
+  focused-report:
+    runs-on: ubuntu-latest
+    needs: focused-browser
+    steps:
+      - name: Download focused browser diagnostics
+        uses: actions/download-artifact@v4
+        with:
+          name: sprint20-browser-diagnostics
+      - name: Report focused browser result
+        shell: bash
+        run: |
+          cat sprint20-browser.log
+          test "$(cat sprint20-browser.status)" = "0"

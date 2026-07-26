@@ -1,0 +1,62 @@
+name: Build and test Sprint 12 modular runtime
+on:
+  push:
+    branches: [feat/live-sprint-12-modular-runtime]
+  pull_request:
+    branches: [live]
+permissions:
+  contents: write
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build consolidated runtime and assets
+        run: node tools/build-sprint12.cjs
+      - name: Validate generated files
+        run: |
+          node --check sprint12-config.js
+          node --check sprint12-source.js
+          node --check sprint12-ui.js
+          node --check tests/sprint12-smoke.mjs
+          node tests/sprint12-static.cjs
+      - name: Commit generated production files
+        if: github.event_name == 'push'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint12.html sprint12.bundle.css sprint12-config.js sprint12-source.js sprint12-ui.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Sprint 0.12 modular production bundle'
+          git push origin HEAD:feat/live-sprint-12-modular-runtime
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Browser smoke test
+        run: |
+          python3 -m http.server 4173 > /tmp/sag12-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint12-smoke.mjs > sprint12-smoke.log 2>&1
+          cat sprint12-smoke.log
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint12-modular-diagnostics
+          path: |
+            sprint12.html
+            sprint12.bundle.css
+            sprint12-config.js
+            sprint12-source.js
+            sprint12-ui.js
+            sprint12-smoke.log
+            /tmp/sag12-http.log
+          if-no-files-found: ignore

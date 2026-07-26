@@ -1,0 +1,74 @@
+name: Build and validate Sprint 08 visuals
+on:
+  pull_request:
+    branches: [live]
+permissions:
+  contents: write
+jobs:
+  build-visual-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build premium visual runtime
+        run: node tools/build-sprint08-visuals.cjs
+      - name: Generate Sprint 08 page
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          let html = fs.readFileSync('sprint07.html', 'utf8');
+          html = html
+            .replaceAll('S.A.G. Frontier — Ascension 0.7', 'S.A.G. Frontier — Visual Forge 0.8')
+            .replaceAll('S.A.G. Frontier Ascension — Arsenal, permanenter Skill Tree und Expeditionen der Star Atlas Germany Community.', 'S.A.G. Frontier Visual Forge — hochwertige Schiffe, Gegner und spielbarer Loot.')
+            .replaceAll('S.A.G. FRONTIER // ASCENSION 0.7', 'S.A.G. FRONTIER // VISUAL FORGE 0.8')
+            .replaceAll('A S C E N S I O N', 'V I S U A L   F O R G E')
+            .replaceAll('ASCENSION PROTOCOL 0.7', 'VISUAL FORGE 0.8')
+            .replace('<link rel="stylesheet" href="sprint07.css">', '<link rel="stylesheet" href="sprint07.css">\n  <link rel="stylesheet" href="sprint08.css">')
+            .replace('<script src="sprint07-source.js"></script>', '<script src="sprint08-source.js"></script>');
+          fs.writeFileSync('sprint08.html', html);
+          NODE
+      - name: Validate JavaScript and visual guards
+        run: |
+          node --check sprint08-source.js
+          node --check tools/build-sprint08-visuals.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('sprint08-source.js', 'utf8');
+          const required = [
+            'function drawLoot(p)',
+            'function gfxThruster(',
+            'function gfxMetal(',
+            "type='credits'",
+            "type='tech'",
+            'salvageCredits',
+            'salvageCores',
+            'VISUAL FORGE 0.8',
+            "const shapes={vanguard:",
+            "const shapes={drone:",
+            "gfxGlow(0,1,11+Math.sin(elapsed*7)*2"
+          ];
+          for (const item of required) if (!source.includes(item)) throw new Error(`Missing visual guard: ${item}`);
+          const forbidden = [
+            'ctx.moveTo(0,-e.r*1.15)',
+            'ctx.strokeRect(-8,-8,16,16)',
+            "ctx.fillStyle='#b92f59'"
+          ];
+          for (const item of forbidden) if (source.includes(item)) throw new Error(`Legacy placeholder renderer remains: ${item}`);
+          const updateStart = source.indexOf('function update(dt){');
+          const updateEnd = source.indexOf('\nfunction updateHUD', updateStart);
+          const updateBlock = source.slice(updateStart, updateEnd);
+          if (updateBlock.includes('gfxPoly(') || updateBlock.includes('drawLoot(')) throw new Error('Rendering leaked into simulation update');
+          console.log('Sprint 0.8 visual regression guards passed');
+          NODE
+      - name: Commit generated visual runtime
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add sprint08-source.js sprint08.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Sprint 0.8 visual runtime'
+          git push origin HEAD:feat/live-sprint-08-visual-overhaul

@@ -1,54 +1,43 @@
 # Roadmap
 
-## Sprint 1 — Foundation
+## Checkpoint A — Consolidated source
 
-Status: baseline import in progress.
+Status: implemented in the 0.41.1 consolidation branch.
 
-- WordPress plugin shell and shortcode
-- Responsive canvas lifecycle
-- Keyboard and touch input
-- Local save data
-- Kiwimi onboarding
-- Basic expedition loop
+- Move the complete production runtime into `main`
+- Freeze `live` as a historical reference
+- Deploy Pages and build the WordPress ZIP from repository-owned sources
+- Protect the imported content with a file/hash manifest
+- Correct locked travel, campaign rewards, fuel/cargo separation and action results
+- Run a mobile browser test against the actual current release
 
-## Sprint 2 — Combat
+## Checkpoint B — Godot architecture
 
-Status: next active sprint.
+Status: foundation implemented; content migration continues.
 
-- Separate combat modules from the current monolithic runtime
-- Weapon definitions and cooldown handling
-- Distinct enemy archetypes and behaviors
-- Elite modifiers
-- Sector boss encounters
-- In-run upgrade selection
-- Damage feedback, hit flashes and readable telegraphs
-- Mobile combat usability and performance pass
-- Automated smoke checks for expedition start and game loop
+- Explicit game-flow states for command, run, upgrade, route, pause and result
+- Versioned save service
+- Dedicated combat director with mobile entity limits
+- Data-owned upgrade and route catalogs
+- Small coordinating scene controller instead of one growing monolith
 
-## Sprint 3 — Homestation and economy
+## Checkpoint C — Feature-parity migration
 
-- Station modules
-- Workshop and permanent upgrades
-- Resource sinks
-- Skill tree
-- Mission board
+- Port the action roguelite, Command progression and meta progression
+- Port Galia star map, stations, economy, ship services and events
+- Port factions, SAG HQ, campaign, Kiwimi dialogue and archive
+- Add save migrations from every current local-storage namespace
+- Maintain a parity matrix so a protected 0.41 feature cannot disappear unnoticed
+- Switch production to Godot only after desktop and mobile parity tests pass
 
-## Sprint 4 — Accounts and online systems
+## Checkpoint D — Expansion
 
-- WordPress user integration
-- Server-authoritative save endpoints
-- Cloud saves
-- Leaderboards
-- Abuse prevention
-
-## Sprint 5 — Content and polish
-
-- Story sectors
-- Audio and visual effects
-- Accessibility settings
-- Device performance profiles
-- Release packaging and public beta
+- Data-driven quests, encounters, bosses and additional ships
+- Inventory and equipment components
+- Longer campaign arcs and faction consequences
+- Optional WordPress accounts, cloud saves and leaderboards
+- Server-side validation for shared or competitive systems
 
 ## Definition of done
 
-Every sprint must end with a playable build, documented changes, syntax checks, a reproducible ZIP build and no known blocker that prevents an expedition from starting on supported desktop or mobile browsers.
+Every checkpoint must end with a playable build, documented changes, reproducible packaging, automated regression coverage and no known blocker that prevents an expedition from starting on supported desktop or mobile browsers.

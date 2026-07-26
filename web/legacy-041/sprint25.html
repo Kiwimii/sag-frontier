@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="cache-control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <title>S.A.G. Frontier — Galia Narrative 0.25</title>
+  <meta name="theme-color" content="#05080c">
+  <meta name="description" content="S.A.G. Frontier 0.25 — Star-Atlas-Kanon, SAG-DAC-Lore, Kampagnentexte und Kiwimi-Dialoge.">
+  <link rel="stylesheet" href="sprint14-progression.css?build=0250">
+  <link rel="stylesheet" href="sprint14-progression-advanced.css?build=0250">
+  <link rel="stylesheet" href="sprint15-cinematic.css?build=0250">
+  <link rel="stylesheet" href="sprint16-lore.css?build=0250">
+  <link rel="stylesheet" href="sprint17-campaign.css?build=0250">
+  <link rel="stylesheet" href="sprint18-events.css?build=0250">
+  <link rel="stylesheet" href="sprint19-finale.css?build=0250">
+  <link rel="stylesheet" href="sprint20-focused.css?build=0250">
+  <link rel="stylesheet" href="sprint20-visual-fixes.css?build=0250">
+  <link rel="stylesheet" href="sprint24-kiwimi-dialogue.css?build=0250">
+  <link rel="stylesheet" href="sprint25-narrative.css?build=0250">
+</head>
+<body data-build="0250">
+  <iframe id="gameFrame" src="sprint13.html?build=0250" title="S.A.G. Frontier Spiel"></iframe>
+  <div class="build-ribbon">SAG FRONTIER <b>0.25</b></div>
+  <button id="commandToggle" type="button" aria-controls="commandCenter" aria-expanded="false"><span>COMMAND</span><b id="commandBadge">0</b></button>
+  <section id="commandCenter" class="command-center hidden" aria-modal="true" role="dialog" aria-labelledby="commandTitle">
+    <div class="command-shell">
+      <header class="command-header"><div><span>S.A.G. EXPEDITION COMMAND</span><h1 id="commandTitle">FRONTIER COMMAND</h1><p>Karriere, Einsatzverträge und Forschung.</p></div><button id="commandClose" type="button" aria-label="Command Center schließen">×</button></header>
+      <div class="command-metrics"><article><span>KOMMANDORANG</span><b id="commandRank">1</b><i id="commandXp">0 / 88 XP</i></article><article><span>COMMAND DATA</span><b id="commandData">0</b><i>Forschung &amp; Operationen</i></article><article><span>VERTRÄGE</span><b id="completedContracts">0</b><i id="activeSlots">0 / 1 aktiv</i></article></div>
+      <nav id="commandTabs" class="command-tabs"><button class="active" data-command-tab="career" type="button">KARRIERE</button><button data-command-tab="contracts" type="button">VERTRÄGE</button><button data-command-tab="research" type="button">FORSCHUNG</button><button data-command-tab="campaign" type="button">OPERATIONEN</button><button data-command-tab="records" type="button">ARCHIV</button></nav>
+      <main id="commandContent" class="command-content" aria-live="polite"></main>
+      <footer><span id="commandStatus">COMMAND LINK ONLINE</span><button id="commandReturn" type="button">ZURÜCK</button></footer>
+    </div>
+  </section>
+  <div id="progressionToast" class="progression-toast" role="status" aria-live="polite"></div>
+  <button id="sagStoryToggle" class="sag-story-toggle" type="button" aria-controls="sagStoryShell" aria-expanded="false"><i></i><span>SAG HQ</span><b id="sagStoryBadge">1</b></button>
+  <section id="sagStoryShell" class="sag-story-shell sag-hidden" aria-modal="true" role="dialog" aria-labelledby="sagStoryTitle">
+    <div class="sag-hq">
+      <header class="sag-hq-header"><div><span>STAR ATLAS GERMANY</span><h1 id="sagStoryTitle">SAG HQ</h1><p>Dein nächster Schritt zur Aufnahme.</p></div><button id="sagStoryClose" class="sag-close" type="button" aria-label="SAG HQ schließen">×</button></header>
+      <div class="sag-metrics"><article><span>STATUS</span><b id="sagMetricStatus">UNREGISTRIERT</b></article><article><span>FRAKTION</span><b id="sagMetricFaction">OFFEN</b></article><article><span>SAG-RUF</span><b id="sagMetricReputation">0</b></article><article><span>VERTRAUEN</span><b id="sagMetricTrust">0</b></article></div>
+      <nav id="sagStoryTabs" class="sag-tabs"><button class="active" data-sag-tab="home" type="button">START</button><button data-sag-tab="campaign" type="button">KAMPAGNE</button><button data-sag-tab="lore" type="button">WISSEN</button><button data-sag-tab="profile" type="button">PROFIL</button></nav>
+      <main id="sagStoryContent" class="sag-content" aria-live="polite"></main>
+      <footer class="sag-hq-footer"><span>SAG // WISSEN TEILEN · VERANTWORTUNG TRAGEN</span><button id="sagStoryReturn" class="sag-btn" type="button">ZUM HANGAR</button></footer>
+    </div>
+  </section>
+  <section id="sagIntro" class="sag-intro sag-hidden" aria-label="Animiertes SAG Intro"></section>
+  <section id="sagFactionStage" class="sag-faction-stage sag-hidden" aria-label="Fraktionswahl"></section>
+  <aside id="sagKiwimiToast" class="sag-kiwimi-toast" role="status" aria-live="polite"></aside>
+  <section id="sagEventOverlay" class="sag-event-overlay sag-hidden" aria-modal="true" role="dialog"></section>
+  <section id="sagStoryScene" class="sag-story-scene sag-hidden" aria-modal="true" role="dialog"></section>
+  <canvas id="sagAtmosphere" class="sag-atmosphere" aria-hidden="true"></canvas>
+  <script src="sprint14-progression-core.js?build=0250"></script>
+  <script src="sprint14-progression-advanced.js?build=0250"></script>
+  <script src="sprint14-progression-ui.js?build=0250"></script>
+  <script src="sprint14-progression-advanced-ui.js?build=0250"></script>
+  <script src="sprint15-story-core.js?build=0250"></script>
+  <script src="sprint21-canon-lore.js?build=0250"></script>
+  <script src="sprint22-sag-dac.js?build=0250"></script>
+  <script src="sprint23-campaign-narrative.js?build=0250"></script>
+  <script src="sprint15-cinematic.js?build=0250"></script>
+  <script src="sprint16-lore-kiwimi.js?build=0250"></script>
+  <script src="sprint17-campaign.js?build=0250"></script>
+  <script src="sprint18-world-events.js?build=0250"></script>
+  <script src="sprint19-finale.js?build=0250"></script>
+  <script src="sprint20-focused.js?build=0250"></script>
+  <script src="sprint24-kiwimi-dialogue.js?build=0250"></script>
+  <script src="sprint25-narrative-ui.js?build=0250"></script>
+  <script src="sprint25-finale-editorial.js?build=0250"></script>
+</body>
+</html>

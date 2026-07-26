@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>S.A.G. Frontier — Arsenal & Hangar 0.5</title>
+  <link rel="stylesheet" href="sprint05.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+<div class="language-switch"><button id="langDe" class="active" type="button">DE</button><button id="langEn" type="button">EN</button></div>
+
+<div id="hud" class="hidden">
+  <div class="hud"><div class="hud-left"><div id="gameTitle" class="title">S.A.G. FRONTIER // ARSENAL 0.5</div><div id="controlsHint" class="muted">WASD / Pfeiltasten · Leertaste Dash · E EMP · P Pause</div><div class="bar"><div id="hpFill" class="fill"></div></div><div id="hpText">HÜLLE 100 / 100</div><div id="shieldRow" class="hidden"><div class="bar"><div id="shieldFill" class="fill shield-fill"></div></div><div id="shieldText">SCHILD 0 / 0</div></div></div><div class="hud-right"><div id="scoreText">PUNKTE 000000</div><div id="timeText">ZEIT 00:00</div><div id="bestText">REKORD 000000</div><div id="waveText" style="color:var(--cyan);font-weight:750">SEKTOR 01 · WELLE 01</div><div id="comboText" style="color:var(--gold);font-weight:800">KOMBO x1.0</div></div></div>
+  <div id="bossWrap" class="boss-wrap"><div class="bar"><div id="bossFill" class="fill"></div></div><div id="bossText" class="boss-text">WARDEN 100%</div></div>
+  <div class="bottom-left"><div id="levelText">LEVEL 01</div><div id="dashText">DASH BEREIT</div><div id="empText">EMP BEREIT</div></div>
+  <div class="bottom-right"><div id="objectiveText">NÄCHSTE WELLE 44s</div><div id="directiveText" class="directive">DIREKTIVE</div><div id="weaponText" class="weapon-status">LASER · RAILGUN</div></div>
+  <div class="xp-wrap"><div class="bar"><div id="xpFill" class="fill" style="width:0"></div></div><div id="xpText" class="xp-text">XP 0 / 30</div></div>
+  <div class="ability-stack"><button id="dashBtn" class="round-btn" type="button">DASH</button><button id="empBtn" class="round-btn emp-btn" type="button">EMP</button></div>
+</div>
+<div id="toast" class="toast">SYSTEM ONLINE</div>
+
+<section id="hangar" class="hangar">
+  <div class="hangar-shell">
+    <div class="hangar-top"><div class="hangar-brand"><h1 id="hangarTitle">S.A.G. FRONTIER // HANGAR</h1><p id="hangarSubtitle">Rüste dein Schiff aus und bereite den nächsten Einsatz vor.</p></div><div class="wallet"><div class="currency"><span id="creditsValue">250</span> <i id="creditsLabel">CREDITS</i></div><div class="currency"><span id="coresValue">0</span> <i id="coresLabel">TECH-KERNE</i></div><div class="currency"><span id="bestValue">0</span> <i id="hangarBestLabel">REKORD</i></div></div></div>
+    <nav class="tabs"><button class="active" data-tab="deployment" id="tabDeployment">EINSATZ</button><button data-tab="weapons" id="tabWeapons">WAFFEN</button><button data-tab="ships" id="tabShips">SCHIFFE</button><button data-tab="modules" id="tabModules">MODULE</button><button data-tab="data" id="tabData">SPIELSTAND</button></nav>
+
+    <div id="pageDeployment" class="tab-page active"><div class="loadout"><div class="loadout-visual"><div id="shipIcon" class="ship-icon"></div></div><div><div class="loadout-slots"><div class="slot"><label id="shipSlotLabel">SCHIFF</label><b id="shipSlot">Vanguard</b></div><div class="slot"><label id="primarySlotLabel">PRIMÄRWAFFE</label><b id="primarySlot">Impulslaser</b></div><div class="slot"><label id="secondarySlotLabel">SEKUNDÄRWAFFE</label><b id="secondarySlot">Nicht ausgerüstet</b></div><div class="slot"><label id="moduleSlotLabel">MODUL</label><b id="moduleSlot">Nicht ausgerüstet</b></div></div><div class="economy-note" id="economyNote">Einsätze bringen Credits. Wardens und Eliteverbände liefern seltene Technologiekerne.</div><button id="startRunBtn" class="primary" type="button">EINSATZ STARTEN</button></div></div></div>
+    <div id="pageWeapons" class="tab-page"><div id="weaponGrid" class="grid"></div></div>
+    <div id="pageShips" class="tab-page"><div id="shipGrid" class="grid"></div></div>
+    <div id="pageModules" class="tab-page"><div id="moduleGrid" class="grid"></div></div>
+    <div id="pageData" class="tab-page"><div class="data-box"><div class="card"><h3 id="exportTitle">Spielstand exportieren</h3><p id="exportText">Kopiere den Text und bewahre ihn als Sicherung auf.</p><textarea id="exportArea" readonly></textarea><div class="card-actions"><button id="refreshExportBtn" type="button">EXPORT AKTUALISIEREN</button></div></div><div class="card"><h3 id="importTitle">Spielstand importieren</h3><p id="importText">Füge einen zuvor exportierten Spielstand ein.</p><textarea id="importArea"></textarea><div class="card-actions"><button id="importBtn" type="button">IMPORTIEREN</button><button id="resetSaveBtn" class="danger" type="button">FORTSCHRITT ZURÜCKSETZEN</button></div><div id="dataNotice" class="notice"></div></div></div></div>
+    <div class="hangar-footer"><span id="progressHint" class="muted">Dauerhafte Boni bleiben bewusst moderat. Neue Waffen und Spielweisen sind der Hauptfortschritt.</span><span id="careerStats" class="muted"></span></div>
+  </div>
+</section>
+
+<div id="upgradeOverlay" class="overlay hidden"><div class="panel" style="width:min(96vw,950px)"><h2 id="upgradeTitle">SYSTEM-UPGRADE</h2><p id="upgradeSubtitle">Große Upgrades erscheinen mit mindestens 75 Sekunden Abstand.</p><div id="choices" class="choices"></div></div></div>
+<div id="pauseOverlay" class="overlay hidden"><div class="panel"><h2 id="pauseTitle">MISSION PAUSIERT</h2><p id="pauseText">Drücke P oder Escape, um fortzufahren.</p><button id="resumeBtn" class="primary" type="button">FORTSETZEN</button></div></div>
+<div id="gameOverOverlay" class="overlay hidden"><div class="panel"><h2 id="gameOverTitle">SIGNAL VERLOREN</h2><p id="finalText"></p><div class="summary-grid"><div class="stat"><b id="sumScore">0</b><span id="sumScoreLabel">PUNKTE</span></div><div class="stat"><b id="sumCredits">0</b><span id="sumCreditsLabel">CREDITS</span></div><div class="stat"><b id="sumCores">0</b><span id="sumCoresLabel">TECH-KERNE</span></div><div class="stat"><b id="sumKills">0</b><span id="sumKillsLabel">ABSCHÜSSE</span></div><div class="stat"><b id="sumBosses">0</b><span id="sumBossesLabel">WARDENS</span></div><div class="stat"><b id="sumLevel">1</b><span id="sumLevelLabel">LEVEL</span></div></div><button id="retryBtn" class="primary" type="button">NOCH EIN EINSATZ</button><button id="returnHangarBtn" class="secondary" type="button">ZURÜCK ZUM HANGAR</button></div></div>
+
+<script src="sprint05.js"></script>
+</body>
+</html>

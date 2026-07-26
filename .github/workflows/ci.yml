@@ -87,10 +87,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create source snapshot
-        run: zip -qr sag-frontier-source.zip godot wordpress docs tools package.json README.md ROADMAP.md
+        run: zip -qr sag-frontier-source.zip godot web wordpress docs tools package.json package-lock.json README.md ROADMAP.md
 
       - name: Upload source snapshot
         uses: actions/upload-artifact@v4
         with:
           name: sag-frontier-source
           path: sag-frontier-source.zip
+
+  browser-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install browser test dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Run current mobile browser flow
+        run: npm run test:web:browser

@@ -1,0 +1,92 @@
+name: Build and test Sprint 13 Outer Frontier
+
+on:
+  push:
+    branches:
+      - feat/live-sprint-13-outer-frontier
+  pull_request:
+    branches:
+      - live
+    paths:
+      - 'SPRINT13.md'
+      - 'src/config/sprint13.balance.js'
+      - 'tools/build-sprint13.cjs'
+      - 'tools/run-sprint13-build.cjs'
+      - 'tests/sprint13-static.cjs'
+      - 'tests/sprint13-smoke.mjs'
+      - 'sprint13*'
+      - 'index.html'
+      - 'launch.html'
+      - '.github/workflows/build-sprint13-outer-frontier.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate Outer Frontier browser build
+        shell: bash
+        run: |
+          set -o pipefail
+          node tools/run-sprint13-build.cjs 2>&1 | tee sprint13-build.log
+
+      - name: Validate JavaScript and static guards
+        run: |
+          node --check src/config/sprint13.balance.js
+          node --check tools/build-sprint13.cjs
+          node --check tools/run-sprint13-build.cjs
+          node --check sprint13-config.js
+          node --check sprint13-source.js
+          node --check tests/sprint13-static.cjs
+          node --check tests/sprint13-smoke.mjs
+          node tests/sprint13-static.cjs
+
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Browser progression and combat smoke test
+        run: |
+          python3 -m http.server 4173 > /tmp/sag13-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node tests/sprint13-smoke.mjs > sprint13-smoke.log 2>&1
+          cat sprint13-smoke.log
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint13-outer-frontier-diagnostics
+          path: |
+            sprint13-build.log
+            sprint13-config.js
+            sprint13-source.js
+            sprint13.bundle.css
+            sprint13.html
+            sprint13-smoke.log
+            /tmp/sag13-http.log
+          if-no-files-found: ignore
+
+      - name: Commit generated playable files
+        if: github.event_name == 'push'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html launch.html sprint13-config.js sprint13-source.js sprint13.bundle.css sprint13.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: generate Outer Frontier 0.13 browser release'
+          git push origin HEAD:feat/live-sprint-13-outer-frontier

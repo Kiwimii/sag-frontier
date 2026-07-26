@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: S.A.G. Frontier Game
- * Description: Embeds the S.A.G. Frontier Godot web build with a resilient loading and error screen.
- * Version: 0.1.0
+ * Description: Embeds the protected S.A.G. Frontier browser runtime with a resilient loading and error screen.
+ * Version: 0.41.1
  * Author: Star Atlas Germany
  * License: MIT
  */
@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 final class SAG_Frontier_Game {
+    private const VERSION = '0.41.1';
     private const SHORTCODES = ['sag_frontier', 'sag_voidrunner'];
 
     public static function init(): void {
@@ -23,8 +24,8 @@ final class SAG_Frontier_Game {
 
     public static function register_assets(): void {
         $base = plugin_dir_url(__FILE__);
-        wp_register_style('sag-frontier-game', $base . 'assets/loader.css', [], '0.1.0');
-        wp_register_script('sag-frontier-game', $base . 'assets/loader.js', [], '0.1.0', true);
+        wp_register_style('sag-frontier-game', $base . 'assets/loader.css', [], self::VERSION);
+        wp_register_script('sag-frontier-game', $base . 'assets/loader.js', [], self::VERSION, true);
     }
 
     public static function render(): string {

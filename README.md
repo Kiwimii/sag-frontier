@@ -1,57 +1,59 @@
 # S.A.G. Frontier
 
-Mobile-first browser roguelite for the Star Atlas Germany community.
+Mobile-first browser roguelite and Galia Operations experience for the Star Atlas Germany community.
 
-The game is delivered as a standalone WordPress plugin and embedded with the shortcode:
+## Current release
 
-```text
-[sag_voidrunner]
-```
+- Production content: **Kiwimi Depth 0.41.1**
+- Source of truth: **`main`**
+- Protected browser runtime: `web/legacy-041/`
+- Future gameplay runtime: modular Godot 4 project in `godot/`
+- WordPress shortcodes: `[sag_frontier]` and `[sag_voidrunner]`
 
-## Current status
-
-- `main`: stable Sprint 1 baseline
-- Sprint 2: combat systems, enemy archetypes, bosses and run upgrades
-
-## Project goals
-
-- Reliable expedition loop on desktop and mobile
-- Short, replayable roguelite runs
-- MUD, ONI and Ustur faction identities
-- Kiwimi tutorial and mission guidance
-- Persistent progression without requiring an account
-- Clean path toward WordPress users, cloud saves and leaderboards
+Build 0.41 remains fully available while its mechanics and content are migrated into Godot. The former `live` branch is a frozen historical reference and is no longer the deployment source.
 
 ## Repository layout
 
 ```text
-wordpress/sag-voidrunner/   Installable WordPress plugin source
-docs/                       Architecture and design documentation
+web/legacy-041/             Complete protected 0.41 browser runtime
+godot/                      Modular future gameplay runtime
+wordpress/sag-frontier-game Installable WordPress wrapper
+docs/                       Architecture and migration documentation
 tools/                      Build and validation scripts
-.github/workflows/          Automated checks
+.github/workflows/          CI, browser regression and deployment
 ```
 
-## Development
+## Validation and packaging
 
 Requirements:
 
-- PHP 7.4+
 - Node.js 20+
+- PHP 7.4+
 - WordPress 6.0+
+- Godot 4.6.3 for local Godot flow tests and exports
 
-Run local checks:
+Run all source and protected-content checks:
 
 ```bash
 npm run check
 ```
 
-Build the installable plugin ZIP:
+Build the installable plugin:
 
 ```bash
 npm run build
 ```
 
-The generated archive is written to `dist/sag-voidrunner.zip`.
+The plugin builder packages a local Godot web export when one is present. Otherwise it packages the protected 0.41.1 browser runtime, so the ZIP remains reproducible throughout the migration.
+
+The generated archive is written to `dist/sag-frontier-game.zip`.
+
+## Release rules
+
+- Existing game, story, campaign, progression and community content may not be removed implicitly.
+- Changes to the protected runtime require an intentional update of `release-manifest.json`.
+- Save data must be versioned and migrated without discarding player inventory.
+- A release must pass Node/PHP checks, the Godot full-flow test and the current mobile browser regression.
 
 ## License
 

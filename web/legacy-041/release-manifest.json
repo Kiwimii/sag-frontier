@@ -1,0 +1,957 @@
+{
+  "release": "SAG Kiwimi Depth 0.41.1",
+  "baseSource": "live@8193477ac5fa4758d04b2550292939d3e2a707e6",
+  "purpose": "Content lock for the complete imported browser runtime.",
+  "files": [
+    {
+      "path": ".github/workflows/build-sprint08-visuals.yml",
+      "bytes": 3581,
+      "sha256": "376977a26523fe68ab724f44c384a1de2785586f75c7340fea9762cf2af8f248"
+    },
+    {
+      "path": ".github/workflows/build-sprint09-progression.yml",
+      "bytes": 1935,
+      "sha256": "9710ec012c2df8de2aea6f422384a2b7279ad3209a9547566f2140b8a66be7c3"
+    },
+    {
+      "path": ".github/workflows/build-sprint10-deep-space.yml",
+      "bytes": 3876,
+      "sha256": "ed833ec23298553fda6b26b8ffdb07410bec600f27cda436bd2a9fbe43903151"
+    },
+    {
+      "path": ".github/workflows/build-sprint11-refinement.yml",
+      "bytes": 2136,
+      "sha256": "2081cdb5d56dfaa15b23565060aa7130ee6856ceaa36153fabcb5c231a9428af"
+    },
+    {
+      "path": ".github/workflows/build-sprint12-modular.yml",
+      "bytes": 2240,
+      "sha256": "90cb1d59045ad4f5148cddea16287605137792721b162d737bd451e95594fadd"
+    },
+    {
+      "path": ".github/workflows/build-sprint13-outer-frontier.yml",
+      "bytes": 2948,
+      "sha256": "09b7990ba2dcdd2f5c36e28a87eeee13da37346061d0c91dfc71ef3b45b1db10"
+    },
+    {
+      "path": ".github/workflows/decompress-source.yml",
+      "bytes": 4584,
+      "sha256": "ed2b10ab89d7219a12e5762a45adabd55a9021a79e2c7ad40e60207b3f43d586"
+    },
+    {
+      "path": ".github/workflows/validate-sprint19.yml",
+      "bytes": 2049,
+      "sha256": "f817b095c533bbcc7071ce98e88394c8ecefa50a7e5b8fd037b92ae384eabc62"
+    },
+    {
+      "path": ".github/workflows/validate-sprint20.yml",
+      "bytes": 3596,
+      "sha256": "e082226e5e92f17f3c5398589a9d0b26cd2dee944aa5a2a7025b82e60d2077ac"
+    },
+    {
+      "path": ".github/workflows/validate-sprint25.yml",
+      "bytes": 3530,
+      "sha256": "4b2a2e24373129c9ec59c95e292171adbcc1a62ef4ea169294e10d661f3bca63"
+    },
+    {
+      "path": ".github/workflows/validate-sprint35.yml",
+      "bytes": 513,
+      "sha256": "df0352600924df21bb6232c0efcca756ec3ab0b6ad129328a82486be9c873796"
+    },
+    {
+      "path": ".github/workflows/validate-sprint40.yml",
+      "bytes": 1600,
+      "sha256": "fad31f02a2a137555c47585c07f96c655131db5fa3797c884baec383e2adc05f"
+    },
+    {
+      "path": ".github/workflows/validate-sprint41.yml",
+      "bytes": 584,
+      "sha256": "a9583187a5496a27f02e7cec862c6877505b9aef4d0c1362878e074a59779cff"
+    },
+    {
+      "path": "NARRATIVE_SOURCES.md",
+      "bytes": 3560,
+      "sha256": "0637b273961dd2c140765d4f28f1665cd2f62610575ec64c65e3d5a7e525b57f"
+    },
+    {
+      "path": "SPRINT09.md",
+      "bytes": 200,
+      "sha256": "ebb68cbfe1bb92baefc6b032ccfe865a7dba3f9768d374bb69f1cdd21c3d78c9"
+    },
+    {
+      "path": "SPRINT10.md",
+      "bytes": 3438,
+      "sha256": "d320c55be6e62c5aad7464c59ce9b9120dcb1a590ee5d7051aa18a2150f68cfc"
+    },
+    {
+      "path": "SPRINT11.md",
+      "bytes": 2300,
+      "sha256": "8ea0bbe91d52c38fdd115b302121f64fd8bb95343d571a50d198a89685a5211e"
+    },
+    {
+      "path": "SPRINT12.md",
+      "bytes": 2164,
+      "sha256": "9143ff2a502b2c2458b89882f7facfe1aa458d50e8c1e5ac6514247ac2c82b37"
+    },
+    {
+      "path": "SPRINT13.md",
+      "bytes": 2840,
+      "sha256": "c57f9c2d87c00b77b23fb1a15ed3dc4016bf31b66037213e83ed71b13cf3f07a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 793,
+      "sha256": "c0a1715c245c933843166ab2d2d14ee015b38e2ef46a6ccea486c5177ba493ce"
+    },
+    {
+      "path": "launch.html",
+      "bytes": 725,
+      "sha256": "e80d2e8522f052889bf43f381719feb1070d69e56dee1b4cf6b52405d4fb40bd"
+    },
+    {
+      "path": "s05p00.txt",
+      "bytes": 5000,
+      "sha256": "b9e514ff40650f37331f0dc6f62151176666060833cf36044dd9570c4f7d28cb"
+    },
+    {
+      "path": "s05z00.txt",
+      "bytes": 5000,
+      "sha256": "95f77bf79198f0569ac3e6682a74745356bb6064c2028b3e9802ab9b2a8b902e"
+    },
+    {
+      "path": "s05z01.txt",
+      "bytes": 5000,
+      "sha256": "15fee75911799377420a1366cffac376fe02394cc91e6b3a9a4a27835efcccb0"
+    },
+    {
+      "path": "s05z02.txt",
+      "bytes": 5000,
+      "sha256": "126a901655978a4cdb7fdce718f7e7d783c32644f0e5ab548e7d7c83ea96eccc"
+    },
+    {
+      "path": "s05z03.txt",
+      "bytes": 5000,
+      "sha256": "ed725164bad6c012922b107560e049bdcaa2010b1150315f2d75f8ca799613ec"
+    },
+    {
+      "path": "s05z04.txt",
+      "bytes": 348,
+      "sha256": "819c46784eedd205cb83de3bfc96b8b43119da67bf539c8c8e7b9436a06b8be7"
+    },
+    {
+      "path": "s06-kiwimi-0.txt",
+      "bytes": 4000,
+      "sha256": "327f3705db81c616825deca6cff2e9c76fd314597df632cc09b56ca7d0309440"
+    },
+    {
+      "path": "s06-kiwimi-1.txt",
+      "bytes": 4000,
+      "sha256": "263ecae7acdfcdd2d3972ffe15c79aa25842ccc6cd050c98df76c5ea58e554dc"
+    },
+    {
+      "path": "s06-kiwimi-2.txt",
+      "bytes": 4000,
+      "sha256": "ec8e6430d6f98ab0d5cc6344b02a82c804683e20bc52cfa6ad83a3804300c780"
+    },
+    {
+      "path": "s06-kiwimi-3.txt",
+      "bytes": 16,
+      "sha256": "963de62e5ff39095c0a725d22b2e6ee2335aff5e95e3c450a1a337790cdc4074"
+    },
+    {
+      "path": "s06-kiwimi.txt",
+      "bytes": 6827,
+      "sha256": "26883790806bff20b04b229204cd04a2d6aec572c26728c3163578a7a445e9bd"
+    },
+    {
+      "path": "s06-sag-banner-0.txt",
+      "bytes": 5500,
+      "sha256": "4cc809ff71bf741d7a9a2fdd4be4470b5d088fad6391fd79baeefe0917a6fa1d"
+    },
+    {
+      "path": "s06-sag-banner-1.txt",
+      "bytes": 5500,
+      "sha256": "9d28fafc4a4c98a91a47284034f6a5b45f4cc62085333e89715aa4bf9c894de9"
+    },
+    {
+      "path": "s06-sag-banner-2.txt",
+      "bytes": 5500,
+      "sha256": "db2c58b7a2e69f094cd5757f4fa1e5e94acc4a2bdfe3b93e6f39704af1276f75"
+    },
+    {
+      "path": "s06-sag-banner-3.txt",
+      "bytes": 5500,
+      "sha256": "4a8eb2b0a856745c1d3671c67ca892648d9d5d01f3cd0b5dde20fb7128cebaab"
+    },
+    {
+      "path": "s06-sag-banner-4.txt",
+      "bytes": 88,
+      "sha256": "a4e2da75e093ea65bc05747fb367843538be7f0798ae43340d644467d8ae3b04"
+    },
+    {
+      "path": "s06-sag-logo-0.txt",
+      "bytes": 6802,
+      "sha256": "556630d901d416ac11caa74e0b86010322d7f324e8b655f56aeca2c076c0a7c0"
+    },
+    {
+      "path": "s06-sag-logo.txt",
+      "bytes": 4080,
+      "sha256": "ef72d26e5ddbdeb6b7457b3d1c73dce721bdb0d8fde2e3fa9ec73e6e4d822efa"
+    },
+    {
+      "path": "s11h00.txt",
+      "bytes": 6836,
+      "sha256": "5753556b13631084bb2f07e26e0c965d1ebee5bf72f34f1eded751d74797f0d3"
+    },
+    {
+      "path": "s11z00.txt",
+      "bytes": 8000,
+      "sha256": "f5ab7f9161e1050ee953a09c11ca2c113274f8b43e23613830580578e03d0f8e"
+    },
+    {
+      "path": "s11z01.txt",
+      "bytes": 8000,
+      "sha256": "03eaa74fd0df59a2b388c4861b2416ec823af7256c201d1ca1090e1e85fbc1e0"
+    },
+    {
+      "path": "s11z02.txt",
+      "bytes": 8000,
+      "sha256": "aae53c75170302fa59f4a3067d905dd88684a0cf1d035dd00fbcc6d17387e15f"
+    },
+    {
+      "path": "s11z03.txt",
+      "bytes": 8000,
+      "sha256": "f3eb79f911a033e8798fc755d248c201a2d09f3d205db83abd0e263abf296ad0"
+    },
+    {
+      "path": "s11z04.txt",
+      "bytes": 8000,
+      "sha256": "789bf34a60017b57bf3becf6236cf0ef60fc5b9184108c61ae1768278f3ec930"
+    },
+    {
+      "path": "s11z05.txt",
+      "bytes": 5096,
+      "sha256": "a302debb2381aa51d01b1293aeb653ebb727c07f72b9c1924641d8b69d39b155"
+    },
+    {
+      "path": "sprint03-core.js",
+      "bytes": 12403,
+      "sha256": "022192b9ea397f02f5ab3c313b2a3d2e7fc38a667ca59b0f0d9fe3adb1da6838"
+    },
+    {
+      "path": "sprint03-game.js",
+      "bytes": 4269,
+      "sha256": "c72a92937345d1eeb9d8065756a2c06181f98d9b1be927108b0e613788d80528"
+    },
+    {
+      "path": "sprint03-render.js",
+      "bytes": 6378,
+      "sha256": "86b7edae4782de53a30e22171648df4600c3f311da01db3c2ef13c78e49860f9"
+    },
+    {
+      "path": "sprint03.css",
+      "bytes": 4232,
+      "sha256": "66cfcac9fc1df14065fd1dba5ac905ab16306943ca31e1bce8e5aef967f6fe0d"
+    },
+    {
+      "path": "sprint03.html",
+      "bytes": 3823,
+      "sha256": "10c13cd195c267b05bdae7cbe57391dc57e943d75397a08bac53020c5ee2db69"
+    },
+    {
+      "path": "sprint04.html",
+      "bytes": 16477,
+      "sha256": "6a19fcf338e97f4e59e78bd62ec6856d9b6a80a50a1ed4b3791bbaa5caff1c38"
+    },
+    {
+      "path": "sprint05-1.txt",
+      "bytes": 16232,
+      "sha256": "84d079ed82ebc345a34b275ad647a5f49c5faec7272f8cb990e45e1c8ae62aa5"
+    },
+    {
+      "path": "sprint05-2.txt",
+      "bytes": 16235,
+      "sha256": "f97258603b77e5997c59027ef161b1009707828f4376773835755693f2e712e0"
+    },
+    {
+      "path": "sprint05-3.txt",
+      "bytes": 16232,
+      "sha256": "26e4a903f0a42f9c2443549670a1934c8abcdd53c8a085e5d3af245824d6bdcc"
+    },
+    {
+      "path": "sprint05-4.txt",
+      "bytes": 5894,
+      "sha256": "e62dc1d319b89f94d0beb02fac2afa2ccaf17f402c0aed16c0849f0c3988dc2a"
+    },
+    {
+      "path": "sprint05-source.js",
+      "bytes": 48696,
+      "sha256": "9824a9afde3354193111bfc3a0f02498fe821692fbb3f0cf9a3e683736ce5fac"
+    },
+    {
+      "path": "sprint05.css",
+      "bytes": 8170,
+      "sha256": "faa935e540974912f411d75b11393d113512379c259a2a4c5f9aef830f45c3f0"
+    },
+    {
+      "path": "sprint05.html",
+      "bytes": 6637,
+      "sha256": "0c2516c8ee6492dfe15f2dd3eef77d22c7cdb819e70a19e7874b7359cc5363cd"
+    },
+    {
+      "path": "sprint05.js",
+      "bytes": 951,
+      "sha256": "230f2d9bcc15bbf02597bb3cbb70d9f652634c0501a5e5861d169a9ec59bb093"
+    },
+    {
+      "path": "sprint06-branding.css",
+      "bytes": 17032,
+      "sha256": "a59fa56f006ecea6f76abe1552197c94e31d127d55eda70df9fbf1907c1cb994"
+    },
+    {
+      "path": "sprint06-branding.js",
+      "bytes": 15177,
+      "sha256": "7001d8104786e1dc8da932f453f31600afa10ea788c1b4b6c6c3b27147eb73ec"
+    },
+    {
+      "path": "sprint06-polish.css",
+      "bytes": 3307,
+      "sha256": "f5db13e0c316e557b05ceff76e9d15c3bc589416a8974ea9df5316923db72221"
+    },
+    {
+      "path": "sprint06.html",
+      "bytes": 11069,
+      "sha256": "f37b2bce90c76646a40fbc971f53ddb01f7c7f99c4abb1cbc7fc803d61b0eb10"
+    },
+    {
+      "path": "sprint07-branding.js",
+      "bytes": 2320,
+      "sha256": "ba34dddaacfdd4a25af1b0067f3792ed7d406ea131877c35049171616d89b636"
+    },
+    {
+      "path": "sprint07-build.log",
+      "bytes": 33,
+      "sha256": "bc34a32f963c154ee35dc74784d9c3f48946a36d560ee825fa9488a0167c67ed"
+    },
+    {
+      "path": "sprint07-source.js",
+      "bytes": 61720,
+      "sha256": "4e3549ea392d6b15ef08037cc143055d6c35dd18e73edbd8f305b3e3dd41b620"
+    },
+    {
+      "path": "sprint07.css",
+      "bytes": 2498,
+      "sha256": "8792a38ca9d703adfac2de224e7eef75b05ca504d3c06dab71318854c87a7478"
+    },
+    {
+      "path": "sprint07.html",
+      "bytes": 11718,
+      "sha256": "a3a9745957d2ad1bb1500b900878337544771b79268b60a1a445523ce173a818"
+    },
+    {
+      "path": "sprint08-source.js",
+      "bytes": 68517,
+      "sha256": "03353e4b94d7b2e3cee6eeb4409ee76811b43390fedee3271b14b2baf157d9bc"
+    },
+    {
+      "path": "sprint08.css",
+      "bytes": 501,
+      "sha256": "aac428e6495e320cbcfb0a0caf1875e587cd02707581882d132e0f32146f90a2"
+    },
+    {
+      "path": "sprint08.html",
+      "bytes": 11742,
+      "sha256": "50a190fc3a68793975c49e19030cb853ab8251198650e598690df4b1a740e288"
+    },
+    {
+      "path": "sprint09-branding.js",
+      "bytes": 4286,
+      "sha256": "92ef8cea5d3d95c23f37bbee54a23abdb667c52bde04ff63695c13c1ef827258"
+    },
+    {
+      "path": "sprint09-source.js",
+      "bytes": 80226,
+      "sha256": "e0010b5c7e0240d7d7e73ec765fb8653508c2522cf833e7fc294b048fc3820a6"
+    },
+    {
+      "path": "sprint09.css",
+      "bytes": 13909,
+      "sha256": "c2a432a5843b2dedd6fd1beb0f43c14fd039b16c606f8f20936423436afa41d9"
+    },
+    {
+      "path": "sprint09.html",
+      "bytes": 13833,
+      "sha256": "2289e8e93a1c2bbe1656024bdaed115ff5ea49c46aae058c9f50e6c1d88922e0"
+    },
+    {
+      "path": "sprint10-source.js",
+      "bytes": 95199,
+      "sha256": "5f2f31cb3e2ff5079d079932768d618cef99c5e79fc7f9f6b89c7ee64de36cdb"
+    },
+    {
+      "path": "sprint10.css",
+      "bytes": 3212,
+      "sha256": "39af355619c7ccb1e6a77eaa10e82088dd771288c086a47980bf6ffd1d133b6f"
+    },
+    {
+      "path": "sprint10.html",
+      "bytes": 14443,
+      "sha256": "44a76180f6ea35999d6afd904899c844c6e97486147a027c20a71a8e3d51f25a"
+    },
+    {
+      "path": "sprint11-branding.js",
+      "bytes": 3450,
+      "sha256": "74c1b846f696fdad048542963de06541eab3fde88ff5d132a7f808f4b41f07cc"
+    },
+    {
+      "path": "sprint11-source.js",
+      "bytes": 110541,
+      "sha256": "f81ccc4d35e924a90ad2568675b4d7feca1167122b1f85a92a2aa3fc997a683d"
+    },
+    {
+      "path": "sprint11.css",
+      "bytes": 2714,
+      "sha256": "7a929366c4a7d8d2aa285024cec891ed3164b74d31031302b6a64ff5b5110a10"
+    },
+    {
+      "path": "sprint11.html",
+      "bytes": 16133,
+      "sha256": "0a0621d04df3ba776366c42b5ae9e82531a977bcf82f1817ceb10c021ed8d34f"
+    },
+    {
+      "path": "sprint12-config.js",
+      "bytes": 1644,
+      "sha256": "33c2f1b3bb6d0ed7cd48454bff6b42d07612fd6cc299e8432e9ae624b9a94c79"
+    },
+    {
+      "path": "sprint12-source.js",
+      "bytes": 111337,
+      "sha256": "b3f1ff065dabe8ef348bf14159814334258864c41fd4125ee3b81f0ba3ae77d5"
+    },
+    {
+      "path": "sprint12-ui.js",
+      "bytes": 25600,
+      "sha256": "802e580c8971a5d99f7c8d4b16ceaa1eea12714725a8d9e98ba1f30636d8f955"
+    },
+    {
+      "path": "sprint12.bundle.css",
+      "bytes": 51938,
+      "sha256": "4279b2933643f7bd80848f4a2f144772457efb9649034fa39e542c78124e4923"
+    },
+    {
+      "path": "sprint12.html",
+      "bytes": 15704,
+      "sha256": "69fa9922b90623e483963c11cc0715204a9e5ff1e4995b482572e655f1eb398c"
+    },
+    {
+      "path": "sprint13-config.js",
+      "bytes": 4591,
+      "sha256": "5e913019d5faa0dc64f57f40eb3a6c45b50f2dfa79e456954fe8c01e037b1262"
+    },
+    {
+      "path": "sprint13-source.js",
+      "bytes": 127165,
+      "sha256": "515d5af60dd70063ee6584f59a7ea252d8506adb2113f92c5218b9ae01d66453"
+    },
+    {
+      "path": "sprint13.bundle.css",
+      "bytes": 53724,
+      "sha256": "4bfa62d24eccbc53b6e4b56177939ce7c43ed48b7c4f59983138722dd0ce2404"
+    },
+    {
+      "path": "sprint13.html",
+      "bytes": 16034,
+      "sha256": "ae8a79b27be588577329f131a9596b281048cef62de7a2e33652513bb0bbe8c1"
+    },
+    {
+      "path": "sprint14-bootstrap.js",
+      "bytes": 955,
+      "sha256": "35c7a0b0f390f6d52b4a2722250e6562ddf0f5915654f36ce69a436681f9aaf7"
+    },
+    {
+      "path": "sprint14-progression-advanced-ui.js",
+      "bytes": 13151,
+      "sha256": "6130cad5f5e8f5c05a5ca56060c3a70e2e0d83f35ec0d34571b019f35b273d93"
+    },
+    {
+      "path": "sprint14-progression-advanced.css",
+      "bytes": 2909,
+      "sha256": "484ea9c0e09e34f5a8e96d77de360e4bc97987f5c2c6536078a5344529beed69"
+    },
+    {
+      "path": "sprint14-progression-advanced.js",
+      "bytes": 15733,
+      "sha256": "a24205ea1817b13010e62237893fa789c504a6d6757bb9855b623fa954cfb113"
+    },
+    {
+      "path": "sprint14-progression-core.js",
+      "bytes": 11600,
+      "sha256": "b8ff904dbc813de8a545e615acc2ec24400cb696a976bbe4ac4b96fab1555250"
+    },
+    {
+      "path": "sprint14-progression-ui.js",
+      "bytes": 10838,
+      "sha256": "ff5e69eec2a8187f21f33df23e4936450ac93eab5aeac6ab03485bf84dcdc24c"
+    },
+    {
+      "path": "sprint14-progression.css",
+      "bytes": 6213,
+      "sha256": "568381d542e83e4a32383412607cf8d7c8ba00353031cb513ad18f60bd63216e"
+    },
+    {
+      "path": "sprint14.html",
+      "bytes": 4114,
+      "sha256": "ef87cfd5a61494868aa08abbdf8048e4d2f0d4e06e347836b67d205f66c0813a"
+    },
+    {
+      "path": "sprint15-cinematic.css",
+      "bytes": 12328,
+      "sha256": "2bd3cc5a18127a00752677892ebf06322205a3e55c7f5554dd723cda2fb1b598"
+    },
+    {
+      "path": "sprint15-cinematic.js",
+      "bytes": 11933,
+      "sha256": "ebfed32485e5cd65615166507d44740539899cd4d37ea35b7355731583310723"
+    },
+    {
+      "path": "sprint15-story-core.js",
+      "bytes": 18220,
+      "sha256": "65130498723c80602d96b37fe6356cf73f7a50f3f10e38b4f6f200a2d50deaff"
+    },
+    {
+      "path": "sprint16-lore-kiwimi.js",
+      "bytes": 7858,
+      "sha256": "004fbee78c27cc863c3631d2c9b4ba894efe3fd36068d9da4e3a2b751a18e23a"
+    },
+    {
+      "path": "sprint16-lore.css",
+      "bytes": 6072,
+      "sha256": "eb0da852c567695482e8c0046026887ed5002ce15665af46c85c6d617bc46acb"
+    },
+    {
+      "path": "sprint17-campaign.css",
+      "bytes": 6060,
+      "sha256": "ad72d96535d6110606ef233c0278cc1534d2a1f40117c056b839a4d2eefb5c0e"
+    },
+    {
+      "path": "sprint17-campaign.js",
+      "bytes": 6895,
+      "sha256": "bd0a4ff7b1edd5afcfb1a83c4a69cc538cae5ae420c9764774c9e70996d0fedd"
+    },
+    {
+      "path": "sprint18-events.css",
+      "bytes": 3960,
+      "sha256": "34b21983e7a14c239c8e84729542bb59bb126064731412efba6ef508edb07bbb"
+    },
+    {
+      "path": "sprint18-world-events.js",
+      "bytes": 7754,
+      "sha256": "275f10ffa60cc6f64c11ebd0d4d8f3a0caf76225606b35c2b2ad881798c02325"
+    },
+    {
+      "path": "sprint19-finale.css",
+      "bytes": 5438,
+      "sha256": "10d28dbaac74501c243a018a6328af32707f07dfb3a094408f7404482924e8b1"
+    },
+    {
+      "path": "sprint19-finale.js",
+      "bytes": 6973,
+      "sha256": "dbcf6d4cf9a1fcb18c7bc46e737ae05a6894657a10fa6dd140306d7b85b34bbc"
+    },
+    {
+      "path": "sprint19.html",
+      "bytes": 6403,
+      "sha256": "149a3a6f73c871f6f7ad81cffc5dbc3d678ea1c6ebdc19075bee9204a3d9b03c"
+    },
+    {
+      "path": "sprint20-focused.css",
+      "bytes": 9356,
+      "sha256": "f2f9a9da0af042617fe06dde9287dc042164964c00fedda57528e9f5cf72fab2"
+    },
+    {
+      "path": "sprint20-focused.js",
+      "bytes": 13717,
+      "sha256": "054b49df38d8f88d8c5fc3583730eb8825674de002e4f3e6f0a7cf828901589f"
+    },
+    {
+      "path": "sprint20-visual-fixes.css",
+      "bytes": 425,
+      "sha256": "925b9665cd2f1dc70f1964452602b97f774e318920dde91ceb3d869b117dd847"
+    },
+    {
+      "path": "sprint20.html",
+      "bytes": 5846,
+      "sha256": "4e0965a55de5036dc76ad4ad1af9081169295d922fa92f3e8a8c402aa47ac64d"
+    },
+    {
+      "path": "sprint21-canon-lore.js",
+      "bytes": 10237,
+      "sha256": "724b01162bc7f59f87dc88f3661fa799cef16f67ff0d354b80b1cb719f3029eb"
+    },
+    {
+      "path": "sprint22-sag-dac.js",
+      "bytes": 4019,
+      "sha256": "4b01844a4e88f14a1784933a4d2a0d9796cfe3989be252ec62e067b76e19021f"
+    },
+    {
+      "path": "sprint23-campaign-narrative.js",
+      "bytes": 13177,
+      "sha256": "b851d59bd487536da3feec1bba48ba8109f080c59b3ac9a41d681151585a27e8"
+    },
+    {
+      "path": "sprint24-kiwimi-dialogue.css",
+      "bytes": 2584,
+      "sha256": "10b6732eec907709dace63a5613851d9789fdb313c9690866c114a6c2a664d54"
+    },
+    {
+      "path": "sprint24-kiwimi-dialogue.js",
+      "bytes": 11055,
+      "sha256": "5f23a185d1b40563fca58d09d50152e415c047f42a2299e848259578baa82f68"
+    },
+    {
+      "path": "sprint25-finale-editorial.js",
+      "bytes": 2702,
+      "sha256": "1d36327c1aadad4b296fd0214c7e2fc4c490f3cb4972600eb58e61a98c2024a4"
+    },
+    {
+      "path": "sprint25-narrative-ui.js",
+      "bytes": 15722,
+      "sha256": "40a1bb5e8753aea74bf103232ac745ecb32bf97e9135da5629eb9e16dcbe4432"
+    },
+    {
+      "path": "sprint25-narrative.css",
+      "bytes": 1987,
+      "sha256": "b70ae8da32989efd82bbf66799f764dbd2af30a6432a259ffefa2ea6228c3c8c"
+    },
+    {
+      "path": "sprint25.html",
+      "bytes": 6376,
+      "sha256": "c7b2e9a204b9c115c5acaf4ba46b4c1cd6c75b983c15f30767d960ef545cf651"
+    },
+    {
+      "path": "sprint26-star-map.js",
+      "bytes": 1777,
+      "sha256": "b1660e0e7ba688916e0c307092a3a8072def52ab91488fb54ad4b75163545083"
+    },
+    {
+      "path": "sprint27-stations.js",
+      "bytes": 948,
+      "sha256": "178ec9fa9aff78c5a282126b160f96b6ac3a17d96493e435c0ea1b9f40fe43d3"
+    },
+    {
+      "path": "sprint28-npcs.js",
+      "bytes": 1020,
+      "sha256": "bbf4afa91a05cfe25d5306c87976fa18897d5e1e3d35b0e82c9be3bdfa809f9c"
+    },
+    {
+      "path": "sprint29-economy.js",
+      "bytes": 399,
+      "sha256": "2ee6164faf1785f53fc10664f6aae4b04f7d4726e0d507fdbabf913df319216e"
+    },
+    {
+      "path": "sprint30-ship.js",
+      "bytes": 286,
+      "sha256": "c51844274d04390f347ed9a3ff5dda4c8e828877446b2e6f18812fef52b79539"
+    },
+    {
+      "path": "sprint31-events.js",
+      "bytes": 1483,
+      "sha256": "e313dac6cf79aad9a406a338e471d2b4f39676c95225c81f21edc397274da548"
+    },
+    {
+      "path": "sprint32-reputation.js",
+      "bytes": 612,
+      "sha256": "a8591214ddc277e36283713615feb8ab368b9dcb9c6ebfa965c74c3fb357dcc8"
+    },
+    {
+      "path": "sprint33-cinematic.js",
+      "bytes": 416,
+      "sha256": "04b10f269729d82ad0aed8873bf7d5882ae24900974a50bfe68c012feec53072"
+    },
+    {
+      "path": "sprint34-dac.js",
+      "bytes": 957,
+      "sha256": "2747d29e7b87c5a1a07b32689d83bd6a3c646b6ab6d7d4c7cdc4aa172042105a"
+    },
+    {
+      "path": "sprint35-campaign.js",
+      "bytes": 3746,
+      "sha256": "1440bb1100bc3d9f8b2c8570e8c718f4f0c98300b5b253df749ab78c6398a613"
+    },
+    {
+      "path": "sprint35-galia-core.js",
+      "bytes": 7619,
+      "sha256": "ae55eb4a91f2c898bcb5c4dbe66bd8b1e789a5f27d42ee036531b0ebca0ac02e"
+    },
+    {
+      "path": "sprint35-galia-ui.js",
+      "bytes": 8852,
+      "sha256": "3cd79a938ca1341c67a5900bf710584d959597a3616b6faabf51c6aa89d31f4c"
+    },
+    {
+      "path": "sprint35-galia.css",
+      "bytes": 3230,
+      "sha256": "19264e844cba5cc38773ea0d8a14fae35cae030af8e8db08c7f3aa8d2d195daf"
+    },
+    {
+      "path": "sprint35.html",
+      "bytes": 7205,
+      "sha256": "4b4b71a161f3b0080205e7eb467494b11ff6d238ebdefbed5e25b28159f86ae3"
+    },
+    {
+      "path": "sprint36-save-integrity.js",
+      "bytes": 4122,
+      "sha256": "777f2dfc2f66c5258a13fdda5308d4465a07b69e2392170ebe20b56bb8158b94"
+    },
+    {
+      "path": "sprint37-action-safety.js",
+      "bytes": 2644,
+      "sha256": "7889d461c4e1cd4a65780c0b71b3c99acb8debbada1cc60695bcda74734ed26f"
+    },
+    {
+      "path": "sprint38-ship-services.js",
+      "bytes": 2258,
+      "sha256": "aff7b1c92d140de23d59851db2fa0919855b3b741d978286df2568356b716e5c"
+    },
+    {
+      "path": "sprint39-accessibility.js",
+      "bytes": 1908,
+      "sha256": "b3675cb12e96b903d0de51fa5153f3bf1aba0c7500a2a580fad950f51a888af6"
+    },
+    {
+      "path": "sprint40-operations-polish.js",
+      "bytes": 5462,
+      "sha256": "4cc362eeb0bf71ff8437179c11fe1b2da33d6a21794e4dd8b7743698ae7361dc"
+    },
+    {
+      "path": "sprint40-stability.css",
+      "bytes": 1717,
+      "sha256": "276c970954937dc3901cf80cab6d6f2fc1e3739c1be871abf87900fa978746fc"
+    },
+    {
+      "path": "sprint40.html",
+      "bytes": 1871,
+      "sha256": "a80bf5223a2dc8e4b0bb342dd50f4845dacab987124338f21533290e4562aa46"
+    },
+    {
+      "path": "sprint41-kiwimi-depth.css",
+      "bytes": 469,
+      "sha256": "4e1cebbed3eed3cb29f74f57d3bfacda870595fdfece4844dbe8b9a30112fbc3"
+    },
+    {
+      "path": "sprint41-kiwimi-depth.js",
+      "bytes": 8446,
+      "sha256": "9f5056db72c202f958c52714b474eaee68e3f3859e5c4c495be80ad561ed65e9"
+    },
+    {
+      "path": "sprint41.html",
+      "bytes": 1802,
+      "sha256": "6ae2286b1e60e8d549725509c715389ab766fe9a25d446830cb84e3885030472"
+    },
+    {
+      "path": "src/config/sprint12.balance.js",
+      "bytes": 1644,
+      "sha256": "33c2f1b3bb6d0ed7cd48454bff6b42d07612fd6cc299e8432e9ae624b9a94c79"
+    },
+    {
+      "path": "src/config/sprint12.manifest.json",
+      "bytes": 433,
+      "sha256": "0c0e0c1fb3cab437cc9f458f6617e141854a49e85fd2dfa2fb72e871792b7da1"
+    },
+    {
+      "path": "src/config/sprint13.balance.js",
+      "bytes": 4591,
+      "sha256": "5e913019d5faa0dc64f57f40eb3a6c45b50f2dfa79e456954fe8c01e037b1262"
+    },
+    {
+      "path": "tests/sprint07-smoke.mjs",
+      "bytes": 5551,
+      "sha256": "6bf6753037b47447242d7990cc62ab8436371e68c85259f8f1d93117b45b43e2"
+    },
+    {
+      "path": "tests/sprint09-smoke.mjs",
+      "bytes": 6138,
+      "sha256": "ae814f80372f8a44dd67cb1f05b6270ee3596f7eceef2340c1b44ddd460fbf81"
+    },
+    {
+      "path": "tests/sprint10-smoke.mjs",
+      "bytes": 4297,
+      "sha256": "90c4d3b8839b16eb14a143a617ff5608c6b36346cd5d40391caf7501b877018b"
+    },
+    {
+      "path": "tests/sprint11-smoke.mjs",
+      "bytes": 7132,
+      "sha256": "0bc2cf05632803e970f88cbd727e593cebe02198468b64b28f92205de6c58cd4"
+    },
+    {
+      "path": "tests/sprint11-static.cjs",
+      "bytes": 2214,
+      "sha256": "b49691a650ba28bf4c9dfeba07cdd01a3151f39f37cd1bb81a9e4b17619cd99f"
+    },
+    {
+      "path": "tests/sprint12-smoke.mjs",
+      "bytes": 2809,
+      "sha256": "2d7c190756676c69c21e8f78c6ca7bd7ff9615fc721792aa952fea58ecdc6ee9"
+    },
+    {
+      "path": "tests/sprint12-static.cjs",
+      "bytes": 1856,
+      "sha256": "ca7f485f60aae2d25d9986450679262345be9fe6855cdfdba2183eded7582e75"
+    },
+    {
+      "path": "tests/sprint13-smoke.mjs",
+      "bytes": 6416,
+      "sha256": "4b7c7e184a29b15f786e544f3e87d710d5aa8b5e9089a5696ac9059e4c5e081c"
+    },
+    {
+      "path": "tests/sprint13-static.cjs",
+      "bytes": 2037,
+      "sha256": "6b3263696ae72f446dc0280698963a6a275a39d692730d0f26105b94fa6ed82c"
+    },
+    {
+      "path": "tests/sprint14-progression.cjs",
+      "bytes": 1883,
+      "sha256": "4644ed8caa1ee89806e5b57e966d1e9e69f6594ebf0e2515ed7214ee62a5b707"
+    },
+    {
+      "path": "tests/sprint14-smoke.mjs",
+      "bytes": 3353,
+      "sha256": "6f5d75876fa9e3a33b32e95820b0ab3db1c917aa8fc05b4f8993c6899cb261ca"
+    },
+    {
+      "path": "tests/sprint14-static.cjs",
+      "bytes": 1723,
+      "sha256": "3647e7f8af6d6bedbaa468ed1f2d85d06cdc59a501530b9d88c70046eebb2665"
+    },
+    {
+      "path": "tests/sprint19-smoke.mjs",
+      "bytes": 5029,
+      "sha256": "07c09e4382fa1652cd2a1325a10bcca15291f26d2c1010fbbd82501084ac4567"
+    },
+    {
+      "path": "tests/sprint19-static.cjs",
+      "bytes": 1925,
+      "sha256": "55950ead4db893f9f4be568c45d982da2a9989ae0c6dc35aa65d8e5e63f3a5c3"
+    },
+    {
+      "path": "tests/sprint19-story.cjs",
+      "bytes": 2586,
+      "sha256": "f41a209652f25ec68e11cc501d4279387c945c98f7d75e5cf3f3fb83a44c1621"
+    },
+    {
+      "path": "tests/sprint20-smoke.mjs",
+      "bytes": 3997,
+      "sha256": "4bc4863ef4273c97e4fb9d82a3ff6ed2944afe8952b1bf7bb42f68aa374b6b5a"
+    },
+    {
+      "path": "tests/sprint20-static.cjs",
+      "bytes": 991,
+      "sha256": "465a96934a700e32b72a5d341d94a5b4d1b57ce2e01535e4d237a55787c188ed"
+    },
+    {
+      "path": "tests/sprint25-smoke.mjs",
+      "bytes": 4790,
+      "sha256": "c7f439d88e5b4cfa02022527030db07d2555fd339a771058c28e92d8214f7c25"
+    },
+    {
+      "path": "tests/sprint25-static.cjs",
+      "bytes": 2070,
+      "sha256": "fb2c7d81ae653fea0add40f0c83d6473ee7a7e3cc0c68931b1061659fd7bae1e"
+    },
+    {
+      "path": "tests/sprint25-story.cjs",
+      "bytes": 1805,
+      "sha256": "c7352ab9e5380d92b20747965878979c5c88ab027faba7c03487a3091a007e08"
+    },
+    {
+      "path": "tests/sprint35-static.cjs",
+      "bytes": 1025,
+      "sha256": "d6b64b11925d71b5c18bce71ea27c3d32b6259623d898e4170369d9a3c52001b"
+    },
+    {
+      "path": "tests/sprint40-smoke.mjs",
+      "bytes": 1192,
+      "sha256": "856fcf8234c8b1e0a35bb131fb622185bed761f1f5adcd36173509ad75f14ac8"
+    },
+    {
+      "path": "tests/sprint40-state.cjs",
+      "bytes": 2013,
+      "sha256": "fbc4593bb0c7748affb47c24612282725fedd7cd84ff70b9943795bf001c69fc"
+    },
+    {
+      "path": "tests/sprint41-browser.mjs",
+      "bytes": 3765,
+      "sha256": "b55445a0088c191f86a353077b635fc790be3568f5efb004c736ba4b466e8c49"
+    },
+    {
+      "path": "tests/sprint41-state-regression.cjs",
+      "bytes": 3162,
+      "sha256": "6e277416f9020f37f7dded83cccda771f16d0d65db96224a7aaa834d8a39e0dc"
+    },
+    {
+      "path": "tests/sprint41-static.cjs",
+      "bytes": 500,
+      "sha256": "0655593cb422da51576dffac5825207b8ef2681ed3bf7fa396f49b91a3b613fe"
+    },
+    {
+      "path": "tools/build-sprint07.cjs",
+      "bytes": 24245,
+      "sha256": "e8c7ed4ee85670010dc5ea5099818d60a38e17e01ce7ff3e2d7dab20823b9c81"
+    },
+    {
+      "path": "tools/build-sprint08-visuals.cjs",
+      "bytes": 13765,
+      "sha256": "d820a066acfb1c9182fd7bec9764cfcc35b12abebca79a23a9202b07ef453f52"
+    },
+    {
+      "path": "tools/build-sprint09-progression.cjs",
+      "bytes": 30682,
+      "sha256": "c467ba495c0ccb210404ccf44709c7af5210d612f6187df3737244f08f4803f5"
+    },
+    {
+      "path": "tools/build-sprint10-deep-space.cjs",
+      "bytes": 38730,
+      "sha256": "c7e0325d14e75e000d1f8f4ad7540139abe1d5e4a27a5f26c248c19c9d45b4f5"
+    },
+    {
+      "path": "tools/build-sprint12.cjs",
+      "bytes": 5583,
+      "sha256": "ba6e981f16cde40f572b7489bbef3223baf3dd981880934d7c2615828404fde0"
+    },
+    {
+      "path": "tools/build-sprint13.cjs",
+      "bytes": 36424,
+      "sha256": "a70aaf4426b64f09b2c9854afc1492a45150bfd282811ab10749b7a75e1f69f1"
+    },
+    {
+      "path": "tools/fix-sprint09-runtime.cjs",
+      "bytes": 2922,
+      "sha256": "8acd99ef246a05f6e8246e2b65b1572736ffc788c3bb89f2213c9c55aacf7586"
+    },
+    {
+      "path": "tools/fix-sprint10-runtime.cjs",
+      "bytes": 726,
+      "sha256": "52b89cf9e80665dd6aa014807eaf887fddf8b079350fb58b79e536285f19d230"
+    },
+    {
+      "path": "tools/repair-build-sprint07.cjs",
+      "bytes": 6771,
+      "sha256": "2e9450c6c9bc57687b38e2b7dc824efc19d9260a43c023fb12e606456178c032"
+    },
+    {
+      "path": "tools/run-sprint13-build.cjs",
+      "bytes": 1470,
+      "sha256": "0c5f3088bbbb4fc8fed44db00114657dece3435cc8f9fa2a63addbe6ae9930d3"
+    },
+    {
+      "path": "tools/sanitize-sprint07.cjs",
+      "bytes": 2668,
+      "sha256": "792e089ee2b17f23c4004988bf06e98ab3e4756e154c9a0bfcd84d9a4d447e35"
+    },
+    {
+      "path": "tools/unpack-sprint11.cjs",
+      "bytes": 1228,
+      "sha256": "78d22528d344c676e782b9c1136ae630c84b1427e49b0ee772e95bb001e59cb4"
+    }
+  ]
+}
