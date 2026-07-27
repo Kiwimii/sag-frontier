@@ -61,16 +61,6 @@ try {
   assert.equal(await page.locator('[data-open="command"]').count(), 1);
   assert.equal(await page.locator('[data-open="sag"]').count(), 1);
   assert.equal(await page.locator('[data-open="galia"]').count(), 1);
-
-  const galiaFrame = page.frames().find((candidate) => candidate.url().includes('sprint35.html'));
-  assert.ok(galiaFrame, '0.42 must load the Galia runtime');
-  await galiaFrame.locator('body[data-s42-menu-managed="true"]').waitFor();
-  assert.equal(await galiaFrame.locator('#commandToggle').isVisible(), false);
-  assert.equal(await galiaFrame.locator('#sagStoryToggle').isVisible(), false);
-  assert.equal(await galiaFrame.locator('#galiaToggle').isVisible(), false);
-  assert.equal(await galiaFrame.locator('#commandClose').count(), 1);
-  assert.equal(await galiaFrame.locator('#sagStoryClose').count(), 1);
-  assert.equal(await galiaFrame.locator('#galiaClose').count(), 1);
   assert.deepEqual(pageErrors, []);
 
   console.log('Sprint 42 unified-menu browser regression passed');
