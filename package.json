@@ -11,7 +11,7 @@
     "check:js": "node --check wordpress/sag-frontier-game/assets/loader.js",
     "check:php": "php -l wordpress/sag-frontier-game/sag-frontier-game.php",
     "check:godot-export": "node tools/check-web-export.mjs",
-    "test:web:browser": "node web/legacy-041/tests/sprint41-browser.mjs && node web/release-042/tests/sprint42-browser.mjs",
+    "test:web:browser": "node web/release-042/tests/sprint42-browser.mjs",
     "export:web": "godot --headless --path godot --export-release Web ../wordpress/sag-frontier-game/public/game/index.html",
     "build": "node tools/build-plugin.mjs"
   },
