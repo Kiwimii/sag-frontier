@@ -1,6 +1,6 @@
 {
   "name": "sag-frontier",
-  "version": "0.42.0",
+  "version": "0.42.1",
   "private": true,
   "description": "Godot-powered browser roguelite for Star Atlas Germany",
   "scripts": {
