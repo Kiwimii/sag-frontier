@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate 0.42.1 release overlay
+      - name: Validate 0.42.2 release overlay
         run: |
           set -euo pipefail
           node --check web/release-042/sprint42-month.js
@@ -36,12 +36,14 @@ jobs:
           test -s web/release-042/sprint42.html
           test -s web/release-042/sprint42-month.css
           test -s web/release-042/sprint42-menu.css
-          grep -q 'sprint42.html?build=0421' web/legacy-041/index.html
+          grep -q 'sprint42.html?build=0422' web/legacy-041/index.html
           grep -q 'PRISM REGENT' web/release-042/sprint42-month.js
           grep -q 'ABYSSAL ORACLE' web/release-042/sprint42-month.js
           grep -q 'commander' web/release-042/sprint42-month.js
-          grep -q 'Zentrales Menü' web/release-042/sprint42-menu.js
-          grep -q 'Fenster schließen' web/release-042/sprint42-menu.js
+          grep -q 'frontierCyclePanel' web/release-042/sprint42-month.js
+          grep -q 's42-hidden' web/release-042/sprint42-month.js
+          grep -q 'data-open="cycle"' web/release-042/sprint42-menu.js
+          grep -q 'Frontier-Zyklus schließen' web/release-042/sprint42-month.js
       - name: Assemble GitHub Pages site
         run: |
           set -euo pipefail
@@ -50,7 +52,7 @@ jobs:
           rsync -a web/release-042/ site/
           touch site/.nojekyll
           cat > site/build-info.json <<EOF
-          {"release":"SAG Month of the Frontier 0.42.1","source_branch":"main","source_sha":"$(git rev-parse HEAD)","built_at":"$(date -u +%Y-%m-%dT%H:%M:%SZ)"}
+          {"release":"SAG Month of the Frontier 0.42.2","source_branch":"main","source_sha":"$(git rev-parse HEAD)","built_at":"$(date -u +%Y-%m-%dT%H:%M:%SZ)"}
           EOF
           for file in site/index.html site/sprint41.html site/sprint42.html site/sprint42-month.js site/sprint42-month.css site/sprint42-menu.js site/sprint42-menu.css site/build-info.json; do test -s "$file"; done
       - name: Configure Pages
@@ -69,6 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-and-build
     steps:
-      - name: Deploy SAG Month of the Frontier 0.42.1
+      - name: Deploy SAG Month of the Frontier 0.42.2
         id: deployment
         uses: actions/deploy-pages@v4
