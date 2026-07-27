@@ -1,11 +1,11 @@
 {
   "name": "sag-frontier",
-  "version": "0.41.1",
+  "version": "0.42.0",
   "private": true,
   "description": "Godot-powered browser roguelite for Star Atlas Germany",
   "scripts": {
     "check": "npm run check:web && npm run check:parity && npm run check:js && npm run check:php && npm run check:godot-export",
-    "check:web": "node tools/check-web-runtime.mjs",
+    "check:web": "node tools/check-web-runtime-042.mjs",
     "check:parity": "node tools/check-feature-parity.mjs",
     "manifest:web": "node tools/check-web-runtime.mjs --write",
     "check:js": "node --check wordpress/sag-frontier-game/assets/loader.js",
