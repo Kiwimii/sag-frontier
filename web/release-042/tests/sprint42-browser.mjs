@@ -55,10 +55,10 @@ try {
 
   const galiaFrame = page.frames().find((candidate) => candidate.url().includes('sprint35.html'));
   assert.ok(galiaFrame, '0.42 must load the Galia runtime');
-  await galiaFrame.locator('#commandToggle').waitFor();
-  assert.equal(await galiaFrame.locator('#commandToggle').isVisible(), false);
-  assert.equal(await galiaFrame.locator('#sagStoryToggle').isVisible(), false);
-  assert.equal(await galiaFrame.locator('#galiaToggle').isVisible(), false);
+  await galiaFrame.locator('body[data-s42-menu-managed="true"]').waitFor();
+  await galiaFrame.locator('#commandToggle').waitFor({ state: 'hidden' });
+  await galiaFrame.locator('#sagStoryToggle').waitFor({ state: 'hidden' });
+  await galiaFrame.locator('#galiaToggle').waitFor({ state: 'hidden' });
 
   await page.locator('.s42-menu-button').click();
   await page.locator('.s42-drawer.open').waitFor();
