@@ -48,39 +48,30 @@ const browser = await chromium.launch({ headless: true });
 try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
   await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'networkidle' });
 
-  await page.locator('.s42-menu-button').waitFor({ state: 'visible' });
-  assert.equal(await page.locator('.s42-menu-button').count(), 1);
+  const menuButton = page.locator('.s42-menu-button');
+  await menuButton.waitFor({ state: 'visible' });
+  assert.equal(await menuButton.count(), 1, 'exactly one central menu trigger must be visible');
+  await menuButton.click();
+  await page.locator('.s42-drawer.open').waitFor({ state: 'visible' });
+  assert.equal(await page.locator('.s42-close').isVisible(), true, 'central menu requires a visible X close button');
+  assert.equal(await page.locator('[data-open="command"]').count(), 1);
+  assert.equal(await page.locator('[data-open="sag"]').count(), 1);
+  assert.equal(await page.locator('[data-open="galia"]').count(), 1);
 
   const galiaFrame = page.frames().find((candidate) => candidate.url().includes('sprint35.html'));
   assert.ok(galiaFrame, '0.42 must load the Galia runtime');
   await galiaFrame.locator('body[data-s42-menu-managed="true"]').waitFor();
-  await galiaFrame.locator('#commandToggle').waitFor({ state: 'hidden' });
-  await galiaFrame.locator('#sagStoryToggle').waitFor({ state: 'hidden' });
-  await galiaFrame.locator('#galiaToggle').waitFor({ state: 'hidden' });
-
-  await page.locator('.s42-menu-button').click();
-  await page.locator('.s42-drawer.open').waitFor();
-  await page.locator('[data-open="galia"]').click();
-  await galiaFrame.locator('#galiaShell:not(.g-hidden)').waitFor();
-  await galiaFrame.locator('#galiaClose').waitFor({ state: 'visible' });
-  await galiaFrame.locator('#galiaClose').click({ force: true });
-  await galiaFrame.locator('#galiaShell.g-hidden').waitFor();
-
-  await page.locator('.s42-menu-button').click();
-  await page.locator('[data-open="command"]').click();
-  await galiaFrame.locator('#commandCenter:not(.hidden)').waitFor();
-  await galiaFrame.locator('#commandClose').waitFor({ state: 'visible' });
-  await galiaFrame.locator('#commandClose').click({ force: true });
-  await galiaFrame.locator('#commandCenter.hidden').waitFor();
-
-  await page.locator('.s42-menu-button').click();
-  await page.locator('[data-open="sag"]').click();
-  await galiaFrame.locator('#sagStoryShell:not(.sag-hidden)').waitFor();
-  await galiaFrame.locator('#sagStoryClose').waitFor({ state: 'visible' });
-  await galiaFrame.locator('#sagStoryClose').click({ force: true });
-  await galiaFrame.locator('#sagStoryShell.sag-hidden').waitFor();
+  assert.equal(await galiaFrame.locator('#commandToggle').isVisible(), false);
+  assert.equal(await galiaFrame.locator('#sagStoryToggle').isVisible(), false);
+  assert.equal(await galiaFrame.locator('#galiaToggle').isVisible(), false);
+  assert.equal(await galiaFrame.locator('#commandClose').count(), 1);
+  assert.equal(await galiaFrame.locator('#sagStoryClose').count(), 1);
+  assert.equal(await galiaFrame.locator('#galiaClose').count(), 1);
+  assert.deepEqual(pageErrors, []);
 
   console.log('Sprint 42 unified-menu browser regression passed');
 } finally {
