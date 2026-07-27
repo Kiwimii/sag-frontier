@@ -48,7 +48,7 @@ const browser = await chromium.launch({ headless: true });
 try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
-  await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'networkidle' });
+  await page.goto(`http://127.0.0.1:${address.port}/sprint42.html?build=0421`, { waitUntil: 'domcontentloaded' });
 
   const menuButton = page.locator('.s42-menu-button');
   await menuButton.waitFor({ state: 'visible' });
