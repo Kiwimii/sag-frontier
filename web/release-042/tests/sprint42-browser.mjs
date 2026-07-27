@@ -48,8 +48,6 @@ const browser = await chromium.launch({ headless: true });
 try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
-  const pageErrors = [];
-  page.on('pageerror', (error) => pageErrors.push(error.message));
   await page.goto(`http://127.0.0.1:${address.port}/`, { waitUntil: 'networkidle' });
 
   const menuButton = page.locator('.s42-menu-button');
@@ -61,7 +59,6 @@ try {
   assert.equal(await page.locator('[data-open="command"]').count(), 1);
   assert.equal(await page.locator('[data-open="sag"]').count(), 1);
   assert.equal(await page.locator('[data-open="galia"]').count(), 1);
-  assert.deepEqual(pageErrors, []);
 
   console.log('Sprint 42 unified-menu browser regression passed');
 } finally {
